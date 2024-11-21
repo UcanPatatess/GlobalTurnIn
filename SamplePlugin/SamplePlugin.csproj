@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
+  <Import Project="Dalamud.Plugin.Bootstrap.targets" />
 
   <PropertyGroup>
     <Version>0.0.0.1</Version>
@@ -10,10 +10,18 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="..\Data\goat.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
-    </Content>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <None Remove="..\Data\goat.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="..\Data\goat.png" Link="Data\goat.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Data\" />
+      <Folder Include="Utilities\" />
+    </ItemGroup>
 </Project>
