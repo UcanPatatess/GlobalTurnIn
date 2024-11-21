@@ -1,9 +1,12 @@
+using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
+using ECommons.Automation.LegacyTaskManager;
+using SamplePlugin.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SomethingNeedDoing.Managers;
 
 namespace SamplePlugin
 {
@@ -11,7 +14,8 @@ namespace SamplePlugin
     {
         internal static Plugin Plugin { get; set; } = null!;
         internal static Configuration Configuration { get; set; } = null!;
-        internal static ChatManager ChatManager { get; set; } = null!;
-        internal static GameEventManager GameEventManager { get; set; } = null!;
+        public static TaskManager TaskManager { get; set; } = null!;
+        internal static LoopingService Example { get; set; } =null!;
+        public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     }
 }

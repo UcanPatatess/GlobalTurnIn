@@ -15,17 +15,7 @@ public class Configuration : IPluginConfiguration
     public int Version { get; set; } = 0;
     public bool IsConfigWindowMovable { get; set; } = true;
     public bool ToggleConfigUI { get; set; } = false;
-    public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the chat channel to use.
-    /// </summary>
-    public XivChatType ChatType { get; set; } = XivChatType.Debug;
-
-    /// <summary>
-    /// Gets or sets the error chat channel to use.
-    /// </summary>
-    public XivChatType ErrorChatType { get; set; } = XivChatType.Urgent;
+    public bool Looping { get; set; } = false;
     internal static Configuration Load(DirectoryInfo configDirectory)
     {
         var pluginConfigPath = new FileInfo(Path.Combine(configDirectory.Parent!.FullName, $"Sample.json"));

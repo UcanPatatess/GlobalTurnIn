@@ -1,58 +1,86 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
 using ECommons.DalamudServices;
-using ImGuiNET;
-using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using ImGuiNET;
 
 namespace SamplePlugin.Windows;
 
-public class MainWindow : Window, IDisposable
+public class MainWindow : ConfigWindow, IDisposable
 {
-    private string GoatImagePath;
-    private Plugin Plugin;
     public static new readonly string WindowName = "Sampling The World";
-    private const string LogoManifestResource = "Sample.Data.goat.png";
+    private const string LogoManifestResource = "SamplePlugin.Data.UcanPatates.png";
+    private const uint SidebarWidth = 203;
+    private Point _logoSize = new(210, 203);
+    private const float _logoScale = 1f;
 
-    // We give this window a hidden ID using ##
-    // So that the user will see "My Amazing Window" as window title,
-    // but for ImGui the ID is "My Amazing Window##With a hidden ID"
-    public MainWindow() : base(WindowName) 
-    {
-        Flags |= ImGuiWindowFlags.NoScrollbar;
-
-        Size = new Vector2(400, 600);
-        SizeCondition = ImGuiCond.FirstUseEver;
-    }
+    public MainWindow() {}
     public void Dispose() { }
+    public static void SetWindowProperties()
+    {
+        var width = SidebarWidth;
 
+        EzConfigGui.Window.Size = new Vector2(width, 500);
+        EzConfigGui.Window.SizeConstraints = new()
+        {
+            MinimumSize = new Vector2(width, 320),
+            MaximumSize = new Vector2(1920, 1080)
+        };
+
+        EzConfigGui.Window.SizeCondition = ImGuiCond.Always;
+
+        EzConfigGui.Window.Flags |= ImGuiWindowFlags.AlwaysAutoResize;
+        EzConfigGui.Window.Flags |= ImGuiWindowFlags.NoSavedSettings;
+
+        EzConfigGui.Window.AllowClickthrough = false;
+        EzConfigGui.Window.AllowPinning = false;
+    }
     public override void Draw()
     {
-        ImGui.Text($"The random config bool is {Service.Configuration.SomePropertyToBeSavedAndWithADefault}");
-
-        
-
-        if (ImGui.Button("Show Settings"))
-        {
-            //Plugin.ToggleConfigUI();
-        }
-
-        ImGui.Spacing();
-
-        ImGui.Text("Have a goat:");
         if (Svc.Texture.GetFromManifestResource(Assembly.GetExecutingAssembly(), LogoManifestResource).TryGetWrap(out var logo, out var _))
         {
-            ImGui.Image(logo.ImGuiHandle, new Vector2(210), new Vector2(203));
+            var maxWidth = 375 * 2 * 0.85f * ImGuiHelpers.GlobalScale;
+            var ratio = maxWidth / _logoSize.X;
+            var scaledLogoSize = new Vector2(_logoSize.X * _logoScale, _logoSize.Y * _logoScale);
+            ImGui.Image(logo.ImGuiHandle, scaledLogoSize);
         }
         else
         {
             ImGui.Text("Image not found.");
         }
+        ImGui.Spacing();
+
+        ImGui.TextColored(Service.Configuration.Looping ? new Vector4(0.0f, 1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 0.0f, 0.0f, 1.0f), $"Are we working: {(Service.Configuration.Looping ? "Yes" : "No")}");
+
+
+
+
+        // Track the current state
+        bool isRunning = Service.Example.IsEnabled;
+
+        if (ImGui.Button(isRunning ? "Stop" : "Start"))
+        {
+            // Toggle the state
+            isRunning = !isRunning;
+
+            // Apply the state to your service
+            Service.Example.IsEnabled = isRunning;
+        }
+
+
+
+        if (ImGui.Button("Show Settings"))
+        {
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
+        }
+        ImGui.Text($"PlayerZone :" + Svc.ClientState.TerritoryType);
+        ImGui.Text($"Target :" + Svc.Targets.Target?.Name.TextValue ?? "");
+        ImGui.Text($"IsPlayerMoving: " + IsMoving());
     }
 }

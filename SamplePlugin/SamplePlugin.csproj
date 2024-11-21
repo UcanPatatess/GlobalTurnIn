@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Version>0.0.0.1</Version>
-    <Description>A sample plugin.</Description>
+    <Description>GlobalTurnIn</Description>
     <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
@@ -15,13 +15,12 @@
     </ItemGroup>
     
     <ItemGroup>
-        <None Remove="..\Data\goat.png" />
+        <None Remove="..\Data\UcanPatates.png" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="..\Data\goat.png" Link="Data\goat.png" />
+        <EmbeddedResource Include="..\Data\UcanPatates.png" Link="Data\UcanPatates.png" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Data\" />
-      <Folder Include="Utilities\" />
     </ItemGroup>
 </Project>

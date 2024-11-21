@@ -6,9 +6,11 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using SamplePlugin.Windows;
 using ECommons;
-using SomethingNeedDoing.Managers;
 using ECommons.SimpleGui;
 using System.Linq;
+using ECommons.DalamudServices;
+using SamplePlugin.Managers;
+using ECommons.Automation.LegacyTaskManager;
 
 namespace SamplePlugin;
 
@@ -16,38 +18,34 @@ public sealed class Plugin : IDalamudPlugin
 {
     public static string Prefix => "SMP";
     private const string Command = "/pmysample";
+    private readonly LoopingService exampleService;
     private static string[] Aliases => ["/sample", "/simp"];
     public Plugin(IDalamudPluginInterface pluginInterface) 
     {
         pluginInterface.Create<Service>();
         Service.Plugin = this;
         Service.Configuration = Configuration.Load(pluginInterface.ConfigDirectory);
+        ECommonsMain.Init(pluginInterface, this);
 
-        Service.ChatManager = new ChatManager();
-        Service.GameEventManager = new GameEventManager();
+        exampleService = new LoopingService();
+        Service.Example = exampleService;
 
-        EzConfigGui.WindowSystem.AddWindow(new MainWindow());
+        
+        EzConfigGui.Init(new MainWindow().Draw);
+        MainWindow.SetWindowProperties();
+        EzConfigGui.WindowSystem.AddWindow(new SettingsWindow());
+
         EzCmd.Add(Command, OnCommand, "Open Settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnCommand, $"{Command} Alias"));
-
-        ECommonsMain.Init(pluginInterface, this);
     }
 
     public void Dispose()
     {
-        Service.GameEventManager?.Dispose();
-        Service.ChatManager?.Dispose();
         ECommonsMain.Dispose();
+        exampleService.Dispose();
     }
-
     private void OnCommand(string command, string args)
     {
-        args = args.Trim();
-
-        if (args == string.Empty)
-        {
-            EzConfigGui.Window.IsOpen ^= true;
-            return;
-        }
+        EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen; return;
     }
 }

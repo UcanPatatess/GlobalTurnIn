@@ -1,12 +1,12 @@
 {
-  "Author": "your name here",
-  "Name": "Sample Plugin",
-  "Punchline": "A short one-liner that shows up in /xlplugins.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "sample",
-    "plugin",
-    "goats"
-  ]
+    "Author": "UcanPatates",
+    "Name": "GlobalTurnIn",
+    "Punchline": "Make money $$$",
+    "Description": "This Plugin will Automaticly turn in your Deltascape , Gordian and Alexandrian parts.",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 11,
+    "Tags": [
+        "automation",
+        "plugin"
+    ]
 }

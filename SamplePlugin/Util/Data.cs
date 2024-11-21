@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SamplePlugin
+namespace SamplePlugin.Util
 {
-    internal class Hover
+    public static class Data
     {
+
     }
 }
