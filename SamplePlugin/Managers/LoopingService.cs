@@ -57,6 +57,14 @@ namespace SamplePlugin.Managers
 
             if (!TaskManager.IsBusy) 
             {
+                if (IsThereTradeItem())
+                {
+                    if(TotalExchangeItem > 0)
+                    {
+
+                    }
+                }
+                /*
                 if (Configuration.vendorTurnIn)
                 {
                     Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
@@ -75,6 +83,7 @@ namespace SamplePlugin.Managers
                 {
                     PluginLog.Information(GetTargetName());
                 }
+                */
             }
         }
         public void Dispose()

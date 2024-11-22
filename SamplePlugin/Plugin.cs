@@ -48,6 +48,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         ECommonsMain.Dispose();
         exampleService.Dispose();
+        
     }
     private void OnCommand(string command, string args)
     {

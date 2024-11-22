@@ -59,6 +59,11 @@ namespace SamplePlugin.Windows
             {
                 Enqueue(new MountTask(), 100);
             }
+            ImGui.SameLine();
+            if(ImGui.Button("Callback shop 0"))
+            {
+                Enqueue(new FireCallback("Shop", true, 0,11,1),100);
+            }
         }
         public void Dispose() { }
     }

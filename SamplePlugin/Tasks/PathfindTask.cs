@@ -4,9 +4,6 @@ using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using SamplePlugin.IPC;
-using SamplePlugin.Tasks.Base;
-using Serilog;
 
 namespace SamplePlugin.Tasks;
 
