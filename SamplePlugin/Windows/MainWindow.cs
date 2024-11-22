@@ -72,16 +72,12 @@ public class MainWindow : ConfigWindow, IDisposable
             // Apply the state to your service
             Example.IsEnabled = isRunning;
         }
-
-
-        if (ImGui.Button("Pathfind"))
-        {
-            Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
-            Enqueue(new PathfindTask(Targetxyz));
-        }
         if (ImGui.Button("Show Settings"))
         {
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
         }
+        ImGui.Text("Exchangeable item number: "+TotalExchangeItem.ToString());
+        ImGui.Text("CanITurnIn: "+IsThereTradeItem().ToString());
+
     }
 }

@@ -9,6 +9,7 @@ using ECommons.DalamudServices;
 using ECommons.SimpleGui;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using SamplePlugin.Tasks;
 
 namespace SamplePlugin.Windows
 {
@@ -43,6 +44,21 @@ namespace SamplePlugin.Windows
             ImGui.Text($"Player X Y Z :");
             ImGui.SameLine();
             ImGui.Text(PlayerXYZ());
+            if (ImGui.Button("Pathfind"))
+            {
+                Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
+                Enqueue(new PathfindTask(Targetxyz), 10000);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Interact"))
+            {
+                Enqueue(new InteractTask(), 100);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Mount Up"))
+            {
+                Enqueue(new MountTask(), 100);
+            }
         }
         public void Dispose() { }
     }

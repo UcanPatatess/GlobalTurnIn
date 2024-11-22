@@ -60,21 +60,21 @@ namespace SamplePlugin.Managers
                 if (Configuration.vendorTurnIn)
                 {
                     Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
-                    //Enqueue(new PathfindTask(Targetxyz, false, 100));
-                    //Navmesh.PathfindAndMoveTo(Targetxyz, false);
 
+                    //Navmesh.PathfindAndMoveTo(Targetxyz, false);
+                    Enqueue(new PathfindTask(Targetxyz, false, 100));
+                    //while (Navmesh.IsRunning) { }
                 }
-                /*
-                if (GetTargetName() == "") // makes sure you have nothing targeted
+                if (GetTargetName() == "Maisenta") // makes sure you have nothing targeted
                 {
-                    string name = "Maisenta";
-                    Enqueue(new TargetTask(name));
+                    
+                    //string name = "Maisenta";
+                    //Enqueue(new InteractTask());
                 }
                 else
                 {
                     PluginLog.Information(GetTargetName());
                 }
-                */
             }
         }
         public void Dispose()

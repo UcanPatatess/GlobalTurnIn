@@ -1,10 +1,12 @@
 using SamplePlugin.Data;
+using System;
 using System.Collections.Generic;
 
 namespace SamplePlugin.Util
 {
     public static class Data
     {
+        public static int TotalExchangeItem = 0;
         // Deltascape Item IDs
         private static int DeltascapeLensID = 19111;
         private static int DeltascapeShaftID = 19112;
@@ -35,6 +37,76 @@ namespace SamplePlugin.Util
         private static int CrankBuyAmount = 2;
         private static int ShaftBuyAmount = 4;
         private static int LensBuyAmount = 2;
+
+        public static bool IsThereTradeItem()
+        {
+            // Add up counts from SabinaTable
+            for (int i = 0; i < SabinaTable.GetLength(0); i++)
+            {
+                int itemID = SabinaTable[i, 3];
+                int count = GetItemCount(itemID);
+                TotalExchangeItem += count;
+            }
+
+            // Add up counts from GelfradusTable
+            for (int i = 0; i < GelfradusTable.GetLength(0); i++)
+            {
+                int itemID = GelfradusTable[i, 3];
+                int count = GetItemCount(itemID);
+                TotalExchangeItem += count;
+            }
+
+            // GORDIAN
+            int GordianLensCount = GetItemCount(GordianLensID);
+            int GordianShaftCount = GetItemCount(GordianShaftID);
+            int GordianCrankCount = GetItemCount(GordianCrankID);
+            int GordianSpringCount = GetItemCount(GordianSpringID);
+            int GordianPedalCount = GetItemCount(GordianPedalID);
+            int GordianBoltCount = GetItemCount(GordianBoltID);
+
+            int GordianTurnInCount =
+                (int)Math.Floor((double)GordianLensCount / LensBuyAmount) +
+                (int)Math.Floor((double)GordianShaftCount / ShaftBuyAmount) +
+                (int)Math.Floor((double)GordianCrankCount / CrankBuyAmount) +
+                (int)Math.Floor((double)GordianSpringCount / SpringBuyAmount) +
+                (int)Math.Floor((double)GordianPedalCount / PedalBuyAmount) +
+                (int)Math.Floor((double)GordianBoltCount / BoltBuyAmount);
+
+            // ALEXANDRIAN
+            int AlexandrianLensCount = GetItemCount(AlexandrianLensID);
+            int AlexandrianShaftCount = GetItemCount(AlexandrianShaftID);
+            int AlexandrianCrankCount = GetItemCount(AlexandrianCrankID);
+            int AlexandrianSpringCount = GetItemCount(AlexandrianSpringID);
+            int AlexandrianPedalCount = GetItemCount(AlexandrianPedalID);
+            int AlexandrianBoltCount = GetItemCount(AlexandrianBoltID);
+
+            int AlexandrianTurnInCount =
+                (int)Math.Floor((double)AlexandrianLensCount / LensBuyAmount) +
+                (int)Math.Floor((double)AlexandrianShaftCount / ShaftBuyAmount) +
+                (int)Math.Floor((double)AlexandrianCrankCount / CrankBuyAmount) +
+                (int)Math.Floor((double)AlexandrianSpringCount / SpringBuyAmount) +
+                (int)Math.Floor((double)AlexandrianPedalCount / PedalBuyAmount) +
+                (int)Math.Floor((double)AlexandrianBoltCount / BoltBuyAmount);
+
+            // DELTASCAPE
+            int DeltascapeLensCount = GetItemCount(DeltascapeLensID);
+            int DeltascapeShaftCount = GetItemCount(DeltascapeShaftID);
+            int DeltascapeCrankCount = GetItemCount(DeltascapeCrankID);
+            int DeltascapeSpringCount = GetItemCount(DeltascapeSpringID);
+            int DeltascapePedalCount = GetItemCount(DeltascapePedalID);
+            int DeltascapeBoltCount = GetItemCount(DeltascapeBoltID);
+
+            int DeltascapeTurnInCount =
+                (int)Math.Floor((double)DeltascapeLensCount / LensBuyAmount) +
+                (int)Math.Floor((double)DeltascapeShaftCount / ShaftBuyAmount) +
+                (int)Math.Floor((double)DeltascapeCrankCount / CrankBuyAmount) +
+                (int)Math.Floor((double)DeltascapeSpringCount / SpringBuyAmount) +
+                (int)Math.Floor((double)DeltascapePedalCount / PedalBuyAmount) +
+                (int)Math.Floor((double)DeltascapeBoltCount / BoltBuyAmount);
+
+            // Final Decision
+            return !(GordianTurnInCount < 1 && DeltascapeTurnInCount < 1 && AlexandrianTurnInCount < 1);
+        }
         public static Dictionary<int, int> ItemIdArmoryTable { get; } = new Dictionary<int, int>
         {
             // ArmoryHead = 3201
