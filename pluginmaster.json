@@ -1,0 +1,11 @@
+{
+    "Plugins": [
+        {
+            "InternalName": "GlobalTurnIn",
+            "AssemblyVersion": "0.0.0.1",
+            "DalamudApiLevel": 11,
+            "IsTestingExclusive": false,
+            "DownloadLink": "https://ucanpatatess.github.io/Sample/GTPotato.rar"
+        }
+    ]
+}
