@@ -14,7 +14,7 @@ namespace SamplePlugin.Managers
     internal class LoopingService : IDisposable
     {
         private readonly Timer updateTimer;
-        private bool enabled = Service.Configuration.Looping;
+        public bool enabled = false;
         public LoopingService()
         {
             updateTimer = new Timer();
@@ -42,13 +42,13 @@ namespace SamplePlugin.Managers
         {
             PluginLog.Information("Watcher started.");
             updateTimer.Enabled = true;
-            Service.Configuration.Looping = true;
+            enabled = true;
         }
         private void Disable()
         {
             PluginLog.Information("Ending watcher.");
             updateTimer.Enabled = false;
-            Service.Configuration.Looping = false;
+            enabled = false;
         }
         private unsafe void OnTimerUpdate(object? sender, ElapsedEventArgs e)
         {
@@ -56,6 +56,11 @@ namespace SamplePlugin.Managers
 
             if (!TaskManager.IsBusy) 
             {
+                if (Configuration.vendorTurnIn)
+                {
+                    //Enqueue(new PathfindTask())
+                }
+                /*
                 if (GetTargetName() == "") // makes sure you have nothing targeted
                 {
                     string name = "Maisenta";
@@ -65,6 +70,7 @@ namespace SamplePlugin.Managers
                 {
                     PluginLog.Information(GetTargetName());
                 }
+                */
             }
         }
         public void Dispose()

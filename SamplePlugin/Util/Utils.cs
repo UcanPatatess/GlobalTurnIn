@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ public static class Utils
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
     public static int GetZoneID() => Svc.ClientState.TerritoryType;
     public static string GetTargetName() => Svc.Targets.Target?.Name.TextValue ?? "";
+    public static unsafe int GetItemCount(int itemID, bool includeHQ = true)
+       => includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
+       : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
     public static bool PluginInstalled(string name)
     {
         return DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);

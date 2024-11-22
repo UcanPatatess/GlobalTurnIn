@@ -20,10 +20,10 @@ public class TargetTask(string targetName) : IBaseTask
 {
     public unsafe bool? Run()
     {
-        PluginLog.Information("Enque Target: " + targetName);
         var target = GetObjectByName(targetName);
         if (target != null)
         {
+            PluginLog.Information("Targeted: " + targetName);
             Svc.Targets.Target = target;
             return true;
         }

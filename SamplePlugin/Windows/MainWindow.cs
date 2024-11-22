@@ -14,7 +14,6 @@ namespace SamplePlugin.Windows;
 
 public class MainWindow : ConfigWindow, IDisposable
 {
-    public static new readonly string WindowName = "Sampling The World";
     private const string LogoManifestResource = "SamplePlugin.Data.UcanPatates.png";
     private const uint SidebarWidth = 203;
     private Point _logoSize = new(210, 203);
@@ -56,13 +55,13 @@ public class MainWindow : ConfigWindow, IDisposable
         }
         ImGui.Spacing();
 
-        ImGui.TextColored(Service.Configuration.Looping ? new Vector4(0.0f, 1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 0.0f, 0.0f, 1.0f), $"Are we working: {(Service.Configuration.Looping ? "Yes" : "No")}");
+        ImGui.TextColored(Example.enabled ? new Vector4(0.0f, 1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 0.0f, 0.0f, 1.0f), $"Are we working: {(Example.enabled ? "Yes" : "No")}");
 
 
 
 
         // Track the current state
-        bool isRunning = Service.Example.IsEnabled;
+        bool isRunning = Example.enabled;
 
         if (ImGui.Button(isRunning ? "Stop" : "Start"))
         {
@@ -70,7 +69,7 @@ public class MainWindow : ConfigWindow, IDisposable
             isRunning = !isRunning;
 
             // Apply the state to your service
-            Service.Example.IsEnabled = isRunning;
+            Example.IsEnabled = isRunning;
         }
 
 
@@ -79,9 +78,5 @@ public class MainWindow : ConfigWindow, IDisposable
         {
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
         }
-        ImGui.Text($"PlayerZone :" + Svc.ClientState.TerritoryType);
-        ImGui.Text($"Target :" + Svc.Targets.Target?.Name.TextValue ?? "");
-        ImGui.Text($"EnqueBussy :" + TaskManager.IsBusy.ToString());
-        ImGui.Text($"IsPlayerMoving: " + IsMoving());
     }
 }

@@ -24,7 +24,8 @@ public sealed class Plugin : IDalamudPlugin
     {
         pluginInterface.Create<Service>();
         Service.Plugin = this;
-        Service.Configuration = Configuration.Load(pluginInterface.ConfigDirectory);
+        Configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
+        //Service.Configuration = Config.Load(pluginInterface.ConfigDirectory);
         ECommonsMain.Init(pluginInterface, this);
 
         exampleService = new LoopingService();
@@ -34,6 +35,7 @@ public sealed class Plugin : IDalamudPlugin
         EzConfigGui.Init(new MainWindow().Draw);
         MainWindow.SetWindowProperties();
         EzConfigGui.WindowSystem.AddWindow(new SettingsWindow());
+        EzConfigGui.WindowSystem.AddWindow(new DebugWindow());
 
         EzCmd.Add(Command, OnCommand, "Open Settings.");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnCommand, $"{Command} Alias"));
@@ -46,6 +48,15 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnCommand(string command, string args)
     {
-        EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen; return;
+        if (args == "debug") 
+        {
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == DebugWindow.WindowName)!.IsOpen ^= true;
+        }
+        else 
+        { 
+            EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen; return;
+        }
+        
+
     }
 }

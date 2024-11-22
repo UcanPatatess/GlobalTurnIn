@@ -13,7 +13,7 @@ namespace SamplePlugin
     internal class Service
     {
         internal static Plugin Plugin { get; set; } = null!;
-        internal static Configuration Configuration { get; set; } = null!;
+        internal static Config Configuration { get; set; } = null!;
         internal static LoopingService Example { get; set; } =null!;
         public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     }

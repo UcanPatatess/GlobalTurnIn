@@ -46,47 +46,67 @@ public class SettingsWindow : Window, IDisposable
     public override void Draw()
     {
         // UseTicket Setting
-        bool useTicket = false;
+        bool useTicket = Configuration.UseTicket;
         if (ImGui.Checkbox("Use Ticket", ref useTicket))
         {
+            Configuration.UseTicket = useTicket;
+            Configuration.Save();
             // Handle the change
         }
         ImGui.Text("Do you want to use tickets to teleport?");
 
         // MaxItem Setting
-        bool maxItem = true;
+        bool maxItem = Configuration.MaxItem;
         if (ImGui.Checkbox("Maximize Item Buy", ref maxItem))
         {
+            Configuration.MaxItem = maxItem;
+            Configuration.Save();
             // Handle the change
         }
         ImGui.Text("Do you want to bypass the system and maximize your inventory by purchasing a single item multiple times?");
 
-        // MaxArmory Setting
-        bool maxArmory = false;
-        if (ImGui.Checkbox("Maximize Armory", ref maxArmory))
+        if (maxItem)
         {
-            // Handle the change
-        }
-        ImGui.Text("Do you want to fill your armory? MaxItem should be true to use this option.");
+            // MaxArmory Setting
+            bool maxArmory = Configuration.MaxArmory;
+            if (ImGui.Checkbox("Maximize Armory", ref maxArmory))
+            {
+                Configuration.MaxArmory = maxArmory;
+                Configuration.Save();
+                // Handle the change
+            }
+            ImGui.Text("Do you want to fill your armory?");
 
-        // MaxArmoryFreeSlot Setting
-        int maxArmoryFreeSlot = 2;
-        ImGui.InputInt("Max Armory Free Slot", ref maxArmoryFreeSlot);
-        ImGui.Text("How many empty slots do you want in your inventory?");
+            // MaxArmoryFreeSlot Setting
+            if (maxArmory)
+            {
+                int maxArmoryFreeSlot = Configuration.MaxArmoryFreeSlot;
+                if (ImGui.InputInt("Max Armory Free Slot", ref maxArmoryFreeSlot))
+                {
+                    Configuration.MaxArmoryFreeSlot = maxArmoryFreeSlot;
+                    Configuration.Save();
+                }
+                ImGui.Text("How many empty slots do you want in your inventory?");
+            }
+        }
 
         // VendorTurnIn Setting
-        bool vendorTurnIn = false;
+        bool vendorTurnIn = Configuration.vendorTurnIn;
         if (ImGui.Checkbox("Vendor Turn-In", ref vendorTurnIn))
         {
+            Configuration.vendorTurnIn = vendorTurnIn;
+            Configuration.Save();
             // Handle the change
         }
         ImGui.Text("Use this setting to sell items to your retainer.");
         ImGui.Text("You'll lose some gil profit and won't gain FC points, but you'll also stay more off the radar.");
 
         // TeleportToFC Setting
-        bool teleportToFC = false;
+        bool teleportToFC = Configuration.teleportToFC;
         if (ImGui.Checkbox("Teleport To FC", ref teleportToFC))
         {
+            Configuration.teleportToFC = teleportToFC;
+            Configuration.Save();
             // Handle the change
         }
         ImGui.Text("If you want to sell your items in the FC house.");
