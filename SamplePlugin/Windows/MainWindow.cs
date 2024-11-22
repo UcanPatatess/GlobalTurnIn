@@ -81,6 +81,7 @@ public class MainWindow : ConfigWindow, IDisposable
         }
         ImGui.Text($"PlayerZone :" + Svc.ClientState.TerritoryType);
         ImGui.Text($"Target :" + Svc.Targets.Target?.Name.TextValue ?? "");
+        ImGui.Text($"EnqueBussy :" + TaskManager.IsBusy.ToString());
         ImGui.Text($"IsPlayerMoving: " + IsMoving());
     }
 }

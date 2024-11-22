@@ -11,6 +11,8 @@ using ECommons.DalamudServices;
 using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
 using Dalamud.Game.ClientState.Objects.Types;
 using System.Numerics;
+using ECommons.Logging;
+using System.Xml.Linq;
 
 namespace SamplePlugin.Tasks;
 
@@ -18,10 +20,11 @@ public class TargetTask(string targetName) : IBaseTask
 {
     public unsafe bool? Run()
     {
-        var target = Svc.Objects.FirstOrDefault(o => o.IsTargetable && o.Name.TextValue.Equals(targetName, System.StringComparison.InvariantCultureIgnoreCase));
-        if (target != default)
+        PluginLog.Information("Enque Target: " + targetName);
+        var target = GetObjectByName(targetName);
+        if (target != null)
         {
-            TargetSystem.Instance()->Target = (GameObject*)target.Address; //not working gonna look into it tomorrow
+            Svc.Targets.Target = target;
             return true;
         }
         return false;

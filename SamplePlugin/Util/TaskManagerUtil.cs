@@ -1,4 +1,5 @@
 using System;
+using ECommons.Automation.LegacyTaskManager;
 using SamplePlugin.Tasks;
 
 namespace SamplePlugin.Util;
@@ -8,6 +9,7 @@ namespace SamplePlugin.Util;
  */
 public static class TaskManagerUtil
 {
+    public static TaskManager TaskManager = new();
     public static void Enqueue(IBaseTask task, int timeLimitMs = 10000, string? name = null)
     {
         TaskManager.Enqueue(task.Run, timeLimitMs, name);

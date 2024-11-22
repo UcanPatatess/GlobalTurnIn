@@ -7,6 +7,7 @@ using ECommons;
 using System.Timers;
 using ECommons.Logging;
 using SamplePlugin.Tasks;
+using ECommons.DalamudServices;
 
 namespace SamplePlugin.Managers
 {
@@ -53,15 +54,17 @@ namespace SamplePlugin.Managers
         {
             PluginLog.Information("Watcher tick.");
 
-            if (GetTargetName() == "") // makes sure you have nothing targeted
+            if (!TaskManager.IsBusy) 
             {
-                string name = "Maisenta";
-                PluginLog.Information("Enque Target: "+name);
-                Enqueue(new TargetTask(name));
-            }
-            else
-            {
-                PluginLog.Information(GetTargetName());
+                if (GetTargetName() == "") // makes sure you have nothing targeted
+                {
+                    string name = "Maisenta";
+                    Enqueue(new TargetTask(name));
+                }
+                else
+                {
+                    PluginLog.Information(GetTargetName());
+                }
             }
         }
         public void Dispose()

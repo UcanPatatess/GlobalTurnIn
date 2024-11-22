@@ -20,7 +20,4 @@
     <ItemGroup>
         <EmbeddedResource Include="..\Data\UcanPatates.png" Link="Data\UcanPatates.png" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Data\" />
-    </ItemGroup>
 </Project>
