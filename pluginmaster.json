@@ -5,7 +5,11 @@
             "AssemblyVersion": "0.0.0.1",
             "DalamudApiLevel": 11,
             "IsTestingExclusive": false,
-            "DownloadLink": "https://ucanpatatess.github.io/Sample/GTPotato.zip"
+            "IconUrl": "https://github.com/UcanPatatess/Sample/blob/master/Data/UcanPatates.png",
+            "RepoUrl": "https://github.com/UcanPatatess/Sample",
+            "DownloadLinkInstall": "https://github.com/UcanPatatess/Sample/raw/refs/heads/master/GTPotato.zip",
+            "DownloadLinkTesting": "https://github.com/UcanPatatess/Sample/raw/refs/heads/master/GTPotato.zip",
+            "DownloadLinkUpdate": "https://github.com/UcanPatatess/Sample/raw/refs/heads/master/GTPotato.zip"
         }
     ]
 }
