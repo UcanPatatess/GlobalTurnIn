@@ -40,7 +40,9 @@ namespace SamplePlugin.Windows
             }
             ImGui.Text($"ItemCountTest :" + GetItemCount(ItemTest));
             ImGui.Text($"IsPlayerMoving :" + IsMoving());
-
+            ImGui.Text($"Player X Y Z :");
+            ImGui.SameLine();
+            ImGui.Text(PlayerXYZ());
         }
         public void Dispose() { }
     }

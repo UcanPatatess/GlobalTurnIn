@@ -71,7 +71,8 @@ public class SettingsWindow : Window, IDisposable
             bool maxArmory = Configuration.MaxArmory;
             if (ImGui.Checkbox("Maximize Armory", ref maxArmory))
             {
-                Configuration.MaxArmory = maxArmory;
+                if (!maxItem) { Configuration.MaxArmory = false; } 
+                else { Configuration.MaxArmory = maxArmory; }
                 Configuration.Save();
                 // Handle the change
             }

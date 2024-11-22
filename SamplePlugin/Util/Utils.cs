@@ -29,6 +29,23 @@ public static class Utils
     {
         return DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
     }
+    public static string PlayerXYZ()
+        {
+        if (Svc.ClientState.LocalPlayer != null)
+        {
+            var PlayerX = Svc.ClientState.LocalPlayer.Position.X;
+            var PlayerY = Svc.ClientState.LocalPlayer.Position.Y;
+            var PlayerZ = Svc.ClientState.LocalPlayer.Position.Z;
+
+            var PlayerXYZ = PlayerX.ToString() + " " + PlayerY.ToString() + " " + PlayerZ.ToString();
+
+            return PlayerXYZ.ToString();
+        }
+        else
+        {
+            return "Player is null";
+        }
+    }
     public static bool NotBusy()
     {
         return Player.Available
