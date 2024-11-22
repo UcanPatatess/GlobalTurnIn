@@ -8,7 +8,7 @@ public class MountTask : IBaseTask // Example to show how a condition would be u
 {
     public unsafe bool? Run()
     {
-        if (Svc.Condition[ConditionFlag.Mounted] && NotBusy()) return true;
+        if (Svc.Condition[ConditionFlag.Mounted] && PlayerNotBusy()) return true;
         if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
         {
             ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24);

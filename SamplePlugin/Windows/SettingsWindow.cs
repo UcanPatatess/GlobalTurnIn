@@ -71,8 +71,7 @@ public class SettingsWindow : Window, IDisposable
             bool maxArmory = Configuration.MaxArmory;
             if (ImGui.Checkbox("Maximize Armory", ref maxArmory))
             {
-                if (!maxItem) { Configuration.MaxArmory = false; } 
-                else { Configuration.MaxArmory = maxArmory; }
+                Configuration.MaxArmory = maxArmory;
                 Configuration.Save();
                 // Handle the change
             }
@@ -90,6 +89,7 @@ public class SettingsWindow : Window, IDisposable
                 ImGui.Text("How many empty slots do you want in your inventory?");
             }
         }
+        else { Configuration.MaxArmory = false; Configuration.Save(); }
 
         // VendorTurnIn Setting
         bool vendorTurnIn = Configuration.vendorTurnIn;

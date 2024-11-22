@@ -8,6 +8,7 @@ using System.Timers;
 using ECommons.Logging;
 using SamplePlugin.Tasks;
 using ECommons.DalamudServices;
+using System.Numerics;
 
 namespace SamplePlugin.Managers
 {
@@ -58,7 +59,10 @@ namespace SamplePlugin.Managers
             {
                 if (Configuration.vendorTurnIn)
                 {
-                    //Enqueue(new PathfindTask())
+                    Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
+                    //Enqueue(new PathfindTask(Targetxyz, false, 100));
+                    //Navmesh.PathfindAndMoveTo(Targetxyz, false);
+
                 }
                 /*
                 if (GetTargetName() == "") // makes sure you have nothing targeted

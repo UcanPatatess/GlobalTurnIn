@@ -1,6 +1,7 @@
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using ECommons.Automation.LegacyTaskManager;
+using SamplePlugin.IPC;
 using SamplePlugin.Managers;
 using System;
 using System.Collections.Generic;

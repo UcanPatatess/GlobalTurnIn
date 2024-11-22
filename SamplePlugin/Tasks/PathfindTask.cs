@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Numerics;
+using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -10,11 +11,13 @@ namespace SamplePlugin.Tasks;
 
 public class PathfindTask(Vector3 targetPosition, bool sprint = false, float toleranceDistance = 3f) : IBaseTask
 {
+    
     public unsafe bool? Run()
     {
+        Svc.Log.Info("PathfindTask runned.");
         if (targetPosition.Distance(Player.GameObject->Position) <= toleranceDistance)
         {
-            NavmeshIPC.PathStop();
+            Navmesh.Stop();
             return true;
         }
         
@@ -27,10 +30,10 @@ public class PathfindTask(Vector3 targetPosition, bool sprint = false, float tol
             }
         }
         
-        if (NavmeshIPC.PathfindInProgress() || NavmeshIPC.PathIsRunning() || IsMoving()) return false;
+        if (Navmesh.PathfindInProgress() || Navmesh.IsRunning() || IsMoving()) return false;
 
-        NavmeshIPC.PathfindAndMoveTo(targetPosition, false);
-        NavmeshIPC.PathSetAlignCamera(true);
+        Navmesh.PathfindAndMoveTo(targetPosition, false);
+        Navmesh.SetAlignCamera(true);
         
         return false;
     }

@@ -17,6 +17,7 @@ namespace SamplePlugin.Util;
 public static class Utils
 {
     public static float SprintCD => Player.Status.FirstOrDefault(s => s.StatusId == 50)?.RemainingTime ?? 0;
+    public static bool HasPlugin(string name) => DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
@@ -46,7 +47,7 @@ public static class Utils
             return "Player is null";
         }
     }
-    public static bool NotBusy()
+    public static bool PlayerNotBusy()
     {
         return Player.Available
                && Player.Object.CastActionId == 0

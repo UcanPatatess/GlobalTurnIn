@@ -73,7 +73,10 @@ public class MainWindow : ConfigWindow, IDisposable
         }
 
 
-
+        if (ImGui.Button("Pathfind"))
+        {
+            NavPathfindAndMoveTo(10.2f, 0.1f, 2.2f, false);
+        }
         if (ImGui.Button("Show Settings"))
         {
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
