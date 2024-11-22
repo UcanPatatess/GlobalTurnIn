@@ -11,6 +11,7 @@ using System.Linq;
 using ECommons.DalamudServices;
 using SamplePlugin.Managers;
 using ECommons.Automation.LegacyTaskManager;
+using SamplePlugin.IPC;
 
 namespace SamplePlugin;
 
@@ -30,8 +31,10 @@ public sealed class Plugin : IDalamudPlugin
 
         exampleService = new LoopingService();
         Service.Example = exampleService;
+        NavmeshIPC navmesh = new();
+        Service.Navmesh = navmesh;
 
-        
+
         EzConfigGui.Init(new MainWindow().Draw);
         MainWindow.SetWindowProperties();
         EzConfigGui.WindowSystem.AddWindow(new SettingsWindow());

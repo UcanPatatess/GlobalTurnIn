@@ -7,5 +7,4 @@
 global using static SamplePlugin.Service;
 global using static ECommons.GenericHelpers;
 global using static SamplePlugin.Util.Utils;
-global using static SamplePlugin.Util.VnaVmeshUtils;
 global using static SamplePlugin.Util.TaskManagerUtil;

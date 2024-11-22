@@ -9,6 +9,7 @@ using ECommons.DalamudServices;
 using ECommons.SimpleGui;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using SamplePlugin.Tasks;
 
 namespace SamplePlugin.Windows;
 
@@ -75,7 +76,8 @@ public class MainWindow : ConfigWindow, IDisposable
 
         if (ImGui.Button("Pathfind"))
         {
-            NavPathfindAndMoveTo(10.2f, 0.1f, 2.2f, false);
+            Vector3 Targetxyz = new Vector3(10.2f, 0.1f, 2.2f);
+            Enqueue(new PathfindTask(Targetxyz));
         }
         if (ImGui.Button("Show Settings"))
         {

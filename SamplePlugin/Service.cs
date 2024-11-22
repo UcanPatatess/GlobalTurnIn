@@ -16,6 +16,7 @@ namespace SamplePlugin
         internal static Plugin Plugin { get; set; } = null!;
         internal static Config Configuration { get; set; } = null!;
         internal static LoopingService Example { get; set; } =null!;
+        internal static NavmeshIPC Navmesh { get; set; } = null!;
         public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     }
 }
