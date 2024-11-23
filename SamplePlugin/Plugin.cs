@@ -37,6 +37,9 @@ public sealed class Plugin : IDalamudPlugin
         Service.Lifestream = lifestream;
         DeliverooIPC deliveroo = new();
         Service.deliveroo = deliveroo;
+        AutoRetainerIPC autoRetainer = new();
+        Service.autoRetainer = autoRetainer;
+
 
 
         EzConfigGui.Init(new MainWindow().Draw);

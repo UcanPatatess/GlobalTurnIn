@@ -2,11 +2,11 @@ using ECommons.EzIpcManager;
 using SamplePlugin.Util;
 using System;
 
-#nullable disable
+#pragma warning disable CS8618
 
 namespace SamplePlugin.IPC
 {
-    internal class LifestreamIPC
+    public class LifestreamIPC
     {
         public const string Name = "Lifestream";
         public const string Repo = "https://github.com/NightmareXIV/MyDalamudPlugins/raw/main/pluginmaster.json";

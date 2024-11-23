@@ -1,12 +1,7 @@
-using Dalamud.Plugin.Ipc;
-using ECommons;
 using ECommons.EzIpcManager;
 using SamplePlugin.Util;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace SamplePlugin.IPC;
 

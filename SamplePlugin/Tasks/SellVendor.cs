@@ -1,14 +1,13 @@
 using ECommons.DalamudServices;
 using ECommons.Throttlers;
 
-
 namespace SamplePlugin.Tasks
 {
-    public class DeliveroTask() : IBaseTask
+    internal class SellVendor() : IBaseTask
     {
         public unsafe bool? Run() 
         {
-            if (!deliveroo.IsTurnInRunning()) 
+            if (!autoRetainer.IsBusy())
             {
                 if (EzThrottler.Throttle("Delivero", 1000))
                 {

@@ -1,13 +1,7 @@
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
-using ECommons.Automation.LegacyTaskManager;
 using SamplePlugin.IPC;
 using SamplePlugin.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SamplePlugin
 {
@@ -17,9 +11,8 @@ namespace SamplePlugin
         internal static Config Configuration { get; set; } = null!;
         internal static LoopingService Example { get; set; } =null!;
         internal static NavmeshIPC Navmesh { get; set; } = null!;
-        internal static IFramework Framework { get; private set; } = null!;
         internal static LifestreamIPC Lifestream { get; set; } = null!;
         internal static DeliverooIPC deliveroo { get; set; } = null!;
-        public static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
+        internal static AutoRetainerIPC autoRetainer { get; set; } = null!; 
     }
 }
