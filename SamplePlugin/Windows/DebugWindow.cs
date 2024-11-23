@@ -8,6 +8,7 @@ using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
 using ECommons.SimpleGui;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using GlobalTurnIn.Tasks;
 using ImGuiNET;
 using SamplePlugin.Tasks;
 
@@ -63,6 +64,15 @@ namespace SamplePlugin.Windows
             if(ImGui.Button("Callback shop 0"))
             {
                 Enqueue(new FireCallback("Shop", true, 0,11,1),100);
+            }
+            if (ImGui.Button("TeleportLimsa"))
+            {
+                Enqueue(new TeleportTask(129, "limsa"));
+            }
+            ImGui.Text("LifestreamBusy: " + Lifestream.IsBusy());
+            if (ImGui.Button("li aftercastle"))
+            {
+                Enqueue(new AethernetTask(128, "aftcastle"));
             }
         }
         public void Dispose() { }

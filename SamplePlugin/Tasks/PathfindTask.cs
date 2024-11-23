@@ -7,7 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 
 namespace SamplePlugin.Tasks;
 
-public class PathfindTask(Vector3 targetPosition, bool sprint = false, float toleranceDistance = 3f) : IBaseTask
+public class PathfindTask(Vector3 targetPosition, bool sprint = false, float toleranceDistance = 1f) : IBaseTask
 {
     public unsafe bool? Run()
     {

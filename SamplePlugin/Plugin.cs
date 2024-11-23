@@ -33,6 +33,10 @@ public sealed class Plugin : IDalamudPlugin
         Service.Example = exampleService;
         NavmeshIPC navmesh = new();
         Service.Navmesh = navmesh;
+        LifestreamIPC lifestream = new();
+        Service.Lifestream = lifestream;
+        DeliverooIPC deliveroo = new();
+        Service.deliveroo = deliveroo;
 
 
         EzConfigGui.Init(new MainWindow().Draw);

@@ -8,6 +8,7 @@ using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
 using ECommons.SimpleGui;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using GlobalTurnIn.Tasks;
 using ImGuiNET;
 using SamplePlugin.Tasks;
 
@@ -78,6 +79,5 @@ public class MainWindow : ConfigWindow, IDisposable
         }
         ImGui.Text("Exchangeable item number: "+TotalExchangeItem.ToString());
         ImGui.Text("CanITurnIn: "+IsThereTradeItem().ToString());
-
     }
 }

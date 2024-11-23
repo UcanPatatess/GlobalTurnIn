@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SamplePlugin.Tasks
 {
-    internal class FireCallback(string AddonName,bool kapkac, params int[] gibeme) : IBaseTask
+    public class FireCallback(string AddonName,bool kapkac, params int[] gibeme) : IBaseTask
     {
         public unsafe bool? Run()
         {
