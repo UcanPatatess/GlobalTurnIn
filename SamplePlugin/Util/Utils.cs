@@ -4,15 +4,10 @@ using ECommons.DalamudServices;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Lumina.Excel.Sheets;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SamplePlugin.Util;
 
@@ -31,6 +26,19 @@ public static class Utils
     public static bool PluginInstalled(string name)
     {
         return DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
+    }
+    public static unsafe int GetInventoryFreeSlotCount()
+    {
+        InventoryType[] types = [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
+        var slots = 0;
+        foreach (var x in types)
+        {
+            var cont = InventoryManager.Instance()->GetInventoryContainer(x);
+            for (var i = 0; i < cont->Size; i++)
+                if (cont->Items[i].ItemId == 0)
+                    slots++;
+        }
+        return slots;
     }
     public static string PlayerXYZ()
         {

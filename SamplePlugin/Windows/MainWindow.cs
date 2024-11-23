@@ -1,83 +1,44 @@
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
+using Dalamud.Interface.Utility.Raii;
 using ECommons.DalamudServices;
 using ECommons.SimpleGui;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using GlobalTurnIn.Tasks;
+using GlobalTurnIn.TaskAuto;
 using ImGuiNET;
-using SamplePlugin.Tasks;
+using System;
+using System.Numerics;
 
-namespace SamplePlugin.Windows;
 
-public class MainWindow : ConfigWindow, IDisposable
+namespace GlobalTurnIn.Windows
 {
-    private const string LogoManifestResource = "SamplePlugin.Data.UcanPatates.png";
-    private const uint SidebarWidth = 203;
-    private Point _logoSize = new(210, 203);
-    private const float _logoScale = 1f;
-
-    public MainWindow() {}
-    public void Dispose() { }
-    public static void SetWindowProperties()
+    internal class MainWindow : ConfigWindow, IDisposable 
     {
-        var width = SidebarWidth;
-
-        EzConfigGui.Window.Size = new Vector2(width, 500);
-        EzConfigGui.Window.SizeConstraints = new()
+        Automation _auto = new();
+        public MainWindow() : base() 
         {
-            MinimumSize = new Vector2(width, 320),
-            MaximumSize = new Vector2(1920, 1080)
-        };
-
-        EzConfigGui.Window.SizeCondition = ImGuiCond.Always;
-
-        EzConfigGui.Window.Flags |= ImGuiWindowFlags.AlwaysAutoResize;
-        EzConfigGui.Window.Flags |= ImGuiWindowFlags.NoSavedSettings;
-
-        EzConfigGui.Window.AllowClickthrough = false;
-        EzConfigGui.Window.AllowPinning = false;
-    }
-    public override void Draw()
-    {
-        if (Svc.Texture.GetFromManifestResource(Assembly.GetExecutingAssembly(), LogoManifestResource).TryGetWrap(out var logo, out var _))
-        {
-            var maxWidth = 375 * 2 * 0.85f * ImGuiHelpers.GlobalScale;
-            var ratio = maxWidth / _logoSize.X;
-            var scaledLogoSize = new Vector2(_logoSize.X * _logoScale, _logoSize.Y * _logoScale);
-            ImGui.Image(logo.ImGuiHandle, scaledLogoSize);
+            Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoCollapse;
+            SizeConstraints = new WindowSizeConstraints
+            {
+                MinimumSize = new Vector2(100, 100),
+                MaximumSize = new Vector2(800, 600)
+            };
         }
-        else
+        public void Dispose() 
         {
-            ImGui.Text("Image not found.");
+            _auto.Dispose();
         }
-        ImGui.Spacing();
-
-        ImGui.TextColored(Example.enabled ? new Vector4(0.0f, 1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 0.0f, 0.0f, 1.0f), $"Are we working: {(Example.enabled ? "Yes" : "No")}");
-
-
-
-
-        // Track the current state
-        bool isRunning = Example.enabled;
-
-        if (ImGui.Button(isRunning ? "Stop" : "Start"))
+        public override async void Draw()
         {
-            // Toggle the state
-            isRunning = !isRunning;
-
-            // Apply the state to your service
-            Example.IsEnabled = isRunning;
+            using (ImRaii.Disabled(!_auto.Running))
+                if (ImGui.Button("Stop current task"))
+                    _auto.Stop();
+            ImGui.SameLine();
+            ImGui.TextUnformatted($"Status: {_auto.CurrentTask?.Status ?? "idle"}");
+            ImGui.Text($"TerritoryID: "+ Svc.ClientState.TerritoryType);
+            ImGui.Text($"PlayerPos: " + PlayerPosition());
+            ImGui.Text($"Navmesh BuildProgress :" + Plugin.navmesh.BuildProgress());//working ipc
+            if (ImGui.Button($"Test"))
+            {
+                _auto.Start(new MainLoopStart());
+            }
         }
-        if (ImGui.Button("Show Settings"))
-        {
-            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
-        }
-        ImGui.Text("Exchangeable item number: "+TotalExchangeItem.ToString());
-        ImGui.Text("CanITurnIn: "+IsThereTradeItem().ToString());
     }
 }

@@ -9,6 +9,8 @@ using ECommons.Logging;
 using SamplePlugin.Tasks;
 using ECommons.DalamudServices;
 using System.Numerics;
+using SamplePlugin.Util;
+using GlobalTurnIn.Tasks;
 
 namespace SamplePlugin.Managers
 {
@@ -59,11 +61,20 @@ namespace SamplePlugin.Managers
             {
                 if (IsThereTradeItem())
                 {
-                    if(TotalExchangeItem > 0)
+                    if (TotalExchangeItem > 0)
                     {
 
                     }
+                    else 
+                    {
+                        if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0) && GetInventoryFreeSlotCount() !=0)
+                        {
+                            Enqueue(new TeleportTask(478, "Idyllshire"));
+                            //while (PlayerNotBusy()) { EnqueueWait(1); } no it will crash
+                        }
+                    }
                 }
+
                 /*
                 if (Configuration.vendorTurnIn)
                 {

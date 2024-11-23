@@ -1,8 +1,7 @@
 using System;
 using ECommons.EzIpcManager;
-using SamplePlugin.Util;
 
-namespace SamplePlugin.IPC
+namespace GlobalTurnIn.IPC
 {
     public class AutoRetainerIPC
     {
@@ -11,7 +10,6 @@ namespace SamplePlugin.IPC
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public AutoRetainerIPC() => EzIPC.Init(this, Name);
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        public static bool Installed => Utils.HasPlugin(Name);
 
         [EzIPC("PluginState.%m")] public readonly Func<bool> IsBusy;
         [EzIPC("PluginState.%m")] public readonly Func<int> GetInventoryFreeSlotCount;

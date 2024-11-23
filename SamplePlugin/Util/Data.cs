@@ -6,6 +6,13 @@ namespace SamplePlugin.Util
     public static class Data
     {
         public static int TotalExchangeItem = 0;
+        public static int GordianTurnInCount = 0;
+        public static int AlexandrianTurnInCount = 0;
+        public static int DeltascapeTurnInCount = 0;
+
+
+
+
         // Deltascape Item IDs
         private static int DeltascapeLensID = 19111;
         private static int DeltascapeShaftID = 19112;
@@ -63,7 +70,7 @@ namespace SamplePlugin.Util
             int GordianPedalCount = GetItemCount(GordianPedalID);
             int GordianBoltCount = GetItemCount(GordianBoltID);
 
-            int GordianTurnInCount =
+            GordianTurnInCount =
                 (int)Math.Floor((double)GordianLensCount / LensBuyAmount) +
                 (int)Math.Floor((double)GordianShaftCount / ShaftBuyAmount) +
                 (int)Math.Floor((double)GordianCrankCount / CrankBuyAmount) +
@@ -79,7 +86,7 @@ namespace SamplePlugin.Util
             int AlexandrianPedalCount = GetItemCount(AlexandrianPedalID);
             int AlexandrianBoltCount = GetItemCount(AlexandrianBoltID);
 
-            int AlexandrianTurnInCount =
+            AlexandrianTurnInCount =
                 (int)Math.Floor((double)AlexandrianLensCount / LensBuyAmount) +
                 (int)Math.Floor((double)AlexandrianShaftCount / ShaftBuyAmount) +
                 (int)Math.Floor((double)AlexandrianCrankCount / CrankBuyAmount) +
@@ -95,7 +102,7 @@ namespace SamplePlugin.Util
             int DeltascapePedalCount = GetItemCount(DeltascapePedalID);
             int DeltascapeBoltCount = GetItemCount(DeltascapeBoltID);
 
-            int DeltascapeTurnInCount =
+            DeltascapeTurnInCount =
                 (int)Math.Floor((double)DeltascapeLensCount / LensBuyAmount) +
                 (int)Math.Floor((double)DeltascapeShaftCount / ShaftBuyAmount) +
                 (int)Math.Floor((double)DeltascapeCrankCount / CrankBuyAmount) +

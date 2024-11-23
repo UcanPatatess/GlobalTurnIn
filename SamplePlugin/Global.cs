@@ -4,8 +4,11 @@
  *
  * you never have to worry about importing the same namespaces in every file. Especially usefull für utility classes.
  */
-global using static SamplePlugin.Service;
-global using static ECommons.GenericHelpers;
-global using static SamplePlugin.Util.Utils;
-global using static SamplePlugin.Util.Data;
-global using static SamplePlugin.Util.TaskManagerUtil;
+
+global using global::System;
+global using global::System.Collections;
+global using global::System.Collections.Generic;
+global using global::System.Linq;
+global using static GlobalTurnIn.Game;
+global using static GlobalTurnIn.Service;
+global using static GlobalTurnIn.Data;

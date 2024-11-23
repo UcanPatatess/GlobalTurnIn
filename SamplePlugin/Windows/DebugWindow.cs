@@ -67,7 +67,7 @@ namespace SamplePlugin.Windows
             }
             if (ImGui.Button("TeleportLimsa"))
             {
-                Enqueue(new TeleportTask(129, "limsa"));
+                Enqueue(new TeleportTask(478, "Idyllshire"));
             }
             ImGui.Text("LifestreamBusy: " + Lifestream.IsBusy());
             if (ImGui.Button("li aftercastle"))
