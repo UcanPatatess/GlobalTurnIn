@@ -25,6 +25,7 @@ public sealed class Plugin : IDalamudPlugin
         Configuration = pluginInterface.GetPluginConfig() as GlobalTurnInConfig ?? new GlobalTurnInConfig();
         ECommonsMain.Init(pluginInterface, this);
         EzConfigGui.Init(new MainWindow().Draw);
+        EzConfigGui.WindowSystem.AddWindow(new SettingMenu());
         EzCmd.Add(Command, OnCommand, "Open Interface");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnCommand, $"{Command} Alias"));
 

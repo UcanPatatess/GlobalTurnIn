@@ -12,9 +12,11 @@ public sealed class MainLoopStart : AutoCommon
     protected override async Task Execute()
     {
         Status = "testing";
+        //await TargetInteract();
+        //await TargetName("Maisenta");
         //await TeleportTo(129, new Vector3(-75, 18, 1)); //works limsa
         //await MountUp();
-        await OpenShopMenu(0,0,"Maisenta","Shop");
+        await OpenShopMenu(0,0,"Shop");
         //await AethernetSwitch("aftcastle",128); //works
         //await MoveTo(new Vector3(45f,20f,2f),1); //works
         //await TargetAndInteract("Bango Zango"); //not async but works
@@ -42,7 +44,7 @@ public sealed class MainLoopStart : AutoCommon
             }
         }*/
     }
-    private async Task TurnIn(DataTable TableName, int MaxArmoryValue) 
+    private async Task TurnIn(int MaxArmoryValue) 
     {
         //ItemIdArmoryTable.TryGetValue(itemId, out int category);
         if (PluginInstalled("Automaton")) 

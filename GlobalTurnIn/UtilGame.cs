@@ -15,6 +15,8 @@ using ECommons.GameFunctions;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using ImGuiNET;
 
 
 namespace GlobalTurnIn;
@@ -25,14 +27,6 @@ public static unsafe class Game
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-    public static void TargetInteract()
-    {
-        var target = Svc.Targets.Target;
-        if (target != default)
-        {
-            unsafe { TargetSystem.Instance()->InteractWithObject(target.Struct(), false); }
-        }
-    }
     public static unsafe int GetInventoryFreeSlotCount()
     {
         InventoryType[] types = [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
@@ -96,82 +90,13 @@ public static unsafe class Game
         return (0, default);
     }
 
-    // TODO: collectibility threshold
-    public static int NumItemsInInventory(uint itemId, short minCollectibility) => InventoryManager.Instance()->GetInventoryItemCount(itemId, false, false, false, minCollectibility);
-
-    public static AtkUnitBase* GetFocusedAddonByID(uint id)
-    {
-        var unitManager = &AtkStage.Instance()->RaptureAtkUnitManager->AtkUnitManager.FocusedUnitsList;
-        foreach (var j in Enumerable.Range(0, Math.Min(unitManager->Count, unitManager->Entries.Length)))
-        {
-            var unitBase = unitManager->Entries[j].Value;
-            if (unitBase != null && unitBase->Id == id)
-            {
-                return unitBase;
-            }
-        }
-        return null;
-    }
-
-    public static bool IsAddonActive(string AddonName)
+    public static bool IsAddonActive(string AddonName) // bunu kullan
     {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
         return addon != null && addon->IsVisible && addon->IsReady;
     }
 
-    public static bool IsShopOpen(uint shopId = 0)
-    {
-        var agent = AgentShop.Instance();
-        if (agent == null || !agent->IsAgentActive() || agent->EventReceiver == null || !agent->IsAddonReady())
-            return false;
-        if (shopId == 0)
-            return true; // some shop is open...
-        if (!EventFramework.Instance()->EventHandlerModule.EventHandlerMap.TryGetValuePointer(shopId, out var eh) || eh == null || eh->Value == null)
-            return false;
-        var proxy = (ShopEventHandler.AgentProxy*)agent->EventReceiver;
-        return proxy->Handler == eh->Value;
-    }
-
-    public static bool OpenShop(GameObject* vendor, uint shopId)
-    {
-        Service.Log.Debug($"Interacting with {(ulong)vendor->GetGameObjectId():X}");
-        TargetSystem.Instance()->InteractWithObject(vendor);
-        var selector = EventHandlerSelector.Instance();
-        if (selector->Target == null)
-            return true; // assume interaction was successful without selector
-
-        if (selector->Target != vendor)
-        {
-            Service.Log.Error($"Unexpected selector target {(ulong)selector->Target->GetGameObjectId():X} when trying to interact with {(ulong)vendor->GetGameObjectId():X}");
-            return false;
-        }
-
-        for (int i = 0; i < selector->OptionsCount; ++i)
-        {
-            if (selector->Options[i].Handler->Info.EventId.Id == shopId)
-            {
-                Service.Log.Debug($"Selecting selector option {i} for shop {shopId:X}");
-                EventFramework.Instance()->InteractWithHandlerFromSelector(i);
-                return true;
-            }
-        }
-
-        Service.Log.Error($"Failed to find shop {shopId:X} in selector for {(ulong)vendor->GetGameObjectId():X}");
-        return false;
-    }
-
-    public static bool OpenShop(ulong vendorInstanceId, uint shopId)
-    {
-        var vendor = GameObjectManager.Instance()->Objects.GetObjectByGameObjectId(vendorInstanceId);
-        if (vendor == null)
-        {
-            Service.Log.Error($"Failed to find vendor {vendorInstanceId:X}");
-            return false;
-        }
-        return OpenShop(vendor, shopId);
-    }
-
-    public static bool CloseShop()
+    public static bool CloseShop() //dükkanı kapattı biraz daha bakılması lazım
     {
         var agent = AgentShop.Instance();
         if (agent == null || agent->EventReceiver == null)
@@ -182,55 +107,6 @@ public static unsafe class Game
         arg.SetInt(-1);
         agent->ReceiveEvent(&res, &arg, 1, 0);
         return true;
-    }
-
-    public static bool BuyItemFromShop(uint shopId, uint itemId, int count)
-    {
-        if (!EventFramework.Instance()->EventHandlerModule.EventHandlerMap.TryGetValuePointer(shopId, out var eh) || eh == null || eh->Value == null)
-        {
-            Service.Log.Error($"Event handler for shop {shopId:X} not found");
-            return false;
-        }
-
-        if (eh->Value->Info.EventId.ContentId != EventHandlerType.Shop)
-        {
-            Service.Log.Error($"{shopId:X} is not a shop");
-            return false;
-        }
-
-        var shop = (ShopEventHandler*)eh->Value;
-        for (int i = 0; i < shop->VisibleItemsCount; ++i)
-        {
-            var index = shop->VisibleItems[i];
-            if (shop->Items[index].ItemId == itemId)
-            {
-                Service.Log.Debug($"Buying {count}x {itemId} from {shopId:X}");
-                shop->BuyItemIndex = index;
-                shop->ExecuteBuy(count);
-                return true;
-            }
-        }
-
-        Service.Log.Error($"Did not find item {itemId} in shop {shopId:X}");
-        return false;
-    }
-
-    public static bool ShopTransactionInProgress(uint shopId)
-    {
-        if (!EventFramework.Instance()->EventHandlerModule.EventHandlerMap.TryGetValuePointer(shopId, out var eh) || eh == null || eh->Value == null)
-        {
-            Service.Log.Error($"Event handler for shop {shopId:X} not found");
-            return false;
-        }
-
-        if (eh->Value->Info.EventId.ContentId != EventHandlerType.Shop)
-        {
-            Service.Log.Error($"{shopId:X} is not a shop");
-            return false;
-        }
-
-        var shop = (ShopEventHandler*)eh->Value;
-        return shop->WaitingForTransactionToFinish;
     }
     public static bool IsTalkInProgress()
     {
@@ -261,13 +137,6 @@ public static unsafe class Game
         }
     }
 
-    public static bool IsTurnInSupplyInProgress(uint npcIndex)
-    {
-        var agent = AgentSatisfactionSupply.Instance();
-        var addon = GetFocusedAddonByID(agent->AddonId);
-        return agent->IsAgentActive() && agent->NpcInfo.Id == npcIndex && agent->NpcInfo.Valid && agent->NpcInfo.Initialized && addon != null && addon->IsVisible;
-    }
-
     public static void TurnInSupply(int slot)
     {
         var agent = AgentSatisfactionSupply.Instance();
@@ -276,59 +145,5 @@ public static unsafe class Game
         values[0].SetInt(1);
         values[1].SetInt(slot);
         agent->ReceiveEvent(&res, values.GetPointer(0), 2, 0);
-    }
-
-    public static bool IsTurnInRequestInProgress(uint itemId)
-    {
-        var ui = UIState.Instance();
-        var agent = AgentRequest.Instance();
-        return agent->IsAgentActive() && ui->NpcTrade.Requests.Count == 1 && ui->NpcTrade.Requests.Items[0].ItemId == itemId;
-    }
-
-    public static void TurnInRequestCommit()
-    {
-        var agent = AgentRequest.Instance();
-        if (!agent->IsAgentActive())
-        {
-            Service.Log.Error("Agent not active...");
-            return;
-        }
-
-        if (agent->SelectedTurnInSlot >= 0)
-        {
-            Service.Log.Error($"Turn-in already in progress for slot {agent->SelectedTurnInSlot}");
-            return;
-        }
-
-        var res = new AtkValue();
-        Span<AtkValue> param = stackalloc AtkValue[4];
-        param[0].SetInt(2); // start turnin
-        param[1].SetInt(0); // slot
-        param[2].SetInt(0); // ???
-        param[3].SetInt(0); // ???
-        agent->ReceiveEvent(&res, param.GetPointer(0), 4, 0);
-
-        if (agent->SelectedTurnInSlot != 0 || agent->SelectedTurnInSlotItemOptions <= 0)
-        {
-            Service.Log.Error($"Failed to start turn-in: cur slot={agent->SelectedTurnInSlot}, count={agent->SelectedTurnInSlotItemOptions}");
-            return;
-        }
-
-        param[0].SetInt(0); // confirm
-        param[1].SetInt(0); // option #0
-        agent->ReceiveEvent(&res, param.GetPointer(0), 4, 1);
-
-        if (agent->SelectedTurnInSlot >= 0)
-        {
-            Service.Log.Error($"Turn-in not confirmed: cur slot={agent->SelectedTurnInSlot}");
-            return;
-        }
-
-        // commit
-        var addonId = agent->AddonId;
-        agent->ReceiveEvent(&res, param.GetPointer(0), 4, 0);
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonById((ushort)addonId);
-        if (addon != null && addon->IsVisible)
-            addon->Close(false);
     }
 }

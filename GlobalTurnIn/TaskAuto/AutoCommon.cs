@@ -10,6 +10,8 @@ using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Lumina.Excel.Sheets;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using ECommons.GameFunctions;
 
 namespace GlobalTurnIn.TaskAuto;
 
@@ -71,6 +73,15 @@ public abstract class AutoCommon() : AutoTask
             await NextFrame();
         }
     }
+    protected async Task WaitUntil(Func<bool> condution,string scopeName)
+    {
+        using var scope = BeginScope(scopeName);
+        while (!condution())
+        {
+            Log("waiting...");
+            await NextFrame();
+        }
+    }
     protected async Task AethernetSwitch(string aethername,uint territoryId)
     {
         if (CurrentTerritory() == territoryId)
@@ -80,23 +91,31 @@ public abstract class AutoCommon() : AutoTask
         await WaitWhile(() => !PlayerIsBusy(), "TeleportStart");
         await WaitWhile(PlayerIsBusy, "TeleportFinish");
     }
-    protected async Task TargetAndInteract(string targetstringName)
+    protected async Task TargetName(string targetstringName)
     {
-        using var scope = BeginScope("Targeting and interacting with "+ targetstringName);
+        using var scope = BeginScope("Targeting "+ targetstringName);
         var target = GetObjectByName(targetstringName);
         if (target != null)
         {
             Svc.Targets.Target = target;
-            TargetInteract();
-            if (IsAddonActive("")||IsAddonActive(""))
-            {
-
-            }
+            await NextFrame();
             return;
+        }
+    }
+    protected async Task TargetInteract(string OpenedShopAddonName)
+    {
+        var target = Svc.Targets.Target;
+        if (target != default)
+        {
+            if (IsAddonActive("SelectString") || IsAddonActive("SelectIconString") || IsAddonActive(OpenedShopAddonName))
+                return;
+            unsafe { TargetSystem.Instance()->InteractWithObject(target.Struct(), false); }
+            await WaitUntil(() => IsAddonActive("SelectString") || IsAddonActive("SelectIconString"), "TargetInteractWaiting");
         }
     }
     protected unsafe async Task FireCallback(string AddonName, bool kapkac, params int[] gibeme)
     {
+        using var scope = BeginScope("CallbackFired!! " + AddonName+" "+ kapkac+ " "+ gibeme);
         if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
         {
             Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
@@ -117,19 +136,63 @@ public abstract class AutoCommon() : AutoTask
             await WaitWhile(() => (!Svc.Condition[ConditionFlag.Mounted]), "MountingFinish");
         }
     }
-    protected async Task OpenShopMenu(int SelectIconString,int SelectString,string NpcName,string OpenedAddonName= "ShopExchangeItem")
+    //OpenedAddonName= "ShopExchangeItem"
+    // konuma göre npc ismi ayarlarsın
+    protected async Task AddonCallSelectString(int SelectString)
     {
-
-        while (true) 
+        using var scope = BeginScope("AddonCallSelectString");
+        if (IsAddonActive("SelectString"))
         {
-            var target = GetObjectByName(NpcName);
-            if (target != Svc.Targets.Target)
-            {
-                await TargetAndInteract(NpcName);
-            }
             await FireCallback("SelectString", true, SelectString);
+            await WaitWhile(() => IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
+        }
+    }
+    protected async Task AddonCallSelectIconString(int SelectIconString)
+    {
+        using var scope = BeginScope("AddonCallSelectIconString");
+        if (IsAddonActive("SelectIconString"))
+        {
             await FireCallback("SelectIconString", true, SelectIconString);
-            if (IsAddonActive(OpenedAddonName)) return;
+            await WaitWhile(() => IsAddonActive("SelectIconString"), "WaitAddonSelectIconStringClosing");
+        }
+    }
+    protected async Task OpenShopMenu(int SelectIconString,int SelectString,string OpenedShopAddonName)
+    {
+        using var scope = BeginScope("OpenShopMenu "+ SelectIconString+" " + SelectString+" " + OpenedShopAddonName);
+        if (IsAddonActive(OpenedShopAddonName))
+            return;
+        string NpcName = string.Empty;
+        if (Svc.ClientState.TerritoryType == 478)
+        {
+            NpcName = "Sabina";
+        }
+        
+        if (Svc.ClientState.TerritoryType == 132) //was for testing
+        {
+            NpcName = "Maisenta";
+        }
+        
+        if (Svc.ClientState.TerritoryType == 635)
+        {
+            NpcName = "Gelfradus";
+        }
+        await TargetName(NpcName);
+        await TargetInteract(OpenedShopAddonName);
+        await AddonCallSelectString(SelectString);
+        await AddonCallSelectIconString(SelectIconString);
+    }
+    protected async Task Exchange(int List,int Amount)
+    {
+        int ExpectedItemCount = 0;
+        int brakepoint = 0;
+        if (Configuration.FillArmory)
+            ExpectedItemCount = +Amount;
+        else 
+        {
+            if (Configuration.MaximizeInv)
+            {
+                ExpectedItemCount = +Amount;
+            }
         }
     }
     protected static string ItemName(uint itemId) => LuminaRow<Lumina.Excel.Sheets.Item>(itemId)?.Name.ToString() ?? itemId.ToString();
