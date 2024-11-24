@@ -92,6 +92,5 @@ namespace GlobalTurnIn.Windows
             }
             ImGui.TextWrapped("Stay off the marketboard and sell to your retainer.");
         }
-
     }
 }

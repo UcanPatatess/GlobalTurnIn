@@ -141,20 +141,20 @@ public abstract class AutoCommon() : AutoTask
     protected async Task AddonCallSelectString(int SelectString)
     {
         using var scope = BeginScope("AddonCallSelectString");
-        if (IsAddonActive("SelectString"))
-        {
-            await FireCallback("SelectString", true, SelectString);
-            await WaitWhile(() => IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
-        }
+        await WaitWhile(() => !IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
+        await FireCallback("SelectString", true, SelectString);
+        await WaitWhile(() => IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
     }
     protected async Task AddonCallSelectIconString(int SelectIconString)
     {
         using var scope = BeginScope("AddonCallSelectIconString");
-        if (IsAddonActive("SelectIconString"))
-        {
-            await FireCallback("SelectIconString", true, SelectIconString);
-            await WaitWhile(() => IsAddonActive("SelectIconString"), "WaitAddonSelectIconStringClosing");
-        }
+        await FireCallback("SelectIconString", true, SelectIconString);
+        await WaitWhile(() => IsAddonActive("SelectIconString"), "WaitAddonSelectIconStringClosing");
+        
+    }
+    protected async Task ChangeArmorySetting(bool arg)
+    {
+        Svc.
     }
     protected async Task OpenShopMenu(int SelectIconString,int SelectString,string OpenedShopAddonName)
     {
@@ -162,24 +162,24 @@ public abstract class AutoCommon() : AutoTask
         if (IsAddonActive(OpenedShopAddonName))
             return;
         string NpcName = string.Empty;
-        if (Svc.ClientState.TerritoryType == 478)
+        if (Svc.ClientState.TerritoryType == 478) //Idyllshire
         {
             NpcName = "Sabina";
         }
         
-        if (Svc.ClientState.TerritoryType == 132) //was for testing
+        if (Svc.ClientState.TerritoryType == 132) //was for testing gridania
         {
             NpcName = "Maisenta";
         }
         
-        if (Svc.ClientState.TerritoryType == 635)
+        if (Svc.ClientState.TerritoryType == 635)//Rhalgr
         {
             NpcName = "Gelfradus";
         }
         await TargetName(NpcName);
         await TargetInteract(OpenedShopAddonName);
-        await AddonCallSelectString(SelectString);
         await AddonCallSelectIconString(SelectIconString);
+        await AddonCallSelectString(SelectString);
     }
     protected async Task Exchange(int List,int Amount)
     {
