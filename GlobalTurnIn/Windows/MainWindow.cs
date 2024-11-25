@@ -57,13 +57,9 @@ namespace GlobalTurnIn.Windows
             ImGui.SameLine();
             if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
-            if (ImGui.Button("callback"))
+            if (ImGui.Button("Test"))
             {
-                P.taskManager.Enqueue(() => GenericHandlers.OpenCharaSettings());
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 10, 0, 20));
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 18, 300, C.MaxArmory ? 1 : 0));
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 0));
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, -1));
+
             }
         }
     }

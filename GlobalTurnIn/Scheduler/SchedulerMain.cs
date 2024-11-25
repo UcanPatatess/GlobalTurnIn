@@ -1,5 +1,6 @@
 using ECommons.DalamudServices;
 using GlobalTurnIn.Scheduler.Tasks;
+using GlobalTurnIn.Windows;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,6 @@ namespace GlobalTurnIn.Scheduler
             return true;
         }
 
-        static bool yes = false;
         internal static void Tick()
         {
             if (AreWeTicking) 
@@ -36,10 +36,10 @@ namespace GlobalTurnIn.Scheduler
                 if (!P.taskManager.IsBusy)
                 {
                     TaskMountUp.Enqueue();
-                    if (!yes)
+                    if (!C.ChangeArmory)
                     {
                         TaskChangeArmorySetting.Enqueue();
-                        yes = true;
+                        C.ChangeArmory = true;
                     }
                 }
             }

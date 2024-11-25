@@ -1,6 +1,7 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using Lumina.Excel.Sheets;
 using System.Numerics;
 
 
@@ -17,16 +18,16 @@ namespace GlobalTurnIn.Windows
         
         public void Dispose() { }
 
+        bool useTicket = C.UseTicket;
+        bool maxItem = C.MaxItem;
+        bool maxArmory = C.MaxArmory;
+        int maxArmoryFreeSlot = C.MaxArmoryFreeSlot;
+        bool vendorTurnIn = C.VendorTurnIn;
+        bool teleportToFC = C.TeleportToFC;
 
+        public bool ChangeArmory = C.ChangeArmory;
         public override void Draw()
         {
-            bool useTicket = C.UseTicket;
-            bool maxItem = C.MaxItem;
-            bool maxArmory = C.MaxArmory;
-            int maxArmoryFreeSlot = C.MaxArmoryFreeSlot;
-            bool vendorTurnIn = C.VendorTurnIn;
-            bool teleportToFC = C.TeleportToFC;
-
             ImGui.PushItemWidth(100);
             ImGui.PopItemWidth();
             ImGui.Text("Teleport Settings:");
@@ -60,6 +61,7 @@ namespace GlobalTurnIn.Windows
                     maxArmory = false;
                 if (ImGui.Checkbox("Fill Armory##maxarmory", ref maxArmory))
                 {
+                    C.ChangeArmory = false;
                     C.MaxArmory = maxArmory;
                 }
                 if (maxArmory)
