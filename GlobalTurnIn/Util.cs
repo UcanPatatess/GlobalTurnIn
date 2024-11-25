@@ -11,6 +11,7 @@ using ECommons.DalamudServices;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
+using Serilog;
 
 
 namespace GlobalTurnIn;
@@ -133,7 +134,7 @@ public static unsafe class Util
                && Player.Object.IsTargetable;
     }
 
-    public static uint CurrentTerritory() => GameMain.Instance()->CurrentTerritoryTypeId;
+    public static uint CurrentTerritory() => Svc.ClientState.TerritoryType;
 
     public static (ulong id, Vector3 pos) FindAetheryte(uint id)
     {
@@ -151,14 +152,15 @@ public static unsafe class Util
 
     public static bool CloseShop() //dükkanı kapattı biraz daha bakılması lazım
     {
+        Log.Debug("CloseShop");
         var agent = AgentShop.Instance();
         if (agent == null || agent->EventReceiver == null)
-            return false;
+            return true;
         AtkValue res = default, arg = default;
         var proxy = (ShopEventHandler.AgentProxy*)agent->EventReceiver;
         proxy->Handler->CancelInteraction();
         arg.SetInt(-1);
         agent->ReceiveEvent(&res, &arg, 1, 0);
-        return true;
+        return false;
     }
 }

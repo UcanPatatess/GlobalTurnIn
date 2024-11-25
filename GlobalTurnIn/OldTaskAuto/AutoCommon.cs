@@ -8,19 +8,6 @@ namespace GlobalTurnIn.TaskAuto;
 public abstract class AutoCommon() 
 {
     /*
-    protected async Task MoveTo(Vector3 dest, float tolerance, bool fly = false)
-    {
-        using var scope = BeginScope("MoveTo");
-        if (PlayerInRange(dest, tolerance))
-            return; // already in range
-
-        // ensure navmesh is ready
-        await WaitWhile(() => Plugin.navmesh.BuildProgress() >= 0, "BuildMesh");
-        ErrorIf(!Plugin.navmesh.IsReady(), "Failed to build navmesh for the zone");
-        ErrorIf(!Plugin.navmesh.PathfindAndMoveTo(dest, fly), "Failed to start pathfinding to destination");
-        using var stop = new OnDispose(Plugin.navmesh.Stop);
-        await WaitWhile(() => !PlayerInRange(dest, tolerance), "Navigate");
-    }
     
     protected async Task WaitUntil(Func<bool> condution,string scopeName)
     {
@@ -57,30 +44,7 @@ public abstract class AutoCommon()
         await WaitWhile(() => IsAddonActive("SelectIconString"), "WaitAddonSelectIconStringClosing");
         
     }
-    protected async Task ChangeArmorySetting(bool arg)
-    {
-        using var scope = BeginScope("Changed Armorry Setting to: "+ (arg ? "Enabled" : "Disabled"));
-        if (!IsAddonActive("ConfigCharacter"))
-            Chat.Instance.SendMessage("/characterconfig");
 
-        await WaitUntil(() => IsAddonActive("ConfigCharacter"),"CharaConfigWait");
-        FireCallback("ConfigCharacter", true,10,0,20);
-        await NextFrame();
-        FireCallback("ConfigCharacter", true,18,300, arg ? 1 : 0);
-        await NextFrame();
-        FireCallback("ConfigCharacter", true, 0);
-        await NextFrame();
-        FireCallback("ConfigCharacter", true, -1);
-        await WaitWhile(()=>IsAddonActive("ConfigCharacter"), "CharaConfigEndWait");
-        await WaitWhile(()=>PlayerIsBusy(),"Waiting Player");
-
-    }
-    protected async Task SellVendor()
-    {
-        Svc.Commands.ProcessCommand("/ays itemsell");
-        await WaitWhile(() => Plugin.autoRetainer.IsBusy(), "AutoReatinerBusy");
-        await WaitWhile(() => PlayerIsBusy(),"PlayerBusy");
-    }
     protected async Task OpenShopMenu(int SelectIconString,int SelectString)
     {
         using var scope = BeginScope("OpenShopMenu "+ SelectIconString+" " + SelectString+" " + "ShopExchangeItem");

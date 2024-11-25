@@ -1,3 +1,4 @@
+using ECommons.DalamudServices;
 using GlobalTurnIn.Scheduler.Tasks;
 using System.Numerics;
 
@@ -28,13 +29,20 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
+                    //TaskTurnIn.OpenShopMenu(0, 0);
+                    
                     if (TotalExchangeItem !=0)
                     {
-                        //TaskGcTurnIn.Enqueue();
+                        if (C.VendorTurnIn)
+                        {
+                            TaskTeleportTo.Enqueue();
+                            TaskMountUp.Enqueue();
+                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51));
+                            TaskSellVendor.Enqueue();
+                        }
+                        else
+                            TaskGcTurnIn.Enqueue();
                     }
-                    P.taskManager.Enqueue(TaskMountUp.Enqueue);
-                    P.taskManager.Enqueue(() => TaskMoveTo.Enqueue(new Vector3(57, 207, -11)));
-                    /*
                     if (IsThereTradeItem())
                     {
                         if (!C.ChangeArmory)
@@ -44,13 +52,17 @@ namespace GlobalTurnIn.Scheduler
                         }
                         if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0) && GetInventoryFreeSlotCount() != 0)
                         {
-
+                            TaskTeleportTo.Enqueue();
+                            TaskMountUp.Enqueue();
+                            TaskMoveTo.Enqueue(new Vector3(-19, 211, -36));
+                            TaskTurnIn.Enqueue();
                         }
                         else
                         {
                             Svc.Chat.Print("No TurnIn material Stopping");
                         }
-                    }*/
+                    }
+                    
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace GlobalTurnIn.Windows
         {
             ImGui.Text($"TerritoryID: "+ Svc.ClientState.TerritoryType);
             ImGui.SameLine();
-            ImGui.Text($"Target DataId: " + Svc.Targets.Target?.DataId);
+            ImGui.Text($"Target Name: " + Svc.Targets.Target?.Name.TextValue);
             ImGui.InputText("##Addon Visible", ref addonName, 100);
             ImGui.SameLine();
             ImGui.Text($"Addon Visible: " + IsAddonActive(addonName));
@@ -68,13 +68,8 @@ namespace GlobalTurnIn.Windows
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
             if (ImGui.Button("Test"))
             {
-                //TaskTeleportTo.Enqueue("Idy");
-
-                    TaskMountUp.Enqueue();
-                    TaskMoveTo.Enqueue(new Vector3(57, 207, -11));
-                
+                P.lifestream.ExecuteCommand("tp Idy");
             }
-
         }
     }
 }

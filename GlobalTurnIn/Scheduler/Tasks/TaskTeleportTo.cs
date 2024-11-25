@@ -1,5 +1,6 @@
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
+using ECommons.DalamudServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,42 @@ namespace GlobalTurnIn.Scheduler.Tasks
 {
     internal static class TaskTeleportTo
     {
-        internal static void Enqueue(string TerritoryName,int TeritoryId)
+        internal static int WhereToTeleportInt()
         {
-            P.taskManager.Enqueue(()=> Teleport(TerritoryName));
-            //if (PlayerNotBusy && CurrentTerritory(TeritoryId))
-            P.taskManager.EnqueueDelay(1000);
+            var where = 478;// idyllshire
+            if (DeltascapeTurnInCount > 0)
+            {
+                where = 635;// Rhalgr
+                return where;
+            }
+            return where;
+        } 
+        internal static string WhereToTeleportString()
+        {
+            var where = "idyllshire";
+            if (DeltascapeTurnInCount > 0)
+            {
+                where = "Rhalgr";
+                return where;
+            }
+            return where;
+        }
+        internal static void Enqueue()
+        {
+            Svc.Log.Info("TaskTeleportTo");
+            if (IsTeritory(WhereToTeleportInt())) { return; }
+            P.taskManager.Enqueue(()=> Teleport());
 
         }
-        private static void Teleport(string arg) => P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + arg)), new(() => P.lifestream.IsBusy()), new(() => !P.lifestream.IsBusy(), LSConfig)]);
+        private static bool IsTeritory(int TeritoryId)
+        {
+            if (CurrentTerritory() == TeritoryId && PlayerNotBusy())
+            {
+                return true;
+            }
+            return false;
+        }
         private static TaskManagerConfiguration LSConfig => new(timeLimitMS: 2 * 60 * 1000);
+        private static void Teleport() => P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + WhereToTeleportString())), new(() => !IsTeritory(WhereToTeleportInt())), new(() => IsTeritory(WhereToTeleportInt()), LSConfig)]);
     }
 }

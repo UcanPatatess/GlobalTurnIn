@@ -35,19 +35,11 @@ namespace GlobalTurnIn.Scheduler.Handlers
             } 
             return false;
         }
-        internal unsafe static bool? AddonCallSelectIconString(int SelectIconString)
-        {
-            FireCallback("SelectIconString", true, SelectIconString);
-            if (TryGetAddonByName<AddonSelectString>("SelectString", out var addon) && IsAddonReady(&addon->AtkUnitBase))
-                return true;
-                
-            return false;
-        }
         public unsafe static bool? FireCallback(string AddonName, bool kapkac, params int[] gibeme)
         {
             if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
             {
-                Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
+                    Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
                 return true;
             }
             return false;

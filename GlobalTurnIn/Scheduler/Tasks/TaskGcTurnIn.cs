@@ -1,12 +1,5 @@
 using ECommons.Automation.NeoTaskManager;
-using ECommons.Configuration;
 using ECommons.DalamudServices;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {

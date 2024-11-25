@@ -15,11 +15,14 @@ namespace GlobalTurnIn.Scheduler.Tasks
         internal unsafe static bool? MountUp()
         {
             if (Svc.Condition[ConditionFlag.Mounted] && PlayerNotBusy()) return true;
-            if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
-            {
-                ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24);
-            }
 
+            if (CurrentTerritory() == 478 || CurrentTerritory() == 635)
+            {
+                if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
+                {
+                    ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24);
+                }
+            }
             return false;
         }
     }
