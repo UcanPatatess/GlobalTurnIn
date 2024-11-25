@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn;
 
@@ -49,7 +44,7 @@ public static class Data
 
     public static bool IsThereTradeItem()
     {
-        // Add up counts from SabinaTable
+        TotalExchangeItem = 0;
         for (int i = 0; i < SabinaTable.GetLength(0); i++)
         {
             int itemID = SabinaTable[i, 3];
@@ -64,7 +59,6 @@ public static class Data
             int count = GetItemCount(itemID);
             TotalExchangeItem += count;
         }
-
         // GORDIAN
         int GordianLensCount = GetItemCount(GordianLensID);
         int GordianShaftCount = GetItemCount(GordianShaftID);

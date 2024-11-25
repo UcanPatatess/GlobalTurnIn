@@ -5,8 +5,10 @@ using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
 using ECommons.Throttlers;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GlobalTurnIn.Scheduler;
 using GlobalTurnIn.Scheduler.Handlers;
+using GlobalTurnIn.Scheduler.Tasks;
 using GlobalTurnIn.TaskAuto;
 using ImGuiNET;
 using System;
@@ -35,13 +37,20 @@ namespace GlobalTurnIn.Windows
         {
             ImGui.Text($"TerritoryID: "+ Svc.ClientState.TerritoryType);
             ImGui.SameLine();
-            ImGui.Text($"Target: " + Svc.Targets.Target);
+            ImGui.Text($"Target DataId: " + Svc.Targets.Target?.DataId);
             ImGui.InputText("##Addon Visible", ref addonName, 100);
             ImGui.SameLine();
             ImGui.Text($"Addon Visible: " + IsAddonActive(addonName));
             ImGui.Text($"PlayerPos: " + PlayerPosition());
-            ImGui.Text($"Navmesh BuildProgress :" + P.navmesh.BuildProgress());//working ipc
-            ImGui.Text($"IsThereTradeItem " + IsThereTradeItem());
+            ImGui.Text($"Navmesh BuildProgress: " + P.navmesh.BuildProgress());//working ipc
+            //ImGui.SameLine();
+            //ImGui.Text($"IsThereTradeItem: " + IsThereTradeItem());
+            ImGui.Text($"Exchange Item Count: " + TotalExchangeItem);
+            ImGui.SameLine();
+            ImGui.Text($"GordianTurnIn Count: " + GordianTurnInCount);
+            ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
+            ImGui.SameLine();
+            ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
             bool isRunning = SchedulerMain.AreWeTicking;
             if (ImGui.Button(isRunning ? "Stop" : "Start"))
             {
@@ -59,8 +68,13 @@ namespace GlobalTurnIn.Windows
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
             if (ImGui.Button("Test"))
             {
+                //TaskTeleportTo.Enqueue("Idy");
 
+                    TaskMountUp.Enqueue();
+                    TaskMoveTo.Enqueue(new Vector3(57, 207, -11));
+                
             }
+
         }
     }
 }

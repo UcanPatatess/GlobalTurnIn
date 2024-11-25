@@ -1,12 +1,5 @@
-using ECommons.DalamudServices;
 using GlobalTurnIn.Scheduler.Tasks;
-using GlobalTurnIn.Windows;
-using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace GlobalTurnIn.Scheduler
 {
@@ -31,16 +24,33 @@ namespace GlobalTurnIn.Scheduler
 
         internal static void Tick()
         {
-            if (AreWeTicking) 
+            if (AreWeTicking)
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    TaskMountUp.Enqueue();
-                    if (!C.ChangeArmory)
+                    if (TotalExchangeItem !=0)
                     {
-                        TaskChangeArmorySetting.Enqueue();
-                        C.ChangeArmory = true;
+                        //TaskGcTurnIn.Enqueue();
                     }
+                    P.taskManager.Enqueue(TaskMountUp.Enqueue);
+                    P.taskManager.Enqueue(() => TaskMoveTo.Enqueue(new Vector3(57, 207, -11)));
+                    /*
+                    if (IsThereTradeItem())
+                    {
+                        if (!C.ChangeArmory)
+                        {
+                            TaskChangeArmorySetting.Enqueue();
+                            C.ChangeArmory = true;
+                        }
+                        if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0) && GetInventoryFreeSlotCount() != 0)
+                        {
+
+                        }
+                        else
+                        {
+                            Svc.Chat.Print("No TurnIn material Stopping");
+                        }
+                    }*/
                 }
             }
         }

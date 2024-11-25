@@ -9,7 +9,6 @@ public class Config : IEzConfig
 {
     [JsonIgnore]
     public const int CURRENT_CONFIG_VERSION = 3;
-
     public int Version = CURRENT_CONFIG_VERSION;
     public bool UseTicket { get; set; } = false;
     public bool TeleportToFC { get; set; } = false;

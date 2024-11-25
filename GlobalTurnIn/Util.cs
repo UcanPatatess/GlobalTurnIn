@@ -1,31 +1,22 @@
 using Dalamud.Game.ClientState.Conditions;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Network;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using FFXIVClientStructs.Interop;
 using System.Numerics;
 using ECommons.DalamudServices;
-using ECommons.GameFunctions;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using ImGuiNET;
-using ECommons.Automation;
-using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
 
 
 namespace GlobalTurnIn;
 
 public static unsafe class Util
 {
-    public static bool ExecuteTeleport(uint aetheryteId) => UIState.Instance()->Telepo.Teleport(aetheryteId, 0);
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
@@ -104,6 +95,34 @@ public static unsafe class Util
             if (cont->Items[i].ItemId == 0)
                 slots++;
         return slots;
+    }
+    public static byte GetPlayerGC() => UIState.Instance()->PlayerState.GrandCompany;
+    public static unsafe void TeleportToGCTown(bool useTickets = false)
+    {
+        var gc = UIState.Instance()->PlayerState.GrandCompany;
+        var aetheryte = gc switch
+        {
+            0 => 0u,
+            1 => 8u,
+            2 => 2u,
+            3 => 9u,
+            _ => 0u
+        };
+        if (useTickets)
+        {
+            var ticket = gc switch
+            {
+                0 => 0u,
+                1 => 21069u,
+                2 => 21070u,
+                3 => 21071u,
+                _ => 0u
+            };
+            if (InventoryManager.Instance()->GetInventoryItemCount(ticket) > 0)
+                AgentInventoryContext.Instance()->UseItem(ticket);
+        }
+        else
+            Telepo.Instance()->Teleport(aetheryte, 0);
     }
     public static bool PlayerNotBusy()
     {

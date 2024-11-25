@@ -29,6 +29,7 @@ public class Plugin : IDalamudPlugin
     internal DeliverooIPC deliveroo;
     internal LifestreamIPC lifestream;
     internal NavmeshIPC navmesh;
+    
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -36,7 +37,6 @@ public class Plugin : IDalamudPlugin
         ECommonsMain.Init(pluginInterface, P, ECommons.Module.DalamudReflector, ECommons.Module.ObjectFunctions);
         config = EzConfig.Init<Config>();
 
-        
         EzConfigGui.Init(new MainWindow().Draw);
         EzConfigGui.WindowSystem.AddWindow(new SettingMenu());
         EzCmd.Add(Command, OnCommand, "Open Interface");
@@ -51,6 +51,7 @@ public class Plugin : IDalamudPlugin
     }
     private void Tick(object _)
     {
+        //_ = IsThereTradeItem();
         if (SchedulerMain.AreWeTicking && Svc.ClientState.LocalPlayer != null)
         {
             SchedulerMain.Tick();

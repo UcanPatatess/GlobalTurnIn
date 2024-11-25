@@ -5,6 +5,7 @@ using Dalamud.Game.ClientState.Conditions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using ECommons.Automation;
 using GlobalTurnIn.Scheduler.Tasks;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 
 namespace GlobalTurnIn.Scheduler.Handlers
 {
@@ -39,15 +40,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
             }
             return false;
         }
-        internal static bool? MountUp()
-        {
-            if (Svc.Condition[ConditionFlag.Mounted]) return true;
 
-            if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
-            {
-                unsafe { ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24); }
-            }
-            return false;
-        }
+        internal static bool? ExecuteTeleport(uint aetherytedataId) => UIState.Instance()->Telepo.Teleport(aetherytedataId, 0);
     }
 }

@@ -1,11 +1,3 @@
-using ECommons.Automation;
-using ECommons.DalamudServices;
-using GlobalTurnIn.TaskAuto;
-using Lumina.Excel.Sheets;
-using System.Data;
-using System.Numerics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn;
 /*

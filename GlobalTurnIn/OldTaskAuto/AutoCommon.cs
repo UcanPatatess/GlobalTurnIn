@@ -41,19 +41,6 @@ public abstract class AutoCommon()
         await WaitWhile(PlayerIsBusy, "TeleportFinish");
     }
 
-    protected async Task MountUp()
-    {
-        await NextFrame(100);
-        using var scope = BeginScope("MountUp");
-        if (Svc.Condition[ConditionFlag.Mounted]) return;
-
-        if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
-        {
-            unsafe { ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24); }
-        }
-        await WaitWhile(() => (!Svc.Condition[ConditionFlag.Mounted]), "MountingFinish");
-        await WaitWhile(() => PlayerIsBusy(), "Waiting Player");
-    }
     //OpenedAddonName= "ShopExchangeItem"
     // konuma göre npc ismi ayarlarsın
     protected async Task AddonCallSelectString(int SelectString)
