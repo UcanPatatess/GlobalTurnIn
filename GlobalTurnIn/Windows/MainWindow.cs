@@ -4,6 +4,9 @@ using ECommons.Automation;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
+using ECommons.Throttlers;
+using GlobalTurnIn.Scheduler;
+using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.TaskAuto;
 using ImGuiNET;
 using System;
@@ -14,7 +17,6 @@ namespace GlobalTurnIn.Windows
 {
     internal class MainWindow : ConfigWindow, IDisposable 
     {
-        Automation _auto = new();
         public MainWindow() : base() 
         {
             Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoCollapse;
@@ -26,31 +28,43 @@ namespace GlobalTurnIn.Windows
         }
         public void Dispose() 
         {
-            _auto.Dispose();
         }
-        private string MaxArmoryFreeSlot = "kpala";
+        private string addonName = "kpala";
+        
         public override void Draw()
         {
-            using (ImRaii.Disabled(!_auto.Running))
-                if (ImGui.Button("Stop current task"))
-                    _auto.Stop();
-            ImGui.SameLine();
-            ImGui.TextUnformatted($"Status: {_auto.CurrentTask?.Status ?? "idle"}");
             ImGui.Text($"TerritoryID: "+ Svc.ClientState.TerritoryType);
             ImGui.SameLine();
             ImGui.Text($"Target: " + Svc.Targets.Target);
-            ImGui.InputText("##Addon Visible", ref MaxArmoryFreeSlot, 100);
+            ImGui.InputText("##Addon Visible", ref addonName, 100);
             ImGui.SameLine();
-            ImGui.Text($"Addon Visible: " + IsAddonActive(MaxArmoryFreeSlot));
+            ImGui.Text($"Addon Visible: " + IsAddonActive(addonName));
             ImGui.Text($"PlayerPos: " + PlayerPosition());
-            ImGui.Text($"Navmesh BuildProgress :" + Plugin.navmesh.BuildProgress());//working ipc
-            if (ImGui.Button($"Test"))
-                _auto.Start(new MainLoopStart());
-
+            ImGui.Text($"Navmesh BuildProgress :" + P.navmesh.BuildProgress());//working ipc
+            ImGui.Text($"IsThereTradeItem " + IsThereTradeItem());
+            bool isRunning = SchedulerMain.AreWeTicking;
+            if (ImGui.Button(isRunning ? "Stop" : "Start"))
+            {
+                if (isRunning)
+                {
+                    SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
+                }
+                else
+                {
+                    SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                }
+            }
             ImGui.SameLine();
             if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
-            ImGui.Text($"IsThereTradeItem "+ IsThereTradeItem());
+            if (ImGui.Button("callback"))
+            {
+                P.taskManager.Enqueue(() => GenericHandlers.OpenCharaSettings());
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 10, 0, 20));
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 18, 300, C.MaxArmory ? 1 : 0));
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 0));
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, -1));
+            }
         }
     }
 }

@@ -16,15 +16,17 @@ namespace GlobalTurnIn.Windows
         }
         
         public void Dispose() { }
-        private bool useTicket = Configuration.UseTicket;
-        private bool maxItem = Configuration.MaxItem;
-        private bool maxArmory = Configuration.MaxArmory;
-        private int maxArmoryFreeSlot = Configuration.MaxArmoryFreeSlot;
-        private bool vendorTurnIn = Configuration.VendorTurnIn;
-        private bool teleportToFC = Configuration.TeleportToFC;
+
 
         public override void Draw()
         {
+            bool useTicket = C.UseTicket;
+            bool maxItem = C.MaxItem;
+            bool maxArmory = C.MaxArmory;
+            int maxArmoryFreeSlot = C.MaxArmoryFreeSlot;
+            bool vendorTurnIn = C.VendorTurnIn;
+            bool teleportToFC = C.TeleportToFC;
+
             ImGui.PushItemWidth(100);
             ImGui.PopItemWidth();
             ImGui.Text("Teleport Settings:");
@@ -33,13 +35,11 @@ namespace GlobalTurnIn.Windows
             // UseTicket
             if (ImGui.Checkbox("Use Tickets to Teleport##useticket", ref useTicket))
             {
-                Configuration.UseTicket = useTicket;
-                Configuration.Save();
+                C.UseTicket = useTicket;
             }
             if (ImGui.Checkbox("Teleport to FC##teleporttofc", ref teleportToFC))
             {
-                Configuration.TeleportToFC = teleportToFC;
-                Configuration.Save();
+                C.TeleportToFC = teleportToFC;
             }
             ImGui.NewLine();
 
@@ -49,8 +49,7 @@ namespace GlobalTurnIn.Windows
             // MaxItem
             if (ImGui.Checkbox("Maximize Inventory##maxitem", ref maxItem))
             {
-                Configuration.MaxItem = maxItem;
-                Configuration.Save();
+                C.MaxItem = maxItem;
             }
             ImGui.TextWrapped("Maximize inventory by buying one of a single item.");
 
@@ -61,7 +60,7 @@ namespace GlobalTurnIn.Windows
                     maxArmory = false;
                 if (ImGui.Checkbox("Fill Armory##maxarmory", ref maxArmory))
                 {
-                    Configuration.MaxArmory = maxArmory;
+                    C.MaxArmory = maxArmory;
                 }
                 if (maxArmory)
                 {
@@ -71,8 +70,7 @@ namespace GlobalTurnIn.Windows
                     if (ImGui.InputInt("##maxarmoryfreeslot", ref maxArmoryFreeSlot))
                     {
                         if (maxArmoryFreeSlot < 0) maxArmoryFreeSlot = 0;
-                        Configuration.MaxArmoryFreeSlot = maxArmoryFreeSlot;
-                        Configuration.Save();
+                        C.MaxArmoryFreeSlot = maxArmoryFreeSlot;
                     }
                     ImGui.PopItemWidth();
                 }
@@ -85,8 +83,7 @@ namespace GlobalTurnIn.Windows
             // VendorTurnIn
             if (ImGui.Checkbox("Vendor Turn-in##vendorturnin", ref vendorTurnIn))
             {
-                Configuration.VendorTurnIn = vendorTurnIn;
-                Configuration.Save();
+                C.VendorTurnIn = vendorTurnIn;
             }
             ImGui.TextWrapped("Stay off the marketboard and sell to your retainer.");
         }

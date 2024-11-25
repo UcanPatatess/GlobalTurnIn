@@ -1,22 +1,13 @@
 using ECommons.DalamudServices;
-using ECommons.Logging;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using ECommons.Automation;
-using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
-using Dalamud.Game.ClientState.Conditions;
-using ECommons.GameHelpers;
-using FFXIVClientStructs.FFXIV.Client.Game;
-using Lumina.Excel.Sheets;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using ECommons.GameFunctions;
 
 namespace GlobalTurnIn.TaskAuto;
 
-public abstract class AutoCommon() : AutoTask
+public abstract class AutoCommon() 
 {
+    /*
     protected async Task MoveTo(Vector3 dest, float tolerance, bool fly = false)
     {
         using var scope = BeginScope("MoveTo");
@@ -30,35 +21,7 @@ public abstract class AutoCommon() : AutoTask
         using var stop = new OnDispose(Plugin.navmesh.Stop);
         await WaitWhile(() => !PlayerInRange(dest, tolerance), "Navigate");
     }
-    protected async Task TeleportTo(uint territoryId, Vector3 destination)
-    {
-        using var scope = BeginScope("Teleport");
-        if (CurrentTerritory() == territoryId)
-            return; // already in correct zone
-
-        var closestAetheryteId = Map.FindClosestAetheryte(territoryId, destination);
-        var teleportAetheryteId = Map.FindPrimaryAetheryte(closestAetheryteId);
-        ErrorIf(teleportAetheryteId == 0, $"Failed to find aetheryte in {territoryId}");
-        if (CurrentTerritory() != LuminaRow<Lumina.Excel.Sheets.Aetheryte>(teleportAetheryteId)!.Value.Territory.RowId)
-        {
-            ErrorIf(!ExecuteTeleport(teleportAetheryteId), $"Failed to teleport to {teleportAetheryteId}");
-            await WaitWhile(() => !PlayerIsBusy(), "TeleportStart");
-            await WaitWhile(PlayerIsBusy, "TeleportFinish");
-        }
-        /*
-        if (teleportAetheryteId != closestAetheryteId)
-        {
-            var (aetheryteId, aetherytePos) = Game.FindAetheryte(teleportAetheryteId);
-            await MoveTo(aetherytePos, 10);
-            ErrorIf(!Game.InteractWith(aetheryteId), "Failed to interact with aetheryte");
-            await WaitUntilSkipTalk(Game.IsSelectStringAddonActive, "WaitSelectAethernet");
-            Game.TeleportToAethernet(teleportAetheryteId, closestAetheryteId);
-            await WaitWhile(() => !Game.PlayerIsBusy(), "TeleportAethernetStart");
-            await WaitWhile(Game.PlayerIsBusy, "TeleportAethernetFinish");
-        }
-        */
-        ErrorIf(CurrentTerritory() != territoryId, "Failed to teleport to expected zone");
-    }
+    
     protected async Task WaitUntil(Func<bool> condution,string scopeName)
     {
         using var scope = BeginScope(scopeName);
@@ -76,36 +39,6 @@ public abstract class AutoCommon() : AutoTask
         ErrorIf(!Plugin.lifestream.AethernetTeleport(aethername), $"Failed to teleport to {aethername}");
         await WaitWhile(() => !PlayerIsBusy(), "TeleportStart");
         await WaitWhile(PlayerIsBusy, "TeleportFinish");
-    }
-    protected async Task TargetName()
-    {
-        string NpcName = string.Empty;
-        if (Svc.ClientState.TerritoryType == 478) //Idyllshire
-            NpcName = "Sabina";
-
-        if (Svc.ClientState.TerritoryType == 635)//Rhalgr
-            NpcName = "Gelfradus";
-
-        using var scope = BeginScope("Targeting "+ NpcName);
-        var target = GetObjectByName(NpcName);
-        if (target != null)
-        {
-            Svc.Targets.Target = target;
-            await NextFrame();
-            return;
-        }
-    }
-    protected async Task TargetInteract()
-    {
-        var OpenedShopAddonName = "ShopExchangeItem";
-        var target = Svc.Targets.Target;
-        if (target != default)
-        {
-            if (IsAddonActive("SelectString") || IsAddonActive("SelectIconString") || IsAddonActive(OpenedShopAddonName))
-                return;
-            unsafe { TargetSystem.Instance()->InteractWithObject(target.Struct(), false); }
-            await WaitUntil(() => IsAddonActive("SelectString") || IsAddonActive("SelectIconString"), "TargetInteractWaiting");
-        }
     }
 
     protected async Task MountUp()
@@ -192,4 +125,5 @@ public abstract class AutoCommon() : AutoTask
         await WaitUntil(() => DidAmountChange(currentgearamount, GetItemCount(gearid)), "");
         await NextFrame(10);
     }
+    */
 }

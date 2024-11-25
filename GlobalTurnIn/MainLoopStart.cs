@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace GlobalTurnIn;
-
+/*
 public sealed class MainLoopStart : AutoCommon
 {
     protected override async Task Execute()
@@ -152,3 +152,4 @@ public sealed class MainLoopStart : AutoCommon
         }
     }
 }
+*/

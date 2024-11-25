@@ -23,7 +23,7 @@ using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegat
 
 namespace GlobalTurnIn;
 
-public static unsafe class Game
+public static unsafe class Util
 {
     public static bool ExecuteTeleport(uint aetheryteId) => UIState.Instance()->Telepo.Teleport(aetheryteId, 0);
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
@@ -46,23 +46,6 @@ public static unsafe class Game
     public static unsafe int GetItemCount(int itemID, bool includeHQ = true)
        => includeHQ ? InventoryManager.Instance()->GetInventoryItemCount((uint)itemID, true) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000)
        : InventoryManager.Instance()->GetInventoryItemCount((uint)itemID) + InventoryManager.Instance()->GetInventoryItemCount((uint)itemID + 500_000);
-    /*
-    public static bool InteractWith(ulong instanceId)
-    {
-        var obj = GameObjectManager.Instance()->Objects.GetObjectByGameObjectId(instanceId);
-        if (obj == null)
-            return false;
-        TargetSystem.Instance()->InteractWithObject(obj);
-        return true;
-    }
-    
-    public static void TeleportToAethernet(uint currentAetheryte, Vector3 destinationAetheryte)
-    {
-        
-        Span<uint> payload = [4, destinationAetheryte];
-        PacketDispatcher.SendEventCompletePacket(0x50000 | currentAetheryte, 0, 0, payload.GetPointer(0), (byte)payload.Length, null);
-    } 
-    */
     public static bool PluginInstalled(string name)
     {
         return DalamudReflector.TryGetDalamudPlugin(name, out _, false, true);
@@ -122,7 +105,14 @@ public static unsafe class Game
                 slots++;
         return slots;
     }
-    public static bool PlayerIsBusy() => Service.Conditions[ConditionFlag.BetweenAreas] || Service.Conditions[ConditionFlag.Casting] || ActionManager.Instance()->AnimationLock > 0;
+    public static bool PlayerNotBusy()
+    {
+        return Player.Available
+               && Player.Object.CastActionId == 0
+               && !IsOccupied()
+               && !Svc.Condition[ConditionFlag.Jumping]
+               && Player.Object.IsTargetable;
+    }
 
     public static uint CurrentTerritory() => GameMain.Instance()->CurrentTerritoryTypeId;
 
@@ -151,12 +141,5 @@ public static unsafe class Game
         arg.SetInt(-1);
         agent->ReceiveEvent(&res, &arg, 1, 0);
         return true;
-    }
-    public unsafe static void FireCallback(string AddonName, bool kapkac, params int[] gibeme)
-    {
-        if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
-        {
-            Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
-        }
     }
 }
