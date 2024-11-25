@@ -59,20 +59,6 @@ public abstract class AutoCommon() : AutoTask
         */
         ErrorIf(CurrentTerritory() != territoryId, "Failed to teleport to expected zone");
     }
-    protected async Task WaitUntilSkipTalk(Func<bool> condition, string scopeName)
-    {
-        using var scope = BeginScope(scopeName);
-        while (!condition())
-        {
-            if (IsTalkInProgress())
-            {
-                Log("progressing talk...");
-                ProgressTalk();
-            }
-            Log("waiting...");
-            await NextFrame();
-        }
-    }
     protected async Task WaitUntil(Func<bool> condution,string scopeName)
     {
         using var scope = BeginScope(scopeName);
@@ -91,10 +77,17 @@ public abstract class AutoCommon() : AutoTask
         await WaitWhile(() => !PlayerIsBusy(), "TeleportStart");
         await WaitWhile(PlayerIsBusy, "TeleportFinish");
     }
-    protected async Task TargetName(string targetstringName)
+    protected async Task TargetName()
     {
-        using var scope = BeginScope("Targeting "+ targetstringName);
-        var target = GetObjectByName(targetstringName);
+        string NpcName = string.Empty;
+        if (Svc.ClientState.TerritoryType == 478) //Idyllshire
+            NpcName = "Sabina";
+
+        if (Svc.ClientState.TerritoryType == 635)//Rhalgr
+            NpcName = "Gelfradus";
+
+        using var scope = BeginScope("Targeting "+ NpcName);
+        var target = GetObjectByName(NpcName);
         if (target != null)
         {
             Svc.Targets.Target = target;
@@ -102,8 +95,9 @@ public abstract class AutoCommon() : AutoTask
             return;
         }
     }
-    protected async Task TargetInteract(string OpenedShopAddonName)
+    protected async Task TargetInteract()
     {
+        var OpenedShopAddonName = "ShopExchangeItem";
         var target = Svc.Targets.Target;
         if (target != default)
         {
@@ -113,28 +107,19 @@ public abstract class AutoCommon() : AutoTask
             await WaitUntil(() => IsAddonActive("SelectString") || IsAddonActive("SelectIconString"), "TargetInteractWaiting");
         }
     }
-    protected unsafe async Task FireCallback(string AddonName, bool kapkac, params int[] gibeme)
-    {
-        using var scope = BeginScope("CallbackFired!! " + AddonName+" "+ kapkac+ " "+ gibeme);
-        if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
-        {
-            Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
-            return;
-        }
-    }
+
     protected async Task MountUp()
     {
+        await NextFrame(100);
         using var scope = BeginScope("MountUp");
-        if (Svc.Data.GetExcelSheet<TerritoryType>()?.GetRow(Player.Territory).Unknown4 != 0)
-        {
-            if (Svc.Condition[ConditionFlag.Mounted]) return ;
+        if (Svc.Condition[ConditionFlag.Mounted]) return;
 
-            if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
-            {
-                unsafe { ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24); }
-            }
-            await WaitWhile(() => (!Svc.Condition[ConditionFlag.Mounted]), "MountingFinish");
+        if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
+        {
+            unsafe { ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24); }
         }
+        await WaitWhile(() => (!Svc.Condition[ConditionFlag.Mounted]), "MountingFinish");
+        await WaitWhile(() => PlayerIsBusy(), "Waiting Player");
     }
     //OpenedAddonName= "ShopExchangeItem"
     // konuma göre npc ismi ayarlarsın
@@ -142,58 +127,69 @@ public abstract class AutoCommon() : AutoTask
     {
         using var scope = BeginScope("AddonCallSelectString");
         await WaitWhile(() => !IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
-        await FireCallback("SelectString", true, SelectString);
+        FireCallback("SelectString", true, SelectString);
         await WaitWhile(() => IsAddonActive("SelectString"), "WaitAddonSelectStringClosing");
     }
     protected async Task AddonCallSelectIconString(int SelectIconString)
     {
         using var scope = BeginScope("AddonCallSelectIconString");
-        await FireCallback("SelectIconString", true, SelectIconString);
+        FireCallback("SelectIconString", true, SelectIconString);
         await WaitWhile(() => IsAddonActive("SelectIconString"), "WaitAddonSelectIconStringClosing");
         
     }
     protected async Task ChangeArmorySetting(bool arg)
     {
-        Svc.
+        using var scope = BeginScope("Changed Armorry Setting to: "+ (arg ? "Enabled" : "Disabled"));
+        if (!IsAddonActive("ConfigCharacter"))
+            Chat.Instance.SendMessage("/characterconfig");
+
+        await WaitUntil(() => IsAddonActive("ConfigCharacter"),"CharaConfigWait");
+        FireCallback("ConfigCharacter", true,10,0,20);
+        await NextFrame();
+        FireCallback("ConfigCharacter", true,18,300, arg ? 1 : 0);
+        await NextFrame();
+        FireCallback("ConfigCharacter", true, 0);
+        await NextFrame();
+        FireCallback("ConfigCharacter", true, -1);
+        await WaitWhile(()=>IsAddonActive("ConfigCharacter"), "CharaConfigEndWait");
+        await WaitWhile(()=>PlayerIsBusy(),"Waiting Player");
+
     }
-    protected async Task OpenShopMenu(int SelectIconString,int SelectString,string OpenedShopAddonName)
+    protected async Task SellVendor()
     {
-        using var scope = BeginScope("OpenShopMenu "+ SelectIconString+" " + SelectString+" " + OpenedShopAddonName);
-        if (IsAddonActive(OpenedShopAddonName))
-            return;
-        string NpcName = string.Empty;
-        if (Svc.ClientState.TerritoryType == 478) //Idyllshire
-        {
-            NpcName = "Sabina";
-        }
-        
-        if (Svc.ClientState.TerritoryType == 132) //was for testing gridania
-        {
-            NpcName = "Maisenta";
-        }
-        
-        if (Svc.ClientState.TerritoryType == 635)//Rhalgr
-        {
-            NpcName = "Gelfradus";
-        }
-        await TargetName(NpcName);
-        await TargetInteract(OpenedShopAddonName);
+        Svc.Commands.ProcessCommand("/ays itemsell");
+        await WaitWhile(() => Plugin.autoRetainer.IsBusy(), "AutoReatinerBusy");
+        await WaitWhile(() => PlayerIsBusy(),"PlayerBusy");
+    }
+    protected async Task OpenShopMenu(int SelectIconString,int SelectString)
+    {
+        using var scope = BeginScope("OpenShopMenu "+ SelectIconString+" " + SelectString+" " + "ShopExchangeItem");
+
+        await TargetName();
+        await TargetInteract();
         await AddonCallSelectIconString(SelectIconString);
         await AddonCallSelectString(SelectString);
+        await WaitUntil(() => IsAddonActive("ShopExchangeItem"), "ShopWait");
     }
-    protected async Task Exchange(int List,int Amount)
+    protected async Task CloseSelectString()
     {
-        int ExpectedItemCount = 0;
-        int brakepoint = 0;
-        if (Configuration.FillArmory)
-            ExpectedItemCount = +Amount;
-        else 
-        {
-            if (Configuration.MaximizeInv)
-            {
-                ExpectedItemCount = +Amount;
-            }
-        }
+        await WaitUntil(()=>IsAddonActive("SelectString"), "CloseSelectstring");
+        FireCallback("SelectString", true, -1);
+        await WaitWhile(() => PlayerIsBusy(),"PlayerBusy");
     }
-    protected static string ItemName(uint itemId) => LuminaRow<Lumina.Excel.Sheets.Item>(itemId)?.Name.ToString() ?? itemId.ToString();
+    protected async Task Exchange(int currentgearamount,int gearid,int List,int Amount)
+    {
+        if (!IsAddonActive("ShopExchangeItem"))
+            return;
+
+        if (Amount >127)
+            Amount =127;
+
+        FireCallback("ShopExchangeItem", true, 0, List, Amount);
+        await WaitUntil(() => IsAddonActive("ShopExchangeItemDialog"), "ShopExchangeItemDialogWait");
+        FireCallback("ShopExchangeItemDialog", true, 0);
+        await WaitUntil(() => IsAddonActive("Request"), "Pandora Should Handle it");
+        await WaitUntil(() => DidAmountChange(currentgearamount, GetItemCount(gearid)), "");
+        await NextFrame(10);
+    }
 }

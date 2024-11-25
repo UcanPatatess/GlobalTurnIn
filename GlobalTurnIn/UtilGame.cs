@@ -17,6 +17,8 @@ using ECommons.GameHelpers;
 using ECommons.Reflection;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using ImGuiNET;
+using ECommons.Automation;
+using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
 
 
 namespace GlobalTurnIn;
@@ -27,6 +29,7 @@ public static unsafe class Game
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+    public static float GetDistanceToPoint(float x, float y, float z) => Vector3.Distance(Svc.ClientState.LocalPlayer?.Position ?? Vector3.Zero, new Vector3(x, y, z));
     public static unsafe int GetInventoryFreeSlotCount()
     {
         InventoryType[] types = [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
@@ -77,7 +80,48 @@ public static unsafe class Game
         var d = dest - PlayerPosition();
         return d.X * d.X + d.Z * d.Z <= dist * dist;
     }
+    public static bool DidAmountChange(int arg,int argg)
+    {
+        if (arg == argg)
+            return false;
+        else
+           return true;
+    }
+    public static bool CanIBuy()
+    {
+        int[,] TableName = null!;
+        if (Svc.ClientState.TerritoryType == 478)
+            TableName = SabinaTable;
+        if (Svc.ClientState.TerritoryType == 635)
+            TableName = GelfradusTable;
 
+        for (int i = 0; i < TableName.GetLength(0); i++)
+        {
+            int itemType = TableName[i, 1];
+            int itemTypeBuy = TableName[i, 2];
+            int gearItem = TableName[i, 3];
+
+            int ItemAmount = GetItemCount(itemType);
+            int GearAmount = GetItemCount(gearItem);
+            int CanExchange = (int)Math.Floor((double)ItemAmount / itemTypeBuy);
+            int SlotINV = GetInventoryFreeSlotCount();
+            if (CanExchange > 0 && GearAmount == 0 && SlotINV > 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static int GetFreeSlotsInContainer(int container)
+    {
+        var inv = InventoryManager.Instance();
+        var cont = inv->GetInventoryContainer((InventoryType)container);
+        var slots = 0;
+        for (var i = 0; i < cont->Size; i++)
+            if (cont->Items[i].ItemId == 0)
+                slots++;
+        return slots;
+    }
     public static bool PlayerIsBusy() => Service.Conditions[ConditionFlag.BetweenAreas] || Service.Conditions[ConditionFlag.Casting] || ActionManager.Instance()->AnimationLock > 0;
 
     public static uint CurrentTerritory() => GameMain.Instance()->CurrentTerritoryTypeId;
@@ -108,42 +152,11 @@ public static unsafe class Game
         agent->ReceiveEvent(&res, &arg, 1, 0);
         return true;
     }
-    public static bool IsTalkInProgress()
+    public unsafe static void FireCallback(string AddonName, bool kapkac, params int[] gibeme)
     {
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName("Talk");
-        return addon != null && addon->IsVisible && addon->IsReady;
-    }
-
-    public static void ProgressTalk()
-    {
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName("Talk");
-        if (addon != null && addon->IsReady)
+        if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
         {
-            var evt = new AtkEvent() { Listener = &addon->AtkEventListener, Target = &AtkStage.Instance()->AtkEventTarget };
-            var data = new AtkEventData();
-            addon->ReceiveEvent(AtkEventType.MouseClick, 0, &evt, &data);
+            Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
         }
-    }
-
-    // TODO: this really needs revision...
-    public static void SelectTurnIn()
-    {
-        var addon = RaptureAtkUnitManager.Instance()->GetAddonByName("SelectString");
-        if (addon != null && addon->IsReady)
-        {
-            AtkValue val = default;
-            val.SetInt(0);
-            addon->FireCallback(1, &val, true);
-        }
-    }
-
-    public static void TurnInSupply(int slot)
-    {
-        var agent = AgentSatisfactionSupply.Instance();
-        var res = new AtkValue();
-        Span<AtkValue> values = stackalloc AtkValue[2];
-        values[0].SetInt(1);
-        values[1].SetInt(slot);
-        agent->ReceiveEvent(&res, values.GetPointer(0), 2, 0);
     }
 }

@@ -23,7 +23,7 @@ public sealed class Plugin : IDalamudPlugin
         pluginInterface.Create<Service>();
         Service.Plugin = this;
         Configuration = pluginInterface.GetPluginConfig() as GlobalTurnInConfig ?? new GlobalTurnInConfig();
-        ECommonsMain.Init(pluginInterface, this);
+        ECommonsMain.Init(pluginInterface, this, ECommons.Module.DalamudReflector, ECommons.Module.ObjectFunctions);
         EzConfigGui.Init(new MainWindow().Draw);
         EzConfigGui.WindowSystem.AddWindow(new SettingMenu());
         EzCmd.Add(Command, OnCommand, "Open Interface");
@@ -40,7 +40,9 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void OnCommand(string command, string args)
     {
-        EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen; return;
-        // in response to the slash command, just toggle the display status of our main ui
+        if (args.StartsWith("s"))
+            EzConfigGui.WindowSystem.Windows.First(w => w is SettingMenu).IsOpen ^= true;
+        else
+            EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen;
     }
 }

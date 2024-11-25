@@ -1,5 +1,6 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.Automation;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
@@ -44,12 +45,12 @@ namespace GlobalTurnIn.Windows
             ImGui.Text($"PlayerPos: " + PlayerPosition());
             ImGui.Text($"Navmesh BuildProgress :" + Plugin.navmesh.BuildProgress());//working ipc
             if (ImGui.Button($"Test"))
-            {
                 _auto.Start(new MainLoopStart());
-            }
+
             ImGui.SameLine();
-            if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Help"))
+            if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
+            ImGui.Text($"IsThereTradeItem "+ IsThereTradeItem());
         }
     }
 }
