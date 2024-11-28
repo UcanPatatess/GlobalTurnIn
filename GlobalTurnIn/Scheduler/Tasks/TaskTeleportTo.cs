@@ -35,7 +35,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             Svc.Log.Info("TaskTeleportTo");
             if (IsTeritory(WhereToTeleportInt())) { return; }
-            P.taskManager.Enqueue(()=> Teleport());
+            P.taskManager.Enqueue(Teleport);
 
         }
         private static bool IsTeritory(int TeritoryId)

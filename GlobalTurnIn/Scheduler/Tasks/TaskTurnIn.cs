@@ -4,16 +4,13 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using ECommons.GameFunctions;
 using ECommons.Throttlers;
 using GlobalTurnIn.Scheduler.Handlers;
-using ECommons.Automation.NeoTaskManager;
 using Serilog;
-using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
     internal static class TaskTurnIn
     {
-        
-        internal static void Enqueue()
+        internal unsafe static void Enqueue()
         {
             if (PluginInstalled("Automaton"))
             {
@@ -54,7 +51,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
                 int SlotArmoryINV = GetFreeSlotsInContainer(ArmoryType);
 
-                if (CanExchange > 0 && GearAmount == 0 && SlotINV > 0) // >o< looks like a emoji lol 
+                if (CanExchange > 0 && GearAmount == 0 && (SlotINV > 0 || (SlotArmoryINV > 0 && C.MaxArmory))) // >o< looks like a emoji lol 
                 {
                     if (shopType != lastShopType)
                     {
@@ -64,7 +61,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     }
                     if (SlotArmoryINV != 0 && C.MaxArmory)
                     {
-                        Exchange(GearAmount, gearItem, pcallValue, SlotArmoryINV);
+                        Exchange(gearItem, pcallValue, SlotArmoryINV);
+
                         if (LastIconShopType != null && iconShopType != LastIconShopType)
                         {
                             P.taskManager.Enqueue(CloseShop);
@@ -74,12 +72,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     if (C.MaxItem)
                     {
                         if (CanExchange < SlotINV)
-                            Exchange(GearAmount, gearItem, pcallValue, CanExchange);
+                            Exchange(gearItem, pcallValue, CanExchange);
                         else
-                            Exchange(GearAmount, gearItem, pcallValue, SlotINV);
+                            Exchange(gearItem, pcallValue, SlotINV);
                     }
                     else
-                        Exchange(GearAmount, gearItem, pcallValue, 1);
+                        Exchange(gearItem, pcallValue, 1);
 
                     if (LastIconShopType != null && iconShopType != LastIconShopType)
                     {
@@ -88,7 +86,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 }
             }
             P.taskManager.Enqueue(CloseShop);
-
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString",true,-1));
         }
         internal static bool? TargetNpc()
         {
@@ -126,72 +124,29 @@ namespace GlobalTurnIn.Scheduler.Tasks
             }
             return false;
         }
-        internal unsafe static bool? AddonCallSelectIconString(int SelectIconString)
+        internal static void OpenShopMenu(int SelectIconString, int SelectString)
         {
-            Log.Debug($"AddonCallSelectIconString: {SelectIconString}");
-            if (EzThrottler.Throttle("AddonCallSelectIconString", 20))
-                GenericHandlers.FireCallback("SelectIconString", true, SelectIconString);
-
-            if (!IsAddonActive("SelectIconString"))
-                return true;
-            
-            return false;
-        }
-        internal unsafe static bool? AddonCallSelectString(int SelectString)
-        {
-            Log.Debug($"AddonCallSelectString: {SelectString}");
-            if (EzThrottler.Throttle("AddonCallSelectString", 20))
-                GenericHandlers.FireCallback("SelectString", true, SelectString);
-
-            if (!IsAddonActive("SelectString"))
-                return true;
-
-            return false;
-        }
-        internal static bool? OpenShopMenu(int SelectIconString, int SelectString)
-        {
-            Log.Debug("OpenShopMenu"+" "+SelectIconString+" "+ SelectString);
+            Log.Debug("OpenShopMenu" + " " + SelectIconString + " " + SelectString);
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetNpc);
             P.taskManager.Enqueue(TargetInteract);
-            P.taskManager.Enqueue(() => AddonCallSelectIconString(SelectIconString));
-            P.taskManager.Enqueue(() => AddonCallSelectString(SelectString));
-            
-            if (IsAddonActive("ShopExchangeItem"))
-                return true;
-
-            return false;
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString",true,SelectIconString));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
+            P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"));
         }
-        internal static bool? Exchange(int currentgearamount, int gearid, int List, int Amount)
+        internal static void Exchange( int gearid, int List, int Amount)
         {
-            Log.Debug($"Exchange currentgearamount: {currentgearamount} gearid: {gearid} List: {List} Amount: {Amount}");
-            if (!IsAddonActive("ShopExchangeItem"))
-            {
-                return false;
-            }
+            Log.Debug($"Exchange  gearid: {gearid} List: {List} Amount: {Amount}");
             if (Amount > 127)
                 Amount = 127;
 
 
-            if (EzThrottler.Throttle("AddonCallSelectString", 20))
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
-            if (EzThrottler.Throttle("AddonCallSelectString", 20))
-                P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItemDialog"));
-            if (EzThrottler.Throttle("AddonCallSelectString", 20))
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
-
-            if (IsAddonActive("SelectYesno"))
-            {
-                if (EzThrottler.Throttle("AddonCallSelectString", 20))
-                    P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectYesno", true, 0));
-                P.taskManager.Enqueue(() => !IsAddonActive("SelectYesno"));
-            }
-            if (DidAmountChange(currentgearamount, GetItemCount(gearid)))
-            {
-                return true;
-            }
-
-            return false;
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
+            // biraz bekletmek lazım denenicek
+            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectYesno", true, 0));
+            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearid)));
+            //P.taskManager.EnqueueDelay(20);
         }
     }
 }

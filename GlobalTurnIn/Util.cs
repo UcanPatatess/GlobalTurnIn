@@ -12,6 +12,8 @@ using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
 using Serilog;
+using Dalamud.Utility;
+using ECommons.Throttlers;
 
 
 namespace GlobalTurnIn;
@@ -98,33 +100,6 @@ public static unsafe class Util
         return slots;
     }
     public static byte GetPlayerGC() => UIState.Instance()->PlayerState.GrandCompany;
-    public static unsafe void TeleportToGCTown(bool useTickets = false)
-    {
-        var gc = UIState.Instance()->PlayerState.GrandCompany;
-        var aetheryte = gc switch
-        {
-            0 => 0u,
-            1 => 8u,
-            2 => 2u,
-            3 => 9u,
-            _ => 0u
-        };
-        if (useTickets)
-        {
-            var ticket = gc switch
-            {
-                0 => 0u,
-                1 => 21069u,
-                2 => 21070u,
-                3 => 21071u,
-                _ => 0u
-            };
-            if (InventoryManager.Instance()->GetInventoryItemCount(ticket) > 0)
-                AgentInventoryContext.Instance()->UseItem(ticket);
-        }
-        else
-            Telepo.Instance()->Teleport(aetheryte, 0);
-    }
     public static bool PlayerNotBusy()
     {
         return Player.Available
@@ -136,21 +111,13 @@ public static unsafe class Util
 
     public static uint CurrentTerritory() => Svc.ClientState.TerritoryType;
 
-    public static (ulong id, Vector3 pos) FindAetheryte(uint id)
-    {
-        foreach (var obj in GameObjectManager.Instance()->Objects.IndexSorted)
-            if (obj.Value != null && obj.Value->ObjectKind == ObjectKind.Aetheryte && obj.Value->BaseId == id)
-                return (obj.Value->GetGameObjectId(), *obj.Value->GetPosition());
-        return (0, default);
-    }
-
     public static bool IsAddonActive(string AddonName) // bunu kullan
     {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
         return addon != null && addon->IsVisible && addon->IsReady;
     }
-
-    public static bool CloseShop() //dükkanı kapattı biraz daha bakılması lazım
+    internal static bool GenericThrottle => FrameThrottler.Throttle("AutoRetainerGenericThrottle", 10);
+    public static bool? CloseShop() //dükkanı kapattı biraz daha bakılması lazım
     {
         Log.Debug("CloseShop");
         var agent = AgentShop.Instance();

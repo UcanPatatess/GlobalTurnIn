@@ -7,7 +7,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
-            P.taskManager.Enqueue(() => GenericHandlers.OpenCharaSettings());
+            P.taskManager.Enqueue(GenericHandlers.OpenCharaSettings);
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 10, 0, 20));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 18, 300, C.MaxArmory ? 1 : 0));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 0));

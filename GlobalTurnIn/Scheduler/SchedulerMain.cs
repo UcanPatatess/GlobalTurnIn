@@ -15,11 +15,14 @@ namespace GlobalTurnIn.Scheduler
         internal static bool EnablePlugin()
         {
             EnableTicking = true;
+
             return true;
         }
         internal static bool DisablePlugin()
         {
             EnableTicking = false;
+            P.taskManager.Abort();
+
             return true;
         }
 
@@ -29,14 +32,15 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    //TaskTurnIn.OpenShopMenu(0, 0);
-                    
                     if (TotalExchangeItem !=0)
                     {
                         if (C.VendorTurnIn)
                         {
                             TaskTeleportTo.Enqueue();
-                            TaskMountUp.Enqueue();
+                            if (GetDistanceToPoint(34, 208, -51) > 4)
+                            {
+                                TaskMountUp.Enqueue();
+                            }
                             TaskMoveTo.Enqueue(new Vector3(34, 208, -51));
                             TaskSellVendor.Enqueue();
                         }
@@ -53,7 +57,10 @@ namespace GlobalTurnIn.Scheduler
                         if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0) && GetInventoryFreeSlotCount() != 0)
                         {
                             TaskTeleportTo.Enqueue();
-                            TaskMountUp.Enqueue();
+                            if(GetDistanceToPoint(-19, 211, -36) > 4)
+                            {
+                                TaskMountUp.Enqueue();
+                            }
                             TaskMoveTo.Enqueue(new Vector3(-19, 211, -36));
                             TaskTurnIn.Enqueue();
                         }

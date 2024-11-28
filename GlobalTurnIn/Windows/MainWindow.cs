@@ -9,7 +9,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GlobalTurnIn.Scheduler;
 using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.Scheduler.Tasks;
-using GlobalTurnIn.TaskAuto;
 using ImGuiNET;
 using System;
 using System.Numerics;
@@ -51,6 +50,7 @@ namespace GlobalTurnIn.Windows
             ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
             ImGui.SameLine();
             ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
+            ImGui.Text($"Distance to -19, 211, -36 ="+ GetDistanceToPoint(-19, 211, -36));
             bool isRunning = SchedulerMain.AreWeTicking;
             if (ImGui.Button(isRunning ? "Stop" : "Start"))
             {

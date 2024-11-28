@@ -7,7 +7,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
-            P.taskManager.Enqueue(()=>SellVendor());
+            P.taskManager.Enqueue(SellVendor);
             P.taskManager.EnqueueDelay(1000);
         }
         private static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 1000, abortOnTimeout: false);
