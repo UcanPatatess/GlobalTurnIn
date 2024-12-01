@@ -1,5 +1,4 @@
 using ECommons.Automation.NeoTaskManager;
-using ECommons.DalamudServices;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -27,25 +26,14 @@ namespace GlobalTurnIn.Scheduler.Tasks
         }
         internal static void Enqueue()
         {
-            Svc.Log.Info("TaskTeleportTo");
-            if (IsTeritory(WhereToTeleportInt()))
-            {
-                //P.taskManager.EnqueueDelay(100);
-            }
+            if (IsInZone(WhereToTeleportInt())) { return; }
             else
-                P.taskManager.Enqueue(Teleport);
-
-        }
-        private static bool IsTeritory(int TeritoryId)
-        {
-            if (CurrentTerritory() == TeritoryId && PlayerNotBusy())
             {
-                return true;
-            }
-            return false;
+                P.taskManager.Enqueue(Teleport);
+                P.taskManager.EnqueueDelay(1000);
+            } 
         }
         private static TaskManagerConfiguration LSConfig => new(timeLimitMS: 2 * 60 * 1000);
-        private static void Teleport() => 
-            P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + WhereToTeleportString())), new(() => !IsTeritory(WhereToTeleportInt())), new(() => IsTeritory(WhereToTeleportInt()), LSConfig)]);
+        private static void Teleport() => P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + WhereToTeleportString())), new(() => !IsInZone(WhereToTeleportInt())), new(() => IsInZone(WhereToTeleportInt()), LSConfig)]);
     }
 }

@@ -16,9 +16,9 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             return AgentMap.Instance()->IsPlayerMoving == 1;
         }
-        internal unsafe static void Enqueue(Vector3 targetPosition, float toleranceDistance = 3f)
+        internal unsafe static void Enqueue(Vector3 targetPosition, string destination, float toleranceDistance = 3f)
         {
-            P.taskManager.Enqueue(() => MoveTo(targetPosition, toleranceDistance));
+            P.taskManager.Enqueue(() => MoveTo(targetPosition, toleranceDistance),destination);
         }
         internal unsafe static bool? MoveTo(Vector3 targetPosition, float toleranceDistance = 3f)
         {

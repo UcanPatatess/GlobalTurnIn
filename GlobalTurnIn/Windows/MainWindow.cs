@@ -30,27 +30,24 @@ namespace GlobalTurnIn.Windows
         public void Dispose() 
         {
         }
-        private string addonName = "kpala";
-        
+        private string CurrentTask()
+        {
+            if (P.taskManager.NumQueuedTasks > 0 && P.taskManager.CurrentTask != null)
+            {
+                return P.taskManager.CurrentTask.Name?.ToString() ?? "None";
+            }
+            return "None";
+        }
         public override void Draw()
         {
-            ImGui.Text($"TerritoryID: "+ Svc.ClientState.TerritoryType);
-            ImGui.SameLine();
-            ImGui.Text($"Target Name: " + Svc.Targets.Target?.Name.TextValue);
-            ImGui.InputText("##Addon Visible", ref addonName, 100);
-            ImGui.SameLine();
-            ImGui.Text($"Addon Visible: " + IsAddonActive(addonName));
-            ImGui.Text($"PlayerPos: " + PlayerPosition());
-            ImGui.Text($"Navmesh BuildProgress: " + P.navmesh.BuildProgress());//working ipc
-            //ImGui.SameLine();
-            //ImGui.Text($"IsThereTradeItem: " + IsThereTradeItem());
+            ImGui.Text($"Current task is: {CurrentTask()}");
+            ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
             ImGui.Text($"Exchange Item Count: " + TotalExchangeItem);
             ImGui.SameLine();
             ImGui.Text($"GordianTurnIn Count: " + GordianTurnInCount);
             ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
             ImGui.SameLine();
             ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
-            ImGui.Text($"Distance to -19, 211, -36 ="+ GetDistanceToPoint(-19, 211, -36));
             bool isRunning = SchedulerMain.AreWeTicking;
             if (ImGui.Button(isRunning ? "Stop" : "Start"))
             {
@@ -66,10 +63,6 @@ namespace GlobalTurnIn.Windows
             ImGui.SameLine();
             if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
                 EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
-            if (ImGui.Button("Test"))
-            {
-                P.lifestream.ExecuteCommand("tp Idy");
-            }
         }
     }
 }

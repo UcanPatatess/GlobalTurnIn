@@ -64,31 +64,6 @@ public static unsafe class Util
         else
            return true;
     }
-    public static bool CanIBuy()
-    {
-        int[,] TableName = null!;
-        if (Svc.ClientState.TerritoryType == 478)
-            TableName = SabinaTable;
-        if (Svc.ClientState.TerritoryType == 635)
-            TableName = GelfradusTable;
-
-        for (int i = 0; i < TableName.GetLength(0); i++)
-        {
-            int itemType = TableName[i, 1];
-            int itemTypeBuy = TableName[i, 2];
-            int gearItem = TableName[i, 3];
-
-            int ItemAmount = GetItemCount(itemType);
-            int GearAmount = GetItemCount(gearItem);
-            int CanExchange = (int)Math.Floor((double)ItemAmount / itemTypeBuy);
-            int SlotINV = GetInventoryFreeSlotCount();
-            if (CanExchange > 0 && GearAmount == 0 && SlotINV > 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
     public static int GetFreeSlotsInContainer(int container)
     {
         var inv = InventoryManager.Instance();
@@ -98,6 +73,18 @@ public static unsafe class Util
             if (cont->Items[i].ItemId == 0)
                 slots++;
         return slots;
+    }
+    public static float GetPlayerRawXPos()
+    {
+        return Svc.ClientState.LocalPlayer!.Position.X;
+    }
+    public static float GetPlayerRawYPos()
+    {
+        return Svc.ClientState.LocalPlayer!.Position.Y;
+    }
+    public static float GetPlayerRawZPos()
+    {
+        return Svc.ClientState.LocalPlayer!.Position.Z;
     }
     public static byte GetPlayerGC() => UIState.Instance()->PlayerState.GrandCompany;
     public static bool PlayerNotBusy()
@@ -110,7 +97,7 @@ public static unsafe class Util
     }
 
     public static uint CurrentTerritory() => Svc.ClientState.TerritoryType;
-
+    public static bool IsInZone(int zoneID) => Svc.ClientState.TerritoryType == zoneID;
     public static bool IsAddonActive(string AddonName) // bunu kullan
     {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);

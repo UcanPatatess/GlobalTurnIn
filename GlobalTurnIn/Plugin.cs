@@ -39,6 +39,7 @@ public class Plugin : IDalamudPlugin
 
         EzConfigGui.Init(new MainWindow().Draw);
         EzConfigGui.WindowSystem.AddWindow(new SettingMenu());
+        EzConfigGui.WindowSystem.AddWindow(new DebugWindow());
         EzCmd.Add(Command, OnCommand, "Open Interface");
         Aliases.ToList().ForEach(a => EzCmd.Add(a, OnCommand, $"{Command} Alias"));
 
@@ -64,7 +65,11 @@ public class Plugin : IDalamudPlugin
     }
     private void OnCommand(string command, string args)
     {
-        if (args.StartsWith("s"))
+        if (args == "debug")
+        {
+            EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == DebugWindow.WindowName)!.IsOpen ^= true;
+        }
+        else if (args.StartsWith("s"))
             EzConfigGui.WindowSystem.Windows.First(w => w is SettingMenu).IsOpen ^= true;
         else
             EzConfigGui.Window.IsOpen = !EzConfigGui.Window.IsOpen;

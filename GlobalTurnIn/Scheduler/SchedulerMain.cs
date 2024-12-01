@@ -7,6 +7,7 @@ namespace GlobalTurnIn.Scheduler
     internal static unsafe class SchedulerMain
     {
         internal static bool AreWeTicking;
+        public static bool AreWeSelling = false;
         internal static bool EnableTicking
         {
             get => AreWeTicking;
@@ -32,42 +33,46 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    if (TotalExchangeItem !=0)
+                    if (TotalExchangeItem != 0)
                     {
+                        AreWeSelling = true;
                         if (C.VendorTurnIn)
                         {
                             TaskTeleportTo.Enqueue();
-                            if (GetDistanceToPoint(34, 208, -51) > 4)
+                            if (GetDistanceToPoint(34, 208, -51) > 4)// needs to be in the task
                             {
                                 TaskMountUp.Enqueue();
                             }
-                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51));
+                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51),"Summoning Bell");
                             TaskSellVendor.Enqueue();
+                            AreWeSelling=false;
                         }
                         else
                             TaskGcTurnIn.Enqueue();
                     }
-                    if (IsThereTradeItem())
+                    if (IsThereTradeItem() && !AreWeSelling)
                     {
                         if (!C.ChangeArmory)
                         {
                             TaskChangeArmorySetting.Enqueue();
                             C.ChangeArmory = true;
                         }
-                        if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0) && GetInventoryFreeSlotCount() != 0)
+                        if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0))
                         {
                             TaskTeleportTo.Enqueue();
-                            if(GetDistanceToPoint(-19, 211, -36) > 4)
+                            if(GetDistanceToPoint(-19, 211, -36) > 4)// needs to be in the task
                             {
                                 TaskMountUp.Enqueue();
                             }
-                            TaskMoveTo.Enqueue(new Vector3(-19, 211, -36));
+                            TaskMoveTo.Enqueue(new Vector3(-19, 211, -36), "Shop NPC");
                             TaskTurnIn.Enqueue();
                         }
                         else
                         {
+                            // needs the rhalgar reach logic
                             Svc.Chat.Print("No TurnIn material Stopping");
                         }
+                        AreWeSelling = true;
                     }
                     
                 }

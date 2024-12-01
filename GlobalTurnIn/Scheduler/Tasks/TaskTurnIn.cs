@@ -5,6 +5,7 @@ using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using GlobalTurnIn.Scheduler.Handlers;
 using Serilog;
+using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -35,8 +36,9 @@ namespace GlobalTurnIn.Scheduler.Tasks
             int SlotINV = GetInventoryFreeSlotCount();
             bool isItemPurchasedFromArmory = false;
             int lastArmoryType = -1;
-            bool areAllArmoriesFull = false;
             int armoryExchaneAmount =0;
+            int newItemAmount = 0; // gotta update them somehow
+            int newGearAmount = 0;
 
             for (int i = 0; i < TableName.GetLength(0); i++)
             {
@@ -63,14 +65,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     lastArmoryType = ArmoryType; // Update the last armory type
                     armoryExchaneAmount += 1;
                 }
-                if (isItemPurchasedFromArmory || armoryExchaneAmount >= 8)
+                if (isItemPurchasedFromArmory || armoryExchaneAmount > 8)
                 {
                     SlotArmoryINV = 0; // Don't consider armory slots if we've already purchased
                 }
                 if (CanExchange > 0 && GearAmount == 0 && (SlotINV > 0 || (SlotArmoryINV > 0 && C.MaxArmory))) // >o< looks like a emoji lol 
                 {
-                    if (SlotINV > 127)
-                        SlotINV = 127;
                     if (shopType != lastShopType)
                     {
                         P.taskManager.Enqueue(CloseShop);
@@ -98,7 +98,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                         else
                         {
                             Exchange(gearItem, pcallValue, SlotINV);
-                            SlotINV -= SlotINV;
+                            SlotINV -= 127;
                         }
                     }
                     else
@@ -161,15 +161,23 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
             P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"));
         }
-        internal static void Exchange(int gearid, int List, int Amount)
+        internal static void Exchange(int gearItem, int List, int Amount)
         {
-            Log.Debug($"Exchange  gearid: {gearid} List: {List} Amount: {Amount}");
+            int ArmoryType = 0;
+            if (ItemIdArmoryTable.TryGetValue(gearItem, out int category))
+                ArmoryType = category;
+            Log.Debug($"Exchange  gearid: {gearItem} List: {List} Amount: {Amount}");
             if (Amount > 127)
                 Amount = 127;
 
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
-            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearid)));
+            
+            if (ArmoryType == 3207 || ArmoryType == 3208 || ArmoryType == 3209 || ArmoryType == 3300) { }
+            else
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectYesno", true, 0));
+            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)));
+            P.taskManager.EnqueueDelay(100);
         }
     }
 }
