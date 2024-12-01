@@ -1,8 +1,8 @@
 using ECommons.Automation;
 using ECommons.DalamudServices;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using ECommons.GameFunctions;
 using ECommons.Throttlers;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using GlobalTurnIn.Scheduler.Handlers;
 using Serilog;
 
@@ -14,7 +14,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             if (PluginInstalled("Automaton"))
             {
-                P.taskManager.Enqueue(()=> Chat.Instance.SendMessage("/inventory"));
+                P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
                 P.taskManager.EnqueueDelay(100);
                 P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
                 P.taskManager.EnqueueDelay(100);
@@ -22,7 +22,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             else
                 P.taskManager.Enqueue(() => Svc.Chat.PrintError("Open AutoMerge in Automaton"));
 
-            
+
             int? lastShopType = null;
             int? LastIconShopType = null;
 
@@ -31,6 +31,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 TableName = SabinaTable;
             if (Svc.ClientState.TerritoryType == 635)
                 TableName = GelfradusTable;
+
+            int SlotINV = GetInventoryFreeSlotCount();
+            bool isItemPurchasedFromArmory = false;
+            int lastArmoryType = -1;
+            bool areAllArmoriesFull = false;
+            int armoryExchaneAmount =0;
 
             for (int i = 0; i < TableName.GetLength(0); i++)
             {
@@ -44,15 +50,27 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 int ItemAmount = GetItemCount(itemType);
                 int GearAmount = GetItemCount(gearItem);
                 int CanExchange = (int)Math.Floor((double)ItemAmount / itemTypeBuy);
-                int SlotINV = GetInventoryFreeSlotCount();
+                
                 int ArmoryType = 0;
                 if (ItemIdArmoryTable.TryGetValue(gearItem, out int category))
                     ArmoryType = category;
 
                 int SlotArmoryINV = GetFreeSlotsInContainer(ArmoryType);
 
+                if (ArmoryType != lastArmoryType)
+                {
+                    isItemPurchasedFromArmory = false; // Reset the flag for the new armory
+                    lastArmoryType = ArmoryType; // Update the last armory type
+                    armoryExchaneAmount += 1;
+                }
+                if (isItemPurchasedFromArmory || armoryExchaneAmount >= 8)
+                {
+                    SlotArmoryINV = 0; // Don't consider armory slots if we've already purchased
+                }
                 if (CanExchange > 0 && GearAmount == 0 && (SlotINV > 0 || (SlotArmoryINV > 0 && C.MaxArmory))) // >o< looks like a emoji lol 
                 {
+                    if (SlotINV > 127)
+                        SlotINV = 127;
                     if (shopType != lastShopType)
                     {
                         P.taskManager.Enqueue(CloseShop);
@@ -62,6 +80,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     if (SlotArmoryINV != 0 && C.MaxArmory)
                     {
                         Exchange(gearItem, pcallValue, SlotArmoryINV);
+                        isItemPurchasedFromArmory = true;
 
                         if (LastIconShopType != null && iconShopType != LastIconShopType)
                         {
@@ -72,13 +91,21 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     if (C.MaxItem)
                     {
                         if (CanExchange < SlotINV)
+                        {
                             Exchange(gearItem, pcallValue, CanExchange);
+                            SlotINV -= CanExchange;
+                        }
                         else
+                        {
                             Exchange(gearItem, pcallValue, SlotINV);
+                            SlotINV -= SlotINV;
+                        }
                     }
                     else
+                    {
                         Exchange(gearItem, pcallValue, 1);
-
+                        SlotINV -= 1;
+                    }
                     if (LastIconShopType != null && iconShopType != LastIconShopType)
                     {
                         P.taskManager.Enqueue(CloseShop);
@@ -86,7 +113,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 }
             }
             P.taskManager.Enqueue(CloseShop);
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString",true,-1));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
         }
         internal static bool? TargetNpc()
         {
@@ -130,23 +157,19 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetNpc);
             P.taskManager.Enqueue(TargetInteract);
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString",true,SelectIconString));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
             P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"));
         }
-        internal static void Exchange( int gearid, int List, int Amount)
+        internal static void Exchange(int gearid, int List, int Amount)
         {
             Log.Debug($"Exchange  gearid: {gearid} List: {List} Amount: {Amount}");
             if (Amount > 127)
                 Amount = 127;
 
-
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
-            // biraz bekletmek lazım denenicek
-            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectYesno", true, 0));
             P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearid)));
-            //P.taskManager.EnqueueDelay(20);
         }
     }
 }

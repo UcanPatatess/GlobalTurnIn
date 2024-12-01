@@ -1,11 +1,5 @@
 using ECommons.Automation.NeoTaskManager;
-using ECommons.Configuration;
 using ECommons.DalamudServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -20,7 +14,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 return where;
             }
             return where;
-        } 
+        }
         internal static string WhereToTeleportString()
         {
             var where = "idyllshire";
@@ -34,8 +28,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
         internal static void Enqueue()
         {
             Svc.Log.Info("TaskTeleportTo");
-            if (IsTeritory(WhereToTeleportInt())) { return; }
-            P.taskManager.Enqueue(Teleport);
+            if (IsTeritory(WhereToTeleportInt()))
+            {
+                //P.taskManager.EnqueueDelay(100);
+            }
+            else
+                P.taskManager.Enqueue(Teleport);
 
         }
         private static bool IsTeritory(int TeritoryId)
@@ -47,6 +45,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             return false;
         }
         private static TaskManagerConfiguration LSConfig => new(timeLimitMS: 2 * 60 * 1000);
-        private static void Teleport() => P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + WhereToTeleportString())), new(() => !IsTeritory(WhereToTeleportInt())), new(() => IsTeritory(WhereToTeleportInt()), LSConfig)]);
+        private static void Teleport() => 
+            P.taskManager.InsertMulti([new(() => P.lifestream.ExecuteCommand("tp " + WhereToTeleportString())), new(() => !IsTeritory(WhereToTeleportInt())), new(() => IsTeritory(WhereToTeleportInt()), LSConfig)]);
     }
 }
