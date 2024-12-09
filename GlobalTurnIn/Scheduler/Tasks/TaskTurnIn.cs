@@ -37,8 +37,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
             bool isItemPurchasedFromArmory = false;
             int lastArmoryType = -1;
             int armoryExchaneAmount =0;
-            int newItemAmount = 0; // gotta update them somehow
-            int newGearAmount = 0;
+
+            UpdateDict();
 
             for (int i = 0; i < TableName.GetLength(0); i++)
             {
@@ -49,7 +49,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 int pcallValue = TableName[i, 4];
                 int iconShopType = TableName[i, 5];
 
-                int ItemAmount = GetItemCount(itemType);
+                int ItemAmount = VendorSellDict[itemType].CurrentItemCount;
                 int GearAmount = GetItemCount(gearItem);
                 int CanExchange = (int)Math.Floor((double)ItemAmount / itemTypeBuy);
                 
@@ -80,6 +80,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     if (SlotArmoryINV != 0 && C.MaxArmory)
                     {
                         Exchange(gearItem, pcallValue, SlotArmoryINV);
+                        VendorSellDict[itemType].CurrentItemCount = ItemAmount- SlotArmoryINV;
                         isItemPurchasedFromArmory = true;
 
                         if (LastIconShopType != null && iconShopType != LastIconShopType)
@@ -93,17 +94,20 @@ namespace GlobalTurnIn.Scheduler.Tasks
                         if (CanExchange < SlotINV)
                         {
                             Exchange(gearItem, pcallValue, CanExchange);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - CanExchange;
                             SlotINV -= CanExchange;
                         }
                         else
                         {
                             Exchange(gearItem, pcallValue, SlotINV);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - SlotINV;
                             SlotINV -= 127;
                         }
                     }
                     else
                     {
                         Exchange(gearItem, pcallValue, 1);
+                        VendorSellDict[itemType].CurrentItemCount = -1;
                         SlotINV -= 1;
                     }
                     if (LastIconShopType != null && iconShopType != LastIconShopType)

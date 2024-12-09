@@ -1,4 +1,6 @@
 
+using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
+
 namespace GlobalTurnIn;
 
 public static class Data
@@ -393,13 +395,34 @@ public static class Data
     public class VendorSellData
     {
         public int CurrentItemCount { get; set; }
+        public int AvailableArmory { get; set; }
     }
 
     public static Dictionary<int, VendorSellData> VendorSellDict = new Dictionary<int, VendorSellData>
     {
-        { 12674, new VendorSellData { CurrentItemCount = GetItemCount(12674)} }, // Lens
-        { 12675, new VendorSellData { CurrentItemCount = GetItemCount(12675)} }, // Shaft
+        // Tarnished Gordian Item IDs
+        { GordianLensID, new VendorSellData { CurrentItemCount = GetItemCount(GordianLensID) } },
+        { GordianShaftID, new VendorSellData { CurrentItemCount = GetItemCount(GordianShaftID) } },
+        { GordianCrankID, new VendorSellData { CurrentItemCount = GetItemCount(GordianCrankID) } },
+        { GordianSpringID, new VendorSellData { CurrentItemCount = GetItemCount(GordianSpringID) } },
+        { GordianPedalID, new VendorSellData { CurrentItemCount = GetItemCount(GordianPedalID) } },
+        { GordianBoltID, new VendorSellData { CurrentItemCount = GetItemCount(GordianBoltID) } },
 
+        // Deltascape Item IDs
+        { DeltascapeLensID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapeLensID) } },
+        { DeltascapeShaftID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapeShaftID) } },
+        { DeltascapeCrankID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapeCrankID) } },
+        { DeltascapeSpringID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapeSpringID) } },
+        { DeltascapePedalID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapePedalID) } },
+        { DeltascapeBoltID, new VendorSellData { CurrentItemCount = GetItemCount(DeltascapeBoltID) } },
+
+        // Alexandrian Item IDs
+        { AlexandrianLensID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianLensID) } },
+        { AlexandrianShaftID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianShaftID) } },
+        { AlexandrianCrankID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianCrankID) } },
+        { AlexandrianSpringID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianSpringID) } },
+        { AlexandrianPedalID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianPedalID) } },
+        { AlexandrianBoltID, new VendorSellData { CurrentItemCount = GetItemCount(AlexandrianBoltID) } }
     };
 
     // tempItem = VendorSellDict[12675].CurrentItemCount
@@ -407,4 +430,10 @@ public static class Data
     // go through buying process
     // subtract how many item you buy from slot
     // VendorSellDict[12675].CurrentItemCount = tempItem - itemBuyAmount
+    public static int[] RaidItemIDs =
+    {
+        GordianLensID, GordianShaftID, GordianCrankID, GordianSpringID, GordianPedalID, GordianBoltID,
+        DeltascapeLensID, DeltascapeShaftID, DeltascapeCrankID, DeltascapeSpringID, DeltascapePedalID, DeltascapeBoltID,
+        AlexandrianLensID , AlexandrianShaftID, AlexandrianCrankID , AlexandrianSpringID , AlexandrianPedalID , AlexandrianBoltID
+    };
 }

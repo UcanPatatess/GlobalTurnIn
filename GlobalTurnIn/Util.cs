@@ -117,4 +117,12 @@ public static unsafe class Util
         agent->ReceiveEvent(&res, &arg, 1, 0);
         return false;
     }
+    public static void UpdateDict()
+    {
+        for (var i = 0; i < RaidItemIDs.Length; i++)
+        {
+            var itemID = RaidItemIDs[i];
+            VendorSellDict[itemID].CurrentItemCount = GetItemCount(itemID);
+        }
+    }
 }
