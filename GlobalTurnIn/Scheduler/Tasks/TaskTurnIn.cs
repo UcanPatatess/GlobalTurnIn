@@ -23,11 +23,11 @@ namespace GlobalTurnIn.Scheduler.Tasks
             else
                 P.taskManager.Enqueue(() => Svc.Chat.PrintError("Open AutoMerge in Automaton"));
 
+        int? lastShopType = null;
+        int? LastIconShopType = null;
 
-            int? lastShopType = null;
-            int? LastIconShopType = null;
 
-            int[,] TableName = null!;
+        int[,] TableName = null!;
             if (Svc.ClientState.TerritoryType == 478)
                 TableName = SabinaTable;
             if (Svc.ClientState.TerritoryType == 635)
@@ -94,20 +94,20 @@ namespace GlobalTurnIn.Scheduler.Tasks
                         if (CanExchange < SlotINV)
                         {
                             Exchange(gearItem, pcallValue, CanExchange);
-                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - CanExchange;
+                            P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - CanExchange);
                             SlotINV -= CanExchange;
                         }
                         else
                         {
                             Exchange(gearItem, pcallValue, SlotINV);
-                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - SlotINV;
+                            P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - SlotINV);
                             SlotINV -= 127;
                         }
                     }
                     else
                     {
                         Exchange(gearItem, pcallValue, 1);
-                        VendorSellDict[itemType].CurrentItemCount = -1;
+                        P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - 1);
                         SlotINV -= 1;
                     }
                     if (LastIconShopType != null && iconShopType != LastIconShopType)
@@ -119,7 +119,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.Enqueue(CloseShop);
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
         }
-        internal static bool? TargetNpc()
+        internal static void TargetNpc()
         {
             string NpcName = string.Empty;
             if (Svc.ClientState.TerritoryType == 478) //Idyllshire
@@ -129,13 +129,9 @@ namespace GlobalTurnIn.Scheduler.Tasks
             Log.Debug("TargetNpc" + NpcName);
 
             var target = GetObjectByName(NpcName);
-            if (target != null)
-            {
-                if (EzThrottler.Throttle("TargetNpc", 20))
-                    Svc.Targets.Target = target;
-                return true;
-            }
-            return false;
+            if (EzThrottler.Throttle("TargetNpc", 20))
+                Svc.Targets.Target = target;
+
         }
 
         internal unsafe static bool? TargetInteract()
@@ -160,6 +156,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             Log.Debug("OpenShopMenu" + " " + SelectIconString + " " + SelectString);
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetNpc);
+            P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetInteract);
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
