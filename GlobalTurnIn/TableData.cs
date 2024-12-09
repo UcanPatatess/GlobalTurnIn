@@ -389,4 +389,22 @@ public static class Data
         {2, AlexandrianLensID, LensBuyAmount, 16433, 1, 2},
         {2, AlexandrianLensID, LensBuyAmount, 16439, 0, 2},
     };
+
+    public class VendorSellData
+    {
+        public int CurrentItemCount { get; set; }
+    }
+
+    public static Dictionary<int, VendorSellData> VendorSellDict = new Dictionary<int, VendorSellData>
+    {
+        { 12674, new VendorSellData { CurrentItemCount = GetItemCount(12674)} }, // Lens
+        { 12675, new VendorSellData { CurrentItemCount = GetItemCount(12675)} }, // Shaft
+
+    };
+
+    // tempItem = VendorSellDict[12675].CurrentItemCount
+    // 200
+    // go through buying process
+    // subtract how many item you buy from slot
+    // VendorSellDict[12675].CurrentItemCount = tempItem - itemBuyAmount
 }
