@@ -7,9 +7,11 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
+            P.taskManager.Enqueue(() => UpdateCurrentTask("Moving to GC"));
             P.taskManager.Enqueue(GoToGC, configuration: LSConfig);
             P.taskManager.EnqueueDelay(1000);
             P.taskManager.Enqueue(Deliveroo, configuration: DConfig);
+            P.taskManager.Enqueue(() => UpdateCurrentTask("Turning in at GC"));
             P.taskManager.EnqueueDelay(1000);
         }
         private static TaskManagerConfiguration LSConfig => new(timeLimitMS: 2 * 60 * 1000);

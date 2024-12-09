@@ -10,7 +10,9 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         public static void Enqueue()
         {
+            P.taskManager.Enqueue(() => UpdateCurrentTask("Mounting Up"));
             P.taskManager.Enqueue(MountUp);
+            P.taskManager.Enqueue(() => UpdateCurrentTask(""));
         }
         internal unsafe static bool? MountUp()
         {

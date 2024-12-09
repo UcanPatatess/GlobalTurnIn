@@ -18,7 +18,9 @@ namespace GlobalTurnIn.Scheduler.Tasks
         }
         internal unsafe static void Enqueue(Vector3 targetPosition, string destination, float toleranceDistance = 3f)
         {
+            P.taskManager.Enqueue(() => UpdateCurrentTask("Moving to location"));
             P.taskManager.Enqueue(() => MoveTo(targetPosition, toleranceDistance),destination);
+            P.taskManager.Enqueue(() => UpdateCurrentTask(""));
         }
         internal unsafe static bool? MoveTo(Vector3 targetPosition, float toleranceDistance = 3f)
         {
