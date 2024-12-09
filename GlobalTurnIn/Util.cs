@@ -14,12 +14,19 @@ using ECommons.Reflection;
 using Serilog;
 using Dalamud.Utility;
 using ECommons.Throttlers;
+using Lumina.Excel.Sheets;
 
 
 namespace GlobalTurnIn;
 
 public static unsafe class Util
 {
+    public static string icurrentTask = "";
+    public static void UpdateCurrentTask(string task)
+    {
+        icurrentTask = task;
+    }
+
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));
