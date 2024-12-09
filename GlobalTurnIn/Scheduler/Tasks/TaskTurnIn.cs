@@ -25,6 +25,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
         int? lastShopType = null;
         int? LastIconShopType = null;
+            LastShopUpdate = lastShopType;
+            LastIconShopTypeUpdate = LastIconShopType;
 
 
         int[,] TableName = null!;
