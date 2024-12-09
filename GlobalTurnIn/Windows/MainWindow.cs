@@ -41,7 +41,8 @@ namespace GlobalTurnIn.Windows
         public override void Draw()
         {
             ImGui.Text($"Current task (Ice) is: {icurrentTask}");
-            ImGui.Text($"LastShopType: { TaskTurnIn.} ");
+            ImGui.Text($"LastShopType: { LastShopUpdate} ");
+            ImGui.Text($"LastIconUpdate: {LastIconShopTypeUpdate}");
             ImGui.Text($"Current task is: {CurrentTask()}");
             ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
             ImGui.Text($"Exchange Item Count: " + TotalExchangeItem);
