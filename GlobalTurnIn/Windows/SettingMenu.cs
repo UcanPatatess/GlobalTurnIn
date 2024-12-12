@@ -23,6 +23,7 @@ namespace GlobalTurnIn.Windows
         bool maxArmory = C.MaxArmory;
         int maxArmoryFreeSlot = C.MaxArmoryFreeSlot;
         bool vendorTurnIn = C.VendorTurnIn;
+        bool SellOilCloth = C.SellOilCloth;
         bool teleportToFC = C.TeleportToFC;
 
         public bool ChangeArmory = C.ChangeArmory;
@@ -86,6 +87,10 @@ namespace GlobalTurnIn.Windows
             if (ImGui.Checkbox("Vendor Turn-in##vendorturnin", ref vendorTurnIn))
             {
                 C.VendorTurnIn = vendorTurnIn;
+            }
+            if (ImGui.Checkbox("Sell OilCloth Turn-in##SellOilCloth", ref SellOilCloth))
+            {
+                C.SellOilCloth = SellOilCloth;
             }
             ImGui.TextWrapped("Stay off the marketboard and sell to your retainer.");
         }

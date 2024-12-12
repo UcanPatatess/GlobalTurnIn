@@ -67,6 +67,7 @@ namespace GlobalTurnIn.Scheduler
                             Svc.Chat.Print("No TurnIn material Stopping");
                         }
                     }
+                    else { DisablePlugin(); }
                 }
             }
         }

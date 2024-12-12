@@ -16,5 +16,6 @@ public class Config : IEzConfig
     public bool MaxArmory { get; set; } = false;
     public int MaxArmoryFreeSlot { get; set; } = 2;
     public bool VendorTurnIn { get; set; } = false;
+    public bool SellOilCloth { get; set; } = false;
     public bool ChangeArmory { get; set; } = false;
 }
