@@ -148,7 +148,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 NpcName = "Sabina";
             if (Svc.ClientState.TerritoryType == 635)//Rhalgr
                 NpcName = "Gelfradus";
-            Log.Debug("TargetNpc" + NpcName);
+            Svc.Log.Debug("TargetNpc" + NpcName);
 
             var target = GetObjectByName(NpcName);
             if (target != null)
