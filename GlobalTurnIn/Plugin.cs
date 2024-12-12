@@ -7,6 +7,7 @@ using ECommons.SimpleGui;
 using GlobalTurnIn;
 using GlobalTurnIn.IPC;
 using GlobalTurnIn.Scheduler;
+using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.Windows;
 using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Delegates;
 
@@ -18,7 +19,7 @@ public class Plugin : IDalamudPlugin
 {
     private const string Command = "/globalt";
     private static string[] Aliases => ["/pgt", "/pglobal"];
-
+    public string Name => "GlobalTurnIn";
     internal static Plugin P = null!;
     private readonly Config config;
     
@@ -53,15 +54,21 @@ public class Plugin : IDalamudPlugin
     private void Tick(object _)
     {
         _ = IsThereTradeItem();
-        if (SchedulerMain.AreWeTicking && Svc.ClientState.LocalPlayer != null)
+        if (SchedulerMain.EnableTicking && Svc.ClientState.LocalPlayer != null)
         {
             SchedulerMain.Tick();
         }
+        SelectYesnoManager.Tick();
+        TextAdvanceManager.Tick();
+        YesAlreadyManager.Tick();
+        GetOutManager.Tick();
     }
     public void Dispose()
     {
         Safe(() => Svc.Framework.Update -= Tick);
         ECommonsMain.Dispose();
+        Safe(TextAdvanceManager.UnlockTA);
+        Safe(YesAlreadyManager.Unlock);
     }
     private void OnCommand(string command, string args)
     {

@@ -7,7 +7,6 @@ namespace GlobalTurnIn.Scheduler
     internal static unsafe class SchedulerMain
     {
         internal static bool AreWeTicking;
-        public static bool AreWeSelling = false;
         internal static bool EnableTicking
         {
             get => AreWeTicking;
@@ -16,14 +15,13 @@ namespace GlobalTurnIn.Scheduler
         internal static bool EnablePlugin()
         {
             EnableTicking = true;
-
             return true;
         }
         internal static bool DisablePlugin()
         {
             EnableTicking = false;
             P.taskManager.Abort();
-
+            P.navmesh.Stop();
             return true;
         }
 
@@ -35,22 +33,18 @@ namespace GlobalTurnIn.Scheduler
                 {
                     if (TotalExchangeItem != 0)
                     {
-                        AreWeSelling = true;
                         if (C.VendorTurnIn)
                         {
                             TaskTeleportTo.Enqueue();
-                            if (GetDistanceToPoint(34, 208, -51) > 4)// needs to be in the task
-                            {
-                                TaskMountUp.Enqueue();
-                            }
-                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51),"Summoning Bell");
+                            TaskMountUp.Enqueue();
+
+                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
                             TaskSellVendor.Enqueue();
-                            AreWeSelling=false;
                         }
                         else
                             TaskGcTurnIn.Enqueue();
                     }
-                    if (IsThereTradeItem() && !AreWeSelling)
+                    else if (IsThereTradeItem())
                     {
                         if (!C.ChangeArmory)
                         {
@@ -60,11 +54,11 @@ namespace GlobalTurnIn.Scheduler
                         if ((GordianTurnInCount > 0 || AlexandrianTurnInCount > 0))
                         {
                             TaskTeleportTo.Enqueue();
-                            if(GetDistanceToPoint(-19, 211, -36) > 4)// needs to be in the task
-                            {
-                                TaskMountUp.Enqueue();
-                            }
+
+                            TaskMountUp.Enqueue();
+
                             TaskMoveTo.Enqueue(new Vector3(-19, 211, -36), "Shop NPC");
+                            TaskMergeWithAutomaton.Enqueue();
                             TaskTurnIn.Enqueue();
                         }
                         else
@@ -72,9 +66,7 @@ namespace GlobalTurnIn.Scheduler
                             // needs the rhalgar reach logic
                             Svc.Chat.Print("No TurnIn material Stopping");
                         }
-                        AreWeSelling = true;
                     }
-                    
                 }
             }
         }

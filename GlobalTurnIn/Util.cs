@@ -103,27 +103,13 @@ public static unsafe class Util
                && !Svc.Condition[ConditionFlag.Jumping]
                && Player.Object.IsTargetable;
     }
-
+    internal static bool GenericThrottle => FrameThrottler.Throttle("GlobalTurnInGenericThrottle", 20);
     public static uint CurrentTerritory() => Svc.ClientState.TerritoryType;
     public static bool IsInZone(int zoneID) => Svc.ClientState.TerritoryType == zoneID;
     public static bool IsAddonActive(string AddonName) // bunu kullan
     {
         var addon = RaptureAtkUnitManager.Instance()->GetAddonByName(AddonName);
         return addon != null && addon->IsVisible && addon->IsReady;
-    }
-    internal static bool GenericThrottle => FrameThrottler.Throttle("AutoRetainerGenericThrottle", 10);
-    public static bool? CloseShop() //dükkanı kapattı biraz daha bakılması lazım
-    {
-        Log.Debug("CloseShop");
-        var agent = AgentShop.Instance();
-        if (agent == null || agent->EventReceiver == null)
-            return true;
-        AtkValue res = default, arg = default;
-        var proxy = (ShopEventHandler.AgentProxy*)agent->EventReceiver;
-        proxy->Handler->CancelInteraction();
-        arg.SetInt(-1);
-        agent->ReceiveEvent(&res, &arg, 1, 0);
-        return false;
     }
     public static void UpdateDict()
     {

@@ -13,6 +13,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 18, 300, C.MaxArmory ? 1 : 0));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, 0));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ConfigCharacter", true, -1));
+            P.taskManager.Enqueue(() => UpdateCurrentTask(""));
         }
     }
 }

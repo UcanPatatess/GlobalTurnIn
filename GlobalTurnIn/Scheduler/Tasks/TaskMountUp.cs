@@ -1,7 +1,6 @@
 using Dalamud.Game.ClientState.Conditions;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using GlobalTurnIn.Scheduler.Handlers;
 
 
 namespace GlobalTurnIn.Scheduler.Tasks
@@ -20,7 +19,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
             if (CurrentTerritory() == 478 || CurrentTerritory() == 635)
             {
-                if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57])
+                if (!Svc.Condition[ConditionFlag.Casting] && !Svc.Condition[ConditionFlag.Unknown57] && PlayerNotBusy())
                 {
                     ActionManager.Instance()->UseAction(ActionType.GeneralAction, 24);
                 }

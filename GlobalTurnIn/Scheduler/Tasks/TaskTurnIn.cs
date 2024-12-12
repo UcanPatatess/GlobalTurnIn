@@ -1,11 +1,14 @@
-using ECommons.Automation;
 using ECommons.DalamudServices;
 using ECommons.GameFunctions;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using GlobalTurnIn.Scheduler.Handlers;
+using Lumina.Excel.Sheets;
 using Serilog;
-using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
+using ECommons.Automation;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -13,21 +16,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal unsafe static void Enqueue()
         {
-            if (PluginInstalled("Automaton"))
-            {
-                P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
-                P.taskManager.EnqueueDelay(100);
-                P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
-                P.taskManager.EnqueueDelay(100);
-            }
-            else
-                P.taskManager.Enqueue(() => Svc.Chat.PrintError("Open AutoMerge in Automaton"));
+            P.taskManager.Enqueue(() => UpdateCurrentTask("TaskTurnIn"));
 
         int? lastShopType = null;
         int? LastIconShopType = null;
             LastShopUpdate = lastShopType;
             LastIconShopTypeUpdate = LastIconShopType;
-
 
         int[,] TableName = null!;
             if (Svc.ClientState.TerritoryType == 478)
@@ -36,10 +30,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 TableName = GelfradusTable;
 
             int SlotINV = GetInventoryFreeSlotCount();
+            if (C.MaxArmory)
+                SlotINV = SlotINV - C.MaxArmoryFreeSlot;
             bool isItemPurchasedFromArmory = false;
             int lastArmoryType = -1;
             int armoryExchaneAmount =0;
-
+            bool SelectIconStirngBool = true;
             UpdateDict();
 
             for (int i = 0; i < TableName.GetLength(0); i++)
@@ -76,13 +72,14 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     if (shopType != lastShopType)
                     {
                         P.taskManager.Enqueue(CloseShop);
-                        OpenShopMenu(iconShopType, shopType);
+                        OpenShopMenu(iconShopType, shopType, SelectIconStirngBool);
                         lastShopType = shopType;
+                        SelectIconStirngBool = false;
                     }
                     if (SlotArmoryINV != 0 && C.MaxArmory)
                     {
                         Exchange(gearItem, pcallValue, SlotArmoryINV);
-                        VendorSellDict[itemType].CurrentItemCount = ItemAmount- SlotArmoryINV;
+                        VendorSellDict[itemType].CurrentItemCount = ItemAmount - (SlotArmoryINV * itemTypeBuy);
                         isItemPurchasedFromArmory = true;
 
                         if (LastIconShopType != null && iconShopType != LastIconShopType)
@@ -96,20 +93,20 @@ namespace GlobalTurnIn.Scheduler.Tasks
                         if (CanExchange < SlotINV)
                         {
                             Exchange(gearItem, pcallValue, CanExchange);
-                            P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - CanExchange);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - (CanExchange * itemTypeBuy);
                             SlotINV -= CanExchange;
                         }
                         else
                         {
                             Exchange(gearItem, pcallValue, SlotINV);
-                            P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - SlotINV);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - (SlotINV * itemTypeBuy);
                             SlotINV -= 127;
                         }
                     }
                     else
                     {
                         Exchange(gearItem, pcallValue, 1);
-                        P.taskManager.Enqueue(() => VendorSellDict[itemType].CurrentItemCount = ItemAmount - 1);
+                        VendorSellDict[itemType].CurrentItemCount = ItemAmount - 1;
                         SlotINV -= 1;
                     }
                     if (LastIconShopType != null && iconShopType != LastIconShopType)
@@ -119,9 +116,24 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 }
             }
             P.taskManager.Enqueue(CloseShop);
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
+            P.taskManager.EnqueueDelay(300);
+            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
         }
-        internal static void TargetNpc()
+        internal unsafe static bool? CloseShop() //dükkanı kapattı biraz daha bakılması lazım
+        {
+            var agent = AgentShop.Instance();
+            if (agent == null || agent->EventReceiver == null)
+            {
+                return true;
+            }
+            AtkValue res = default, arg = default;
+            var proxy = (ShopEventHandler.AgentProxy*)agent->EventReceiver;
+            proxy->Handler->CancelInteraction();
+            arg.SetInt(-1);
+            agent->ReceiveEvent(&res, &arg, 1, 0);
+            return false;
+        }
+        internal static bool? TargetNpc()
         {
             string NpcName = string.Empty;
             if (Svc.ClientState.TerritoryType == 478) //Idyllshire
@@ -131,14 +143,17 @@ namespace GlobalTurnIn.Scheduler.Tasks
             Log.Debug("TargetNpc" + NpcName);
 
             var target = GetObjectByName(NpcName);
-            if (EzThrottler.Throttle("TargetNpc", 20))
-                Svc.Targets.Target = target;
-
+            if (target != null)
+            {
+                if (EzThrottler.Throttle("TargetNpc", 100))
+                    Svc.Targets.Target = target;
+                return true;
+            }
+            return false;
         }
 
         internal unsafe static bool? TargetInteract()
         {
-            Log.Debug("TargetInteract");
             var target = Svc.Targets.Target;
             if (target != null)
             {
@@ -148,19 +163,21 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 if (EzThrottler.Throttle("TargetInteract", 100))
                     TargetSystem.Instance()->InteractWithObject(target.Struct(), false);
 
-
                 return false;
             }
             return false;
         }
-        internal static void OpenShopMenu(int SelectIconString, int SelectString)
+        internal static void OpenShopMenu(int SelectIconString, int SelectString,bool armory = true)
         {
             Log.Debug("OpenShopMenu" + " " + SelectIconString + " " + SelectString);
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetNpc);
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetInteract);
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString));
+            if (armory)
+            {
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString));
+            }
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
             P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"));
         }
@@ -175,10 +192,6 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
-            
-            if (ArmoryType == 3207 || ArmoryType == 3208 || ArmoryType == 3209 || ArmoryType == 3300) { }
-            else
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectYesno", true, 0));
             P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)));
             P.taskManager.EnqueueDelay(100);
         }

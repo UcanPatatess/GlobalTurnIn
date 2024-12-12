@@ -2,12 +2,6 @@ using ECommons.Automation;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using GlobalTurnIn.Scheduler.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Scheduler.Handlers
 {
@@ -37,9 +31,11 @@ namespace GlobalTurnIn.Scheduler.Handlers
         }
         public unsafe static bool? FireCallback(string AddonName, bool kapkac, params int[] gibeme)
         {
-            if (ECommons.GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && ECommons.GenericHelpers.IsAddonReady(addon))
+            UpdateCurrentTask($"FireCallback {AddonName} {kapkac} {gibeme}");
+            if (TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && IsAddonReady(addon))
             {
-                    Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
+                UpdateCurrentTask("");
+                Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
                 return true;
             }
             return false;
