@@ -78,10 +78,18 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     }
                     if (SlotArmoryINV != 0 && C.MaxArmory)
                     {
-                        Exchange(gearItem, pcallValue, SlotArmoryINV);
-                        VendorSellDict[itemType].CurrentItemCount = ItemAmount - (SlotArmoryINV * itemTypeBuy);
-                        isItemPurchasedFromArmory = true;
-
+                        if (CanExchange < SlotArmoryINV)
+                        {
+                            Exchange(gearItem, pcallValue, CanExchange);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - (CanExchange * itemTypeBuy);
+                            isItemPurchasedFromArmory = true;
+                        }
+                        else
+                        {
+                            Exchange(gearItem, pcallValue, SlotArmoryINV);
+                            VendorSellDict[itemType].CurrentItemCount = ItemAmount - (SlotArmoryINV * itemTypeBuy);
+                            isItemPurchasedFromArmory = true;
+                        }
                         if (LastIconShopType != null && iconShopType != LastIconShopType)
                         {
                             P.taskManager.Enqueue(CloseShop);
@@ -106,7 +114,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                     else
                     {
                         Exchange(gearItem, pcallValue, 1);
-                        VendorSellDict[itemType].CurrentItemCount = ItemAmount - 1;
+                        VendorSellDict[itemType].CurrentItemCount = ItemAmount - (1* itemTypeBuy);
                         SlotINV -= 1;
                     }
                     if (LastIconShopType != null && iconShopType != LastIconShopType)
