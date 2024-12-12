@@ -1,3 +1,4 @@
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -67,7 +68,8 @@ namespace GlobalTurnIn.Windows
                 }
                 if (maxArmory)
                 {
-                    ImGui.Text("Free Armory Slots:");
+                    ImGui.Text("Free Main Inventory Slots:");
+                    ImGuiComponents.HelpMarker("Select how many slots you want in the inventory open.\nGood to use if you're buying multiple stack of Oilcloth for instance.");
                     ImGui.SameLine();
                     ImGui.PushItemWidth(100);
                     if (ImGui.InputInt("##maxarmoryfreeslot", ref maxArmoryFreeSlot))
