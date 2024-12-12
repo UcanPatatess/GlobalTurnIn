@@ -31,7 +31,7 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    if (TotalExchangeItem != 0)
+                    if (TotalExchangeItem != 0 || (GetItemCount(10120) > 999 && C.SellOilCloth))
                     {
                         if (C.VendorTurnIn)
                         {
