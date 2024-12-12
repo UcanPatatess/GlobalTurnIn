@@ -177,7 +177,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         }
         internal static void OpenShopMenu(int SelectIconString, int SelectString,bool armory = true)
         {
-            Log.Debug("OpenShopMenu" + " " + SelectIconString + " " + SelectString);
+            Svc.Log.Debug("OpenShopMenu" + " " + SelectIconString + " " + SelectString);
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(TargetNpc);
             P.taskManager.EnqueueDelay(100);
@@ -194,7 +194,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             int ArmoryType = 0;
             if (ItemIdArmoryTable.TryGetValue(gearItem, out int category))
                 ArmoryType = category;
-            Log.Debug($"Exchange  gearid: {gearItem} List: {List} Amount: {Amount}");
+            Svc.Log.Debug($"Exchange  gearid: {gearItem} List: {List} Amount: {Amount}");
             if (Amount > 127)
                 Amount = 127;
 
