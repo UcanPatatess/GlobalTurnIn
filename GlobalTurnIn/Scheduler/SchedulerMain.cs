@@ -31,8 +31,16 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    if (TotalExchangeItem != 0 || (GetItemCount(10120) > 999 && C.SellOilCloth))
+                    if (TotalExchangeItem != 0 || (GetItemCount(10120) > 999 ))
                     {
+                        if (C.SellOilCloth)
+                        {
+                            TaskTeleportTo.Enqueue();
+                            TaskMountUp.Enqueue();
+
+                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
+                            TaskSellVendor.Enqueue();
+                        }
                         if (C.VendorTurnIn)
                         {
                             TaskTeleportTo.Enqueue();
