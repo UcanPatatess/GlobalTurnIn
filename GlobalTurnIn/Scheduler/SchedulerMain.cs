@@ -37,11 +37,19 @@ namespace GlobalTurnIn.Scheduler
                     }
                     else if ((TotalExchangeItem != 0 && C.VendorTurnIn) || (C.SellOilCloth && GetItemCount(10120) > 0))
                     {
-                        TaskTeleportTo.Enqueue();
-                        TaskMountUp.Enqueue();
+                        if (C.TeleportToFC)
+                        {
+                            TaskFcSell.Enqueue();
+                            TaskSellVendor.Enqueue();
+                        }
+                        else
+                        {
+                            TaskTeleportTo.Enqueue();
+                            TaskMountUp.Enqueue();
 
-                        TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
-                        TaskSellVendor.Enqueue();
+                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
+                            TaskSellVendor.Enqueue();
+                        }
                     }
                     else if (IsThereTradeItem())
                     {

@@ -6,7 +6,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
-            P.taskManager.Enqueue(() => UpdateCurrentTask("Changing Armory Setting"));
+            P.taskManager.Enqueue(() => UpdateCurrentTask("Going to Fc"));
             P.taskManager.Enqueue(GoHome,configuration:LSConfig);
             P.taskManager.EnqueueDelay(1000);
             P.taskManager.Enqueue(() => UpdateCurrentTask(""));

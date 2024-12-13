@@ -14,10 +14,11 @@ namespace GlobalTurnIn.Scheduler.Tasks
 {
     internal static class TaskTurnIn
     {
+        public static bool AreWeTurningIn=false;
         internal unsafe static void Enqueue()
         {
             P.taskManager.Enqueue(() => UpdateCurrentTask("TaskTurnIn"));
-
+            
         int? lastShopType = null;
         int? LastIconShopType = null;
             LastShopUpdate = lastShopType;
@@ -30,8 +31,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 TableName = GelfradusTable;
 
             int SlotINV = GetInventoryFreeSlotCount();
-            if (C.MaxArmory)
-                SlotINV = SlotINV - C.MaxArmoryFreeSlot;
+            SlotINV = SlotINV - C.MaxArmoryFreeSlot;
             bool isItemPurchasedFromArmory = false;
             int lastArmoryType = -1;
             int armoryExchaneAmount =0;
@@ -125,6 +125,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             }
             P.taskManager.Enqueue(CloseShop);
             P.taskManager.EnqueueDelay(300);
+            GetOutManager.InternalTicking = true;
             //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
         }
         internal unsafe static bool? CloseShop() //dükkanı kapattı biraz daha bakılması lazım
