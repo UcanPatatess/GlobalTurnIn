@@ -74,6 +74,11 @@ namespace GlobalTurnIn.Windows
                 // Update the property based on the selected option
                 C.VendorTurnIn = (selectedOption == 0);
             }
+            string helpMarkerContent = C.VendorTurnIn
+            ? "Stay off the rankings and sell to your retainer."
+            : "You will gain more gil, but be careful of the rankings.";
+            ImGui.SameLine();
+            ImGuiComponents.HelpMarker(helpMarkerContent);
             ImGui.PopItemWidth();
             using (ImRaii.Disabled(!C.VendorTurnIn))
             {
@@ -84,13 +89,13 @@ namespace GlobalTurnIn.Windows
                 {
                     C.TeleportToFC = teleportToFC;
                 }
+                ImGui.SameLine();
+                ImGuiComponents.HelpMarker("Teleport to your Fc to sell gears.");
             }
             if (ImGui.Checkbox("Sell OilCloth Turn-in##SellOilCloth", ref sellOilCloth))
             {
                 C.SellOilCloth = sellOilCloth;
             }
-            ImGui.SameLine();
-            ImGuiComponents.HelpMarker("Stay off the marketboard and sell to your retainer.");
         }
     }
 }
