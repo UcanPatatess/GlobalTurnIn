@@ -55,7 +55,7 @@ namespace GlobalTurnIn.Windows
             }
             ImGui.Text("Free Main Inventory Slots");
             ImGuiComponents.HelpMarker("Select how many slots you want in the inventory open.\nGood to use if you're buying multiple stack of Oilcloth for instance.");
-            ImGui.PushItemWidth(100);
+            ImGui.PushItemWidth(130);
             if (ImGui.InputInt("##maxarmoryfreeslot", ref maxArmoryFreeSlot))
             {
                 if (maxArmoryFreeSlot < 0) maxArmoryFreeSlot = 0;
@@ -68,11 +68,13 @@ namespace GlobalTurnIn.Windows
             ImGui.Separator();
 
             // VendorTurnIn
-            if (ImGui.Combo("", ref selectedOption, options, options.Length))
+            ImGui.PushItemWidth(130);
+            if (ImGui.Combo("##turn-insettings", ref selectedOption, options, options.Length))
             {
                 // Update the property based on the selected option
                 C.VendorTurnIn = (selectedOption == 0);
             }
+            ImGui.PopItemWidth();
             using (ImRaii.Disabled(!C.VendorTurnIn))
             {
                 if (!C.VendorTurnIn)
