@@ -29,10 +29,10 @@ namespace GlobalTurnIn.Scheduler.Tasks
             if (IsInZone(WhereToTeleportInt())) { return; }
             else
             {
-                P.taskManager.Enqueue(() => UpdateCurrentTask("Teleporting"));
+                P.taskManager.Enqueue(() => UpdateCurrentTask("Teleporting"), "Teleporting");
                 P.taskManager.Enqueue(Teleport);
                 P.taskManager.EnqueueDelay(1000);
-                P.taskManager.Enqueue(() => UpdateCurrentTask(""));
+                P.taskManager.Enqueue(() => UpdateCurrentTask(""), "Updating Task");
             } 
         }
         private static TaskManagerConfiguration LSConfig => new(timeLimitMS: 2 * 60 * 1000);

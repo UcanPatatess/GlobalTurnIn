@@ -184,10 +184,10 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.Enqueue(TargetInteract);
             if (armory)
             {
-                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString));
+                P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectIconString", true, SelectIconString), "Fire Callback 1");
             }
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString));
-            P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, SelectString), "Fire Callback 2");
+            P.taskManager.Enqueue(() => IsAddonActive("ShopExchangeItem"), "Addon Active");
         }
         internal static void Exchange(int gearItem, int List, int Amount)
         {
@@ -199,8 +199,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 Amount = 127;
 
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0));
-            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)));
+            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0), "Shop Exchange Dialog Close"); // Problem child is right here, for reference
+            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), "Did Item Exhange");
             P.taskManager.EnqueueDelay(100);
         }
     }
