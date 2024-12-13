@@ -201,8 +201,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
             P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
             //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0), "Shop Exchange Dialog Close"); // Problem child is right here, for reference
-            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), "Did Item Exhange");
-            P.taskManager.EnqueueDelay(100);
+            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), $"Did Item {gearItem} Exhange");
+            P.taskManager.EnqueueDelay(200);
         }
     }
 }
