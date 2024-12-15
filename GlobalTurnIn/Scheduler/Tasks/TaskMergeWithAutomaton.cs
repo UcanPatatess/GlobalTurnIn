@@ -11,6 +11,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
             P.taskManager.EnqueueDelay(100);
+            P.taskManager.Enqueue(() => Chat.Instance.SendMessage("/inventory"));
+            P.taskManager.EnqueueDelay(100);
             P.taskManager.Enqueue(() => UpdateCurrentTask(""));
         }
     }

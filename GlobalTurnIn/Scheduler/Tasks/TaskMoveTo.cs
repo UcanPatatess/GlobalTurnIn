@@ -29,6 +29,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 P.navmesh.Stop();
                 return true;
             }
+            if (!P.navmesh.IsReady()) { UpdateCurrentTask("Waiting Navmesh"); return false; }
             if (P.navmesh.PathfindInProgress() || P.navmesh.IsRunning() || IsMoving()) return false;
 
             P.navmesh.PathfindAndMoveTo(targetPosition, false);
