@@ -38,15 +38,17 @@ namespace GlobalTurnIn.Windows
             if (ImGui.Checkbox("Maximize Inventory##maxitem", ref maxItem))
             {
                 C.MaxItem = maxItem;
+                C.ChangeArmory = false;
             }
             ImGui.SameLine();
             ImGuiComponents.HelpMarker("Maximize inventory by buying one of a single item.");
-
-
-            using (ImRaii.Disabled(!maxItem))
+            using (ImRaii.Disabled(!C.MaxItem))
             {
-                if (!maxItem) 
+                if (maxItem == false)
+                {
+                    C.MaxArmory = false;
                     maxArmory = false;
+                } 
                 if (ImGui.Checkbox("Fill Armory##maxarmory", ref maxArmory))
                 {
                     C.ChangeArmory = false;
