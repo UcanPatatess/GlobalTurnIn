@@ -10,6 +10,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         internal static void Enqueue()
         {
             P.taskManager.Enqueue(ContentsFinderConfirm);
+            P.taskManager.EnqueueDelay(1000);
         }
         internal static unsafe bool? ContentsFinderConfirm()
         {

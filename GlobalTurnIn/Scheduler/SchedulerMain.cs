@@ -31,7 +31,15 @@ namespace GlobalTurnIn.Scheduler
 
         public static bool RunTurnin = false;
         public static bool RunA4N = false;
-
+        private enum DutyState
+        {
+            None,
+            OpenContentsFinder,
+            SelectDuty,
+            LaunchDuty,
+            ConfirmContentWindow
+        }
+        private static DutyState CurrentState = DutyState.None;
         internal static void Tick()
         {
             if (DoWeTick)
@@ -40,17 +48,46 @@ namespace GlobalTurnIn.Scheduler
                 {
                     if (RunA4N)
                     {
-                        if (!DutyOpen && !ContentFinderWindow)
+                        switch(CurrentState)
                         {
-                            TaskDutyFinder.Enqueue();
-                        }
-                        else if (DutyOpen && !CorrectDuty())
-                        {
-                            TaskSelectCorrectDuty.Enqueue();
-                        }
-                        else if (ContentFinderWindow)
-                        {
+                            case DutyState.None:
+                                if (!IsAddonActive("ContentsFinder"))
+                                {
+                                    TaskDutyFinder.Enqueue();
+                                    CurrentState = DutyState.OpenContentsFinder;
+                                }
+                                break;
 
+                            case DutyState.OpenContentsFinder:
+                                if (IsAddonActive("ContentsFinder"))
+                                {
+                                    TaskSelectCorrectDuty.Enqueue();
+                                    CurrentState = DutyState.SelectDuty;
+                                }
+                                break;
+
+                            case DutyState.SelectDuty:
+                                if (IsAddonActive("ContentsFinder"))
+                                {
+                                    TaskLaunchDuty.Enqueue();
+                                    CurrentState = DutyState.LaunchDuty;
+                                }
+                                break;
+
+                            case DutyState.LaunchDuty:
+                                if (IsAddonActive("ContentsFinderConfirm"))
+                                {
+                                    TaskContentWidnowConfirm.Enqueue();
+                                    CurrentState = DutyState.ConfirmContentWindow;
+                                }
+                                break;
+
+                            case DutyState.ConfirmContentWindow:
+                                if (!IsAddonActive("ContentsFinderConfirm"))
+                                {
+                                    CurrentState = DutyState.None; // Reset state for the next cycle
+                                }
+                                break;
                         }
                     }
                     else if (RunTurnin)
