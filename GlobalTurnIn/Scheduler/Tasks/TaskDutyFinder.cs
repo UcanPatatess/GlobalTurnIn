@@ -2,11 +2,6 @@ using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -14,7 +9,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
-            P.taskManager.Enqueue(() => OpenDutyFinder());
+            P.taskManager.Enqueue(OpenDutyFinder);
         }
 
         public static bool DutyFinderOpen;
@@ -22,6 +17,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             if (TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) && IsAddonReady(addon))
             {
+                AgentContentsFinder.Instance()->OpenRegularDuty(115);//relocated
+                DutyFinderOpen = true;
                 return true;
             }
 
@@ -29,10 +26,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             { // Throttle to prevent spamming
                 AgentContentsFinder.Instance()->AgentInterface.Show(); // Opens the duty finder
                 ContentsFinder.Instance()->IsUnrestrictedParty = true; // Sets the DF to unsync
-                DutyFinderOpen = true;
             }
-            AgentContentsFinder.Instance()->OpenRegularDuty(115);
-
             return false;
         }
     }

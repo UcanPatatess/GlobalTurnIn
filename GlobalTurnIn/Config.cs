@@ -18,4 +18,5 @@ public class Config : IEzConfig
     public bool VendorTurnIn { get; set; } = false;
     public bool SellOilCloth { get; set; } = false;
     public bool ChangeArmory { get; set; } = false;
+    public int DutyFinderCallValue { get; set; } = 0;
 }

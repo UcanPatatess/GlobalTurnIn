@@ -49,7 +49,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
         }
         internal static void Tick()
         {
-            if (SchedulerMain.EnableTicking)
+            if (SchedulerMain.DoWeTick)
             {
                 //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
                 if (TryGetAddonByName<AddonRequest>("Request", out var addon3))

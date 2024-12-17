@@ -96,12 +96,16 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
+                    ImGui.Text($"A4n Duty is selected {CorrectDuty()}");
                     ImGui.Text("Open A4N in the duty selection");
                     if (ImGui.Button("A4N"))
                     {
                         TaskDutyFinder.Enqueue();
                     }
-
+                    if (ImGui.Button("SelectDuty"))
+                    {
+                        TaskSelectCorrectDuty.Enqueue();
+                    }
 
                     ImGui.EndTabItem();
                 }

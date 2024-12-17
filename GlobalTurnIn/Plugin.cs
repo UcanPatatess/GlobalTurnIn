@@ -54,7 +54,7 @@ public class Plugin : IDalamudPlugin
     private void Tick(object _)
     {
         _ = IsThereTradeItem();
-        if (SchedulerMain.EnableTicking && Svc.ClientState.LocalPlayer != null)
+        if (SchedulerMain.DoWeTick && Svc.ClientState.LocalPlayer != null)
         {
             SchedulerMain.Tick();
         }

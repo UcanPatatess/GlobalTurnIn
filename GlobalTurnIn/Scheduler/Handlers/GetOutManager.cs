@@ -16,7 +16,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
         }
         internal static void Tick()
         {
-            if (SchedulerMain.EnableTicking && InternalTicking)
+            if (SchedulerMain.DoWeTick && InternalTicking)
             {
                 //DuoLog.Warning($"TickCount64 = {NoSelectString}");
                 if (TryGetAddonByName<AtkUnitBase>("SelectString", out var addon) && IsAddonReady(addon))

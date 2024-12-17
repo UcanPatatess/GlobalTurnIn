@@ -26,8 +26,19 @@ public static unsafe class Util
     {
         icurrentTask = task;
     }
-    public static int? LastShopUpdate = 0;
-    public static int? LastIconShopTypeUpdate = 0;
+    public static unsafe bool CorrectDuty() // first actual function I made that returns a true/false statement in C#... man this was a pain to learn about xD(ice)
+    {
+        if (TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) && IsAddonReady(addon))
+        {
+            //var mainAddon = ((AddonContentsFinder*)addon)->SelectedDutyTextNodeSpan[0].Value->NodeText.ToString();
+            var mainAddon = ((AddonContentsFinder*)addon) ->SelectedDutyTextNode[0].Value->NodeText.ToString();
+            var AlexText = "Alexander - The Burden of the Father";
+            return mainAddon == AlexText;
+        }
+        return false;
+    }
+    public static unsafe bool DutyOpen => (TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) && IsAddonReady(addon));
+    public static unsafe bool ContentFinderWindow => (TryGetAddonByName<AtkUnitBase>("ContentsFinderConfirm", out var addon) && IsAddonReady(addon));
     internal static unsafe float GetDistanceToPlayer(Vector3 v3) => Vector3.Distance(v3, Player.GameObject->Position);
     internal static unsafe float GetDistanceToPlayer(IGameObject gameObject) => GetDistanceToPlayer(gameObject.Position);
     internal static IGameObject? GetObjectByName(string name) => Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(o => o.Name.TextValue.Equals(name, StringComparison.CurrentCultureIgnoreCase));

@@ -53,9 +53,9 @@ namespace GlobalTurnIn.Windows
                     ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
                     ImGui.SameLine();
                     ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
-                    if (ImGui.Button(SchedulerMain.EnableTicking ? "Stop" : "Start"))
+                    if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start"))
                     {
-                        if (SchedulerMain.EnableTicking)
+                        if (SchedulerMain.DoWeTick)
                         {
                             SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
                         }
