@@ -51,7 +51,11 @@ namespace GlobalTurnIn.Scheduler
                         switch(CurrentState)
                         {
                             case DutyState.None:
-                                if (!IsAddonActive("ContentsFinder"))
+                                if (IsAddonActive("ContentsFinder"))
+                                {
+                                    CurrentState = DutyState.SelectDuty;
+                                }
+                                else
                                 {
                                     TaskDutyFinder.Enqueue();
                                     CurrentState = DutyState.OpenContentsFinder;
@@ -85,7 +89,7 @@ namespace GlobalTurnIn.Scheduler
                             case DutyState.ConfirmContentWindow:
                                 if (!IsAddonActive("ContentsFinderConfirm"))
                                 {
-                                    CurrentState = DutyState.None; // Reset state for the next cycle
+                                    CurrentState = DutyState.None;
                                 }
                                 break;
                         }
