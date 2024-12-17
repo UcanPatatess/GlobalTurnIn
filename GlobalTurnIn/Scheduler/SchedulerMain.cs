@@ -26,6 +26,7 @@ namespace GlobalTurnIn.Scheduler
             P.navmesh.Stop();
             RunTurnin = false;
             RunA4N = false;
+            CurrentState = DutyState.None;
             return true;
         }
 
@@ -53,7 +54,7 @@ namespace GlobalTurnIn.Scheduler
                             case DutyState.None:
                                 if (IsAddonActive("ContentsFinder"))
                                 {
-                                    CurrentState = DutyState.SelectDuty;
+                                    CurrentState = DutyState.OpenContentsFinder;
                                 }
                                 else
                                 {
