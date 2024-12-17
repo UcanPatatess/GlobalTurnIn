@@ -53,7 +53,7 @@ namespace GlobalTurnIn.Windows
                     ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
                     ImGui.SameLine();
                     ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
-                    if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start"))
+                    if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start Turnin"))
                     {
                         if (SchedulerMain.DoWeTick)
                         {
@@ -62,6 +62,7 @@ namespace GlobalTurnIn.Windows
                         else
                         {
                             SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                            SchedulerMain.RunTurnin = true;
                         }
                     }
                     ImGui.SameLine();
@@ -71,6 +72,18 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
+                    if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4N"))
+                    {
+                        if (SchedulerMain.DoWeTick)
+                        {
+                            SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
+                        }
+                        else
+                        {
+                            SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                            SchedulerMain.RunA4N = true;
+                        }
+                    }
                     ImGui.Text("Coming soon");
                     ImGui.EndTabItem();
                 }

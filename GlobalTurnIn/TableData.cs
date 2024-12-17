@@ -10,9 +10,6 @@ public static class Data
     public static int AlexandrianTurnInCount = 0;
     public static int DeltascapeTurnInCount = 0;
 
-
-
-
     // Deltascape Item IDs
     private static int DeltascapeLensID = 19111;
     private static int DeltascapeShaftID = 19112;

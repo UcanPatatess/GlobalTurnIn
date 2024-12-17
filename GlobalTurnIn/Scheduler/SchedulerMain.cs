@@ -24,8 +24,13 @@ namespace GlobalTurnIn.Scheduler
             DoWeTick = false;
             P.taskManager.Abort();
             P.navmesh.Stop();
+            RunTurnin = false;
+            RunA4N = false;
             return true;
         }
+
+        public static bool RunTurnin = false;
+        public static bool RunA4N = false;
 
         internal static void Tick()
         {
@@ -33,61 +38,65 @@ namespace GlobalTurnIn.Scheduler
             {
                 if (!P.taskManager.IsBusy)
                 {
-                    if (!DutyOpen && !ContentFinderWindow)
+                    if (RunA4N)
                     {
-                        TaskDutyFinder.Enqueue();
-                    }
-                    else if(DutyOpen)
-                    {
-                        
-                    }
-
-                    /*
-                    if (TotalExchangeItem != 0 && !C.VendorTurnIn)
-                    {
-                        TaskGcTurnIn.Enqueue();
-                    }
-                    else if ((TotalExchangeItem != 0 && C.VendorTurnIn) || (C.SellOilCloth && GetItemCount(10120) > 0))
-                    {
-                        if (C.TeleportToFC)
+                        if (!DutyOpen && !ContentFinderWindow)
                         {
-                            TaskFcSell.Enqueue();
-                            TaskSellVendor.Enqueue();
+                            TaskDutyFinder.Enqueue();
                         }
-                        else
+                        else if (DutyOpen && !CorrectDuty())
                         {
-                            TaskTeleportTo.Enqueue();
-                            TaskMountUp.Enqueue();
-                            TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
-                            TaskSellVendor.Enqueue();
+                            TaskSelectCorrectDuty.Enqueue();
                         }
                     }
-                    else if (IsThereTradeItem())
+                    else if (RunTurnin)
                     {
-                        if (!C.ChangeArmory)
+                        if (TotalExchangeItem != 0 && !C.VendorTurnIn)
                         {
-                            TaskChangeArmorySetting.Enqueue();
-                            C.ChangeArmory = true;
+                            TaskGcTurnIn.Enqueue();
                         }
-                        if (GordianTurnInCount > 0 || AlexandrianTurnInCount > 0)
+                        else if ((TotalExchangeItem != 0 && C.VendorTurnIn) || (C.SellOilCloth && GetItemCount(10120) > 0))
                         {
-                            TaskTeleportTo.Enqueue();
-                            TaskMountUp.Enqueue();
-                            TaskMoveTo.Enqueue(new Vector3(-19, 211, -36), "Shop NPC");
-                            TaskMergeWithAutomaton.Enqueue();
-                            TaskTurnIn.Enqueue();
+                            if (C.TeleportToFC)
+                            {
+                                TaskFcSell.Enqueue();
+                                TaskSellVendor.Enqueue();
+                            }
+                            else
+                            {
+                                TaskTeleportTo.Enqueue();
+                                TaskMountUp.Enqueue();
+                                TaskMoveTo.Enqueue(new Vector3(34, 208, -51), "Summoning Bell");
+                                TaskSellVendor.Enqueue();
+                            }
                         }
-                        else
+                        else if (IsThereTradeItem())
                         {
-                            //logic is added but it needs to be tested
-                            TaskTeleportTo.Enqueue();
-                            TaskMountUp.Enqueue();
-                            TaskMoveTo.Enqueue(new Vector3(-55.6f, 0.0f, 51.4f), "Shop NPC");
-                            TaskMergeWithAutomaton.Enqueue();
-                            TaskTurnIn.Enqueue();
+                            if (!C.ChangeArmory)
+                            {
+                                TaskChangeArmorySetting.Enqueue();
+                                C.ChangeArmory = true;
+                            }
+                            if (GordianTurnInCount > 0 || AlexandrianTurnInCount > 0)
+                            {
+                                TaskTeleportTo.Enqueue();
+                                TaskMountUp.Enqueue();
+                                TaskMoveTo.Enqueue(new Vector3(-19, 211, -36), "Shop NPC");
+                                TaskMergeWithAutomaton.Enqueue();
+                                TaskTurnIn.Enqueue();
+                            }
+                            else
+                            {
+                                //logic is added but it needs to be tested
+                                TaskTeleportTo.Enqueue();
+                                TaskMountUp.Enqueue();
+                                TaskMoveTo.Enqueue(new Vector3(-55.6f, 0.0f, 51.4f), "Shop NPC");
+                                TaskMergeWithAutomaton.Enqueue();
+                                TaskTurnIn.Enqueue();
+                            }
                         }
+                        else { DisablePlugin(); }
                     }
-                    else { DisablePlugin(); }*/
                 }
             }
         }

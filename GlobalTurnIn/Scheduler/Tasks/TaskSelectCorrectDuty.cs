@@ -1,3 +1,4 @@
+using ECommons.Throttlers;
 using GlobalTurnIn.Scheduler.Handlers;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
                 return true;
             }
 
-            if (GenericThrottle)
+            if (EzThrottler.Throttle("Throttling Pcall for Normal raid", 75))
             {
                 GenericHandlers.FireCallback("ContentsFinder", true,3, PcallValue);
                 PcallValue += 1;
