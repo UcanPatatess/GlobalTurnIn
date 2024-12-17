@@ -1,16 +1,8 @@
 using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
-using ECommons.Automation;
-using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
-using ECommons.Throttlers;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using GlobalTurnIn.Scheduler;
-using GlobalTurnIn.Scheduler.Handlers;
-using GlobalTurnIn.Scheduler.Tasks;
 using ImGuiNET;
-using System;
 using System.Numerics;
 
 

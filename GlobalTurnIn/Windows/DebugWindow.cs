@@ -106,7 +106,21 @@ namespace GlobalTurnIn.Windows
                     {
                         TaskSelectCorrectDuty.Enqueue();
                     }
-
+                    if (ImGui.Button("TaskLaunchDuty"))
+                    {
+                        TaskLaunchDuty.Enqueue();
+                    }
+                    if (ImGui.Button("TaskContentWidnowConfirm"))
+                    {
+                        TaskContentWidnowConfirm.Enqueue();
+                    }
+                    if (ImGui.Button("GetInA4n"))
+                    {
+                        TaskDutyFinder.Enqueue();
+                        TaskSelectCorrectDuty.Enqueue();
+                        TaskLaunchDuty.Enqueue();
+                        TaskContentWidnowConfirm.Enqueue();
+                    }
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();

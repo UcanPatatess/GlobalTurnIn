@@ -48,6 +48,10 @@ namespace GlobalTurnIn.Scheduler
                         {
                             TaskSelectCorrectDuty.Enqueue();
                         }
+                        else if (ContentFinderWindow)
+                        {
+
+                        }
                     }
                     else if (RunTurnin)
                     {

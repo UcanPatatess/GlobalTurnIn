@@ -1,33 +1,41 @@
 using ECommons.Throttlers;
 using GlobalTurnIn.Scheduler.Handlers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
     internal class TaskSelectCorrectDuty
     {
         private static int PcallValue = C.DutyFinderCallValue;
+        private static bool Restart = false;
         internal static void Enqueue()
         {
-            PcallValue = 0;
-            P.taskManager.Enqueue(SelectLoopIfNotCorrect);
+            P.taskManager.Enqueue(Run);
         }
-        internal static bool SelectLoopIfNotCorrect()
+        internal static bool Run()
         {
+            if (Restart)
+            {
+                PcallValue = 0; // Reset to start if needed
+                Restart = false;
+            }
             if (CorrectDuty()) 
             {
                 C.DutyFinderCallValue = PcallValue;
                 return true;
             }
-
-            if (EzThrottler.Throttle("Throttling Pcall for Normal raid", 75))
+            if (IsAddonActive("JournalDetail"))
             {
-                GenericHandlers.FireCallback("ContentsFinder", true,3, PcallValue);
-                PcallValue += 1;
+                if (EzThrottler.Throttle("Throttling Pcall for Normal raid", 75))
+                {
+                    GenericHandlers.FireCallback("ContentsFinder", true, 3, PcallValue);
+                    if (!CorrectDuty())
+                        PcallValue += 1;
+
+                    if (PcallValue > 102)
+                    {
+                        Restart = true;
+                    }
+                }
             }
             return false;
         }
