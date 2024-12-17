@@ -40,29 +40,47 @@ namespace GlobalTurnIn.Windows
         }
         public override void Draw()
         {
-            ImGui.Text($"Current task (Ice) is: {icurrentTask}");
-            ImGui.Text($"Current task is: {CurrentTask()}");
-            ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
-            ImGui.Text($"Exchange Item Count: " + TotalExchangeItem);
-            ImGui.SameLine();
-            ImGui.Text($"GordianTurnIn Count: " + GordianTurnInCount);
-            ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
-            ImGui.SameLine();
-            ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
-            if (ImGui.Button(SchedulerMain.EnableTicking ? "Stop" : "Start"))
+            if (ImGui.BeginTabBar("##Main Window Tabs"))
             {
-                if (SchedulerMain.EnableTicking)
+                if (ImGui.BeginTabItem("Turnin Items"))
                 {
-                    SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
+                    ImGui.Text($"Current task (Ice) is: {icurrentTask}");
+                    ImGui.Text($"Current task is: {CurrentTask()}");
+                    ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
+                    ImGui.Text($"Exchange Item Count: " + TotalExchangeItem);
+                    ImGui.SameLine();
+                    ImGui.Text($"GordianTurnIn Count: " + GordianTurnInCount);
+                    ImGui.Text($"AlexandrianTurnIn Count: " + AlexandrianTurnInCount);
+                    ImGui.SameLine();
+                    ImGui.Text($"DeltascapeTurnIn Count: " + DeltascapeTurnInCount);
+                    if (ImGui.Button(SchedulerMain.EnableTicking ? "Stop" : "Start"))
+                    {
+                        if (SchedulerMain.EnableTicking)
+                        {
+                            SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
+                        }
+                        else
+                        {
+                            SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                        }
+                    }
+                    ImGui.SameLine();
+                    if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
+                        EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
+                    ImGui.EndTabItem();
                 }
-                else
+                if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
-                    SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                    ImGui.Text("Coming soon");
+                    ImGui.EndTabItem();
                 }
+                if (ImGui.BeginTabItem("Statistics"))
+                {
+                    ImGui.Text("Statistics would go here...");
+                    ImGui.EndTabItem();
+                }
+                ImGui.EndTabBar();
             }
-            ImGui.SameLine();
-            if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
-                EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingMenu.WindowName)!.IsOpen ^= true;
         }
     }
 }
