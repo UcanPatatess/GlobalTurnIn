@@ -32,6 +32,7 @@ namespace GlobalTurnIn.Windows
         private float yPos = 0;
         private float zPos = 0;
         private int tolerance = 0;
+
         public override void Draw()
         {
             if (ImGui.BeginTabBar("##Debug Tabs"))
@@ -121,6 +122,8 @@ namespace GlobalTurnIn.Windows
                         TaskLaunchDuty.Enqueue();
                         TaskContentWidnowConfirm.Enqueue();
                     }
+                    ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
+
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();
