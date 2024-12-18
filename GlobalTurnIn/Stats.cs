@@ -4,5 +4,10 @@ namespace GlobalTurnIn
     {
         public int GillEarned = 0;
         public int TotalA4nRuns = 0;
+        public void Reset()
+        {
+            GillEarned = 0;
+            TotalA4nRuns = 0;
+        }
     }
 }

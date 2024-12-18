@@ -50,6 +50,7 @@ public class Plugin : IDalamudPlugin
         lifestream = new();
         navmesh = new();
         Svc.Framework.Update += Tick;
+        ResetStats();
     }
     private void Tick(object _)
     {
@@ -69,6 +70,10 @@ public class Plugin : IDalamudPlugin
         ECommonsMain.Dispose();
         Safe(TextAdvanceManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
+    }
+    public void ResetStats()
+    {
+        C.SessionStats.Reset();
     }
     private void OnCommand(string command, string args)
     {

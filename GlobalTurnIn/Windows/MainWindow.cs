@@ -45,7 +45,6 @@ namespace GlobalTurnIn.Windows
                         C.Stats = new();
                         C.Save();
                     }
-
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Session"))
@@ -60,7 +59,6 @@ namespace GlobalTurnIn.Windows
         }
         private void DrawStatsTab(Stats stat, out bool reset)
         {   
-
             DrawStats(stat);
 
             bool isCtrlHeld = ImGui.GetIO().KeyCtrl;

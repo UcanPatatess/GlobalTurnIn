@@ -28,7 +28,6 @@ namespace GlobalTurnIn.Scheduler.Handlers
                 {
                     Stats.GillEarned += earnedGill;
                 });
-
                 C.Save();
             }
             PreviousGil = currentGill;
