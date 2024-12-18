@@ -133,8 +133,7 @@ public static unsafe class Util
         }
     }
 
-    // Hey, Ice here. Putting the Target Utilities that I have in my plugin here so I can use them here... something to switch over for targeting peeps
-
+    // Targeting Utils
     public static bool TryGetObjectByDataId(uint dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.DataId == dataId)) != null;
     public static bool TryGetObjectByObjectId(uint ObjectID, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.GameObjectId == ObjectID)) != null;
 
@@ -144,7 +143,7 @@ public static unsafe class Util
         {
             if (gameObject == null || !gameObject.IsTargetable)
                 return;
-            var gameObjectPointer = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)gameObject.Address;
+            var gameObjectPointer = (GameObject*)gameObject.Address;
             TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
         }
         catch (Exception ex)

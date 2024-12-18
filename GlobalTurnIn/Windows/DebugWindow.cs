@@ -27,6 +27,9 @@ namespace GlobalTurnIn.Windows
         private float yPos = 0;
         private float zPos = 0;
         private int tolerance = 0;
+        private float targetXPos = 0;
+        private float targetYPos = 0;
+        private float targetZPos = 0;
 
         public override void Draw()
         {
@@ -121,7 +124,42 @@ namespace GlobalTurnIn.Windows
                         TaskLaunchDuty.Enqueue();
                         TaskContentWidnowConfirm.Enqueue();
                     }
+                    if (ImGui.Button("Chest Task"))
+                    {
+                        TaskOpenChest.Enqueue();
+
+                    }
+
                     ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
+
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("Targeting Debug"))
+                {
+                    if (Svc.Targets?.Target != null)
+                    {
+                        targetXPos = (float)Math.Round(Svc.Targets.Target.Position.X, 2);
+                        targetYPos = (float)Math.Round(Svc.Targets.Target.Position.Y, 2);
+                        targetZPos = (float)Math.Round(Svc.Targets.Target.Position.Z, 2);
+                        // Get the GameObjectId and display it in the ImGui.Text box
+                        ImGui.Text($"Name: {Svc.Targets.Target.Name}");
+                        ImGui.Text($"GameObjectId: {Svc.Targets.Target.GameObjectId}");
+                        ImGui.Text($"DataID: {Svc.Targets.Target.DataId}");
+                        if (ImGui.Button("Copy DataID to clipboard"))
+                        {
+                            ImGui.SetClipboardText($"{Svc.Targets.Target.DataId}");
+                        }
+                        ImGui.Text($"Target Pos: X: {targetXPos}, Y: {targetYPos}, Z: {targetZPos}");
+                        if (ImGui.Button("Copy Target XYZ"))
+                        {
+                            ImGui.SetClipboardText($"{targetXPos}f, {targetYPos}f, {targetZPos}f");
+                        }
+                    }
+                    else
+                    {
+                        // Optionally display a message if no target is selected
+                        ImGui.Text("No target selected.");
+                    }
 
                     ImGui.EndTabItem();
                 }

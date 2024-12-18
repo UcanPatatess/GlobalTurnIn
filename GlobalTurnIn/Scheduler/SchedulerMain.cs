@@ -38,7 +38,10 @@ namespace GlobalTurnIn.Scheduler
             OpenContentsFinder,
             SelectDuty,
             LaunchDuty,
-            ConfirmContentWindow
+            ConfirmContentWindow,
+            EnterCombat,
+            CombatMode,
+            OpenChest
         }
         private static DutyState CurrentState = DutyState.None;
         internal static void Tick()
@@ -93,6 +96,9 @@ namespace GlobalTurnIn.Scheduler
                                     CurrentState = DutyState.None;
                                 }
                                 break;
+
+                            //case DutyState.EnterCombat:
+                                //if !()
                         }
                     }
                     else if (RunTurnin)
