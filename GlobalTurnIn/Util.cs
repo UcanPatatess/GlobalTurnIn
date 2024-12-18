@@ -15,6 +15,9 @@ using Serilog;
 using Dalamud.Utility;
 using ECommons.Throttlers;
 using Lumina.Excel.Sheets;
+using ECommons;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using ECommons.DalamudServices.Legacy;
 
 
 namespace GlobalTurnIn;
@@ -127,5 +130,40 @@ public static unsafe class Util
             var itemID = RaidItemIDs[i];
             VendorSellDict[itemID].CurrentItemCount = GetItemCount(itemID);
         }
+    }
+
+    // Hey, Ice here. Putting the Target Utilities that I have in my plugin here so I can use them here... something to switch over for targeting peeps
+
+    public static bool TryGetObjectByDataId(uint dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.DataId == dataId)) != null;
+    public static bool TryGetObjectByObjectId(uint ObjectID, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.GameObjectId == ObjectID)) != null;
+
+    public static unsafe void InteractWithObject(IGameObject? gameObject)
+    {
+        try
+        {
+            if (gameObject == null || !gameObject.IsTargetable)
+                return;
+            var gameObjectPointer = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)gameObject.Address;
+            TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Info($"InteractWithObject: Exception: {ex}");
+        }
+    }
+
+    public static bool? TargetByID(IGameObject? gameObject)
+    {
+        if (GenericHelpers.IsOccupied())
+        {
+            var x = gameObject;
+            if (x != null)
+            {
+                Svc.Targets.SetTarget(x);
+                Svc.Log.Debug($"Setting the target to {x.DataId}");
+                return true;
+            }
+        }
+        return false;
     }
 }
