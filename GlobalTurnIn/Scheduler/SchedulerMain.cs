@@ -128,7 +128,7 @@ namespace GlobalTurnIn.Scheduler
                                 TaskTeleportTo.Enqueue();
                                 TaskMountUp.Enqueue();
                                 TaskMoveTo.Enqueue(new Vector3(-19, 211, -36), "Shop NPC");
-                                TaskMergeWithAutomaton.Enqueue();
+                                TaskMergeInv.Enqueue();
                                 TaskTurnIn.Enqueue();
                             }
                             else
@@ -137,7 +137,7 @@ namespace GlobalTurnIn.Scheduler
                                 TaskTeleportTo.Enqueue();
                                 TaskMountUp.Enqueue();
                                 TaskMoveTo.Enqueue(new Vector3(-55.6f, 0.0f, 51.4f), "Shop NPC");
-                                TaskMergeWithAutomaton.Enqueue();
+                                TaskMergeInv.Enqueue();
                                 TaskTurnIn.Enqueue();
                             }
                         }

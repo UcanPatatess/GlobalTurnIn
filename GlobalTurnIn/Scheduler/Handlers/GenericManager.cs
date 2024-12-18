@@ -1,10 +1,10 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ECommons.Automation;
-using ECommons.Logging;
 using ECommons.Automation.LegacyTaskManager;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ECommons.UIHelpers.AddonMasterImplementations;
 using ECommons.DalamudServices;
+
 
 namespace GlobalTurnIn.Scheduler.Handlers
 {
@@ -15,6 +15,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
+       
 
         private static int PreviousGil = (int)GetGil(); 
         private static void CheckGill()
@@ -32,7 +33,6 @@ namespace GlobalTurnIn.Scheduler.Handlers
             }
             PreviousGil = currentGill;
         }
-
         private static bool? ConfirmOrAbort(AddonRequest* addon)
         {
             if (addon->HandOverButton != null && addon->HandOverButton->IsEnabled)
@@ -72,55 +72,55 @@ namespace GlobalTurnIn.Scheduler.Handlers
                 if (SchedulerMain.RunTurnin)
                 {
                     CheckGill();
-                }
-                //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
-                if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
-                {
-                    for (var i = 1; i <= addon3->EntryCount; i++)
+                    //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
+                    if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
                     {
-                        if (SlotsFilled.Contains(addon3->EntryCount)) ConfirmOrAbort(addon3);
-                        if (SlotsFilled.Contains(i)) return;
-                        var val = i;
-                        TaskManager.DelayNext($"ClickTurnin{val}", 10);
-                        TaskManager.Enqueue(() => TryClickItem(addon3, val));
-                    }
-                }
-                else
-                {
-                    SlotsFilled.Clear();
-                    TaskManager.Abort();
-                }
-                if (IsAddonActive("ShopExchangeItem"))
-                {
-                    if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog",out var addon)&&IsAddonReady(addon))
-                    {
-                        if (Environment.TickCount64 - NoShopExchangeItemDialog > 10)
+                        for (var i = 1; i <= addon3->EntryCount; i++)
                         {
-                            if (GenericThrottle)
-                            {
-                                Callback.Fire(addon, true, 0);
-                                NoShopExchangeItemDialog = Environment.TickCount64;
-                            }
+                            if (SlotsFilled.Contains(addon3->EntryCount)) ConfirmOrAbort(addon3);
+                            if (SlotsFilled.Contains(i)) return;
+                            var val = i;
+                            TaskManager.DelayNext($"ClickTurnin{val}", 10);
+                            TaskManager.Enqueue(() => TryClickItem(addon3, val));
                         }
                     }
                     else
                     {
-                        NoShopExchangeItemDialog = Environment.TickCount64;
+                        SlotsFilled.Clear();
+                        TaskManager.Abort();
                     }
-                    if (TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon2) && IsAddonReady(addon2))
+                    if (IsAddonActive("ShopExchangeItem"))
                     {
-                        if (Environment.TickCount64 - NoSelectYesno > 10)
+                        if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog", out var addon) && IsAddonReady(addon))
                         {
-                            if (GenericThrottle)
+                            if (Environment.TickCount64 - NoShopExchangeItemDialog > 10)
                             {
-                                Callback.Fire(addon2, true, 0);
-                                NoSelectYesno = Environment.TickCount64;
+                                if (GenericThrottle)
+                                {
+                                    Callback.Fire(addon, true, 0);
+                                    NoShopExchangeItemDialog = Environment.TickCount64;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        NoSelectYesno = Environment.TickCount64;
+                        else
+                        {
+                            NoShopExchangeItemDialog = Environment.TickCount64;
+                        }
+                        if (TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon2) && IsAddonReady(addon2))
+                        {
+                            if (Environment.TickCount64 - NoSelectYesno > 10)
+                            {
+                                if (GenericThrottle)
+                                {
+                                    Callback.Fire(addon2, true, 0);
+                                    NoSelectYesno = Environment.TickCount64;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            NoSelectYesno = Environment.TickCount64;
+                        }
                     }
                 }
             }

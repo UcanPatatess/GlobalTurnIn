@@ -4,13 +4,10 @@ using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
 using ECommons.DalamudServices;
 using ECommons.SimpleGui;
-using GlobalTurnIn;
 using GlobalTurnIn.IPC;
 using GlobalTurnIn.Scheduler;
 using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.Windows;
-using static FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Delegates;
-
 
 
 namespace GlobalTurnIn;
@@ -30,7 +27,7 @@ public class Plugin : IDalamudPlugin
     internal DeliverooIPC deliveroo;
     internal LifestreamIPC lifestream;
     internal NavmeshIPC navmesh;
-    
+
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -50,7 +47,7 @@ public class Plugin : IDalamudPlugin
         lifestream = new();
         navmesh = new();
         Svc.Framework.Update += Tick;
-        ResetStats();
+        C.SessionStats.Reset();
     }
     private void Tick(object _)
     {
@@ -70,10 +67,6 @@ public class Plugin : IDalamudPlugin
         ECommonsMain.Dispose();
         Safe(TextAdvanceManager.UnlockTA);
         Safe(YesAlreadyManager.Unlock);
-    }
-    public void ResetStats()
-    {
-        C.SessionStats.Reset();
     }
     private void OnCommand(string command, string args)
     {

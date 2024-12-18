@@ -1,14 +1,9 @@
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
-using ECommons.SimpleGui;
+using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.Scheduler.Tasks;
 using ImGuiNET;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GlobalTurnIn.Windows
 {
@@ -92,6 +87,10 @@ namespace GlobalTurnIn.Windows
                     {
                         P.taskManager.Enqueue(() => TaskMoveTo.Enqueue(new Vector3(xPos, yPos, zPos), "Interact string", tolerance));
                         ECommons.Logging.InternalLog.Information("Firing off Vnav Moveto");
+                    }
+                    if (ImGui.Button("MergeInv"))
+                    {
+                        TaskMergeInv.Enqueue();
                     }
                     ImGui.EndTabItem();
                 }
