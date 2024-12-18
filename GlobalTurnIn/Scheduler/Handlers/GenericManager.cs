@@ -8,13 +8,32 @@ using ECommons.DalamudServices;
 
 namespace GlobalTurnIn.Scheduler.Handlers
 {
-    internal static unsafe class ShopExchangeItemManager
+    internal static unsafe class GenericManager
     {
         internal static long NoSelectYesno = long.MaxValue;
         internal static long NoShopExchangeItemDialog = long.MaxValue;
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
+
+        private static int PreviousGil = (int)GetGil(); 
+        private static void CheckGill()
+        {
+            int currentGill = (int)GetGil();
+
+            if (currentGill > PreviousGil) 
+            {
+                int earnedGill = currentGill - PreviousGil;
+                C.UpdateStats(Stats =>
+                {
+                    Stats.GillEarned += earnedGill;
+                });
+
+                C.Save();
+            }
+            PreviousGil = currentGill;
+        }
+
         private static bool? ConfirmOrAbort(AddonRequest* addon)
         {
             if (addon->HandOverButton != null && addon->HandOverButton->IsEnabled)
@@ -51,6 +70,10 @@ namespace GlobalTurnIn.Scheduler.Handlers
         {
             if (SchedulerMain.DoWeTick)
             {
+                if (SchedulerMain.RunTurnin)
+                {
+                    CheckGill();
+                }
                 //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
                 if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
                 {

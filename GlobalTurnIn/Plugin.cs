@@ -58,7 +58,7 @@ public class Plugin : IDalamudPlugin
         {
             SchedulerMain.Tick();
         }
-        ShopExchangeItemManager.Tick();
+        GenericManager.Tick();
         TextAdvanceManager.Tick();
         YesAlreadyManager.Tick();
         GetOutManager.Tick();

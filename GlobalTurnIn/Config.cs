@@ -19,4 +19,16 @@ public class Config : IEzConfig
     public bool SellOilCloth { get; set; } = false;
     public bool ChangeArmory { get; set; } = false;
     public int DutyFinderCallValue { get; set; } = 0;
+    public Stats Stats { get; set; } = new Stats();
+    public Stats SessionStats { get; set; } = new Stats();
+    public void UpdateStats(Action<Stats> updateAction)
+    {
+        updateAction(Stats);
+        updateAction(SessionStats);
+    }
+    public void Save()
+    {
+        EzConfig.Save();
+    }
 }
+

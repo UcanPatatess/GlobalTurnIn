@@ -1,10 +1,12 @@
 using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
 using GlobalTurnIn.Scheduler;
 using ImGuiNET;
 using System.Numerics;
-
 
 namespace GlobalTurnIn.Windows
 {
@@ -29,6 +31,62 @@ namespace GlobalTurnIn.Windows
                 return P.taskManager.CurrentTask.Name?.ToString() ?? "None";
             }
             return "None";
+        }
+        private void DrawStatsTab()
+        {
+            if (ImGui.BeginTabBar("Stats"))
+            {
+                if (ImGui.BeginTabItem("Lifetime"))
+                {
+                    this.DrawStatsTab(C.Stats, out bool reset);
+
+                    if (reset)
+                    {
+                        C.Stats = new();
+                        C.Save();
+                    }
+
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("Session"))
+                {
+                    this.DrawStatsTab(C.SessionStats, out bool reset);
+                    if (reset)
+                        C.SessionStats = new();
+                    ImGui.EndTabItem();
+                }
+                ImGui.EndTabBar();
+            }
+        }
+        private void DrawStatsTab(Stats stat, out bool reset)
+        {   
+
+            DrawStats(stat);
+
+            bool isCtrlHeld = ImGui.GetIO().KeyCtrl;
+            using (var _ = ImRaii.PushStyle(ImGuiStyleVar.Alpha, 0.5f, !ImGui.GetIO().KeyCtrl))
+                reset = ImGui.Button("RESET STATS", new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y)) && ImGui.GetIO().KeyCtrl;
+            if (ImGui.IsItemHovered()) ImGui.SetTooltip(isCtrlHeld ? "Press to reset your stats." : "Hold Ctrl to enable the button.");
+        }
+        private void DrawStats(Stats stat)
+        {
+            ImGui.BeginChild("Stats", new Vector2(0, ImGui.GetContentRegionAvail().Y - 30f), true);
+            ImGui.Columns(3, null, false);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText(ImGuiColors.DalamudRed, "Root Of Riches", true);
+            ImGuiHelpers.ScaledDummy(10f);
+            ImGui.Columns(2, null, false);
+            ImGui.NextColumn();
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("GillEarned", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText("TotalA4nRuns", true);
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.GillEarned.ToString("N0")}");
+            ImGui.NextColumn();
+            ImGuiEx.CenterColumnText($"{stat.TotalA4nRuns.ToString("N0")}");
+
+            ImGui.EndChild();
         }
         public override void Draw()
         {
@@ -79,11 +137,12 @@ namespace GlobalTurnIn.Windows
                     ImGui.Text("Coming soon");
                     ImGui.EndTabItem();
                 }
-                if (ImGui.BeginTabItem("Statistics"))
+                if (ImGui.BeginTabItem("Stats"))
                 {
-                    ImGui.Text("Statistics would go here...");
+                    DrawStatsTab();
                     ImGui.EndTabItem();
                 }
+
                 ImGui.EndTabBar();
             }
         }
