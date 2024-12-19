@@ -10,12 +10,9 @@ namespace GlobalTurnIn.Scheduler.Handlers
 {
     internal static unsafe class GenericManager
     {
-        internal static long NoSelectYesno = long.MaxValue;
-        internal static long NoShopExchangeItemDialog = long.MaxValue;
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
-       
 
         private static int PreviousGil = (int)GetGil(); 
         private static void CheckGill()
@@ -89,39 +86,6 @@ namespace GlobalTurnIn.Scheduler.Handlers
                     {
                         SlotsFilled.Clear();
                         TaskManager.Abort();
-                    }
-                    if (IsAddonActive("ShopExchangeItem"))
-                    {
-                        if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog", out var addon) && IsAddonReady(addon))
-                        {
-                            if (Environment.TickCount64 - NoShopExchangeItemDialog > 30)
-                            {
-                                if (GenericThrottle)
-                                {
-                                    Callback.Fire(addon, true, 0);
-                                    NoShopExchangeItemDialog = Environment.TickCount64;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            NoShopExchangeItemDialog = Environment.TickCount64;
-                        }
-                        if (TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon2) && IsAddonReady(addon2))
-                        {
-                            if (Environment.TickCount64 - NoSelectYesno > 10)
-                            {
-                                if (GenericThrottle)
-                                {
-                                    Callback.Fire(addon2, true, 0);
-                                    NoSelectYesno = Environment.TickCount64;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            NoSelectYesno = Environment.TickCount64;
-                        }
                     }
                 }
             }

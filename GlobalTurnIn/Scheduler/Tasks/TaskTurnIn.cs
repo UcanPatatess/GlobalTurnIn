@@ -190,16 +190,11 @@ namespace GlobalTurnIn.Scheduler.Tasks
         }
         internal static void Exchange(int gearItem, int List, int Amount)
         {
-            int ArmoryType = 0;
-            if (ItemIdArmoryTable.TryGetValue(gearItem, out int category))
-                ArmoryType = category;
             Svc.Log.Debug($"Exchange  gearid: {gearItem} List: {List} Amount: {Amount}");
             if (Amount > 127)
                 Amount = 127;
 
-            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
-            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0), "Shop Exchange Dialog Close"); // Problem child is right here, for reference
-            //P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), "Did Item Exhange");
+            
             P.taskManager.Enqueue(() => DoExchange(gearItem, "ShopExchangeItem", true, 0, List, Amount));
             P.taskManager.EnqueueDelay(100);
         }
