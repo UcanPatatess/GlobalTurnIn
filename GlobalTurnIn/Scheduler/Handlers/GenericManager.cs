@@ -10,12 +10,9 @@ namespace GlobalTurnIn.Scheduler.Handlers
 {
     internal static unsafe class GenericManager
     {
-        internal static long NoSelectYesno = long.MaxValue;
-        internal static long NoShopExchangeItemDialog = long.MaxValue;
         internal static TaskManager taskManager = new();
         static TaskManager TaskManager => taskManager;
         private static List<int> SlotsFilled { get; set; } = new();
-       
 
         private static int PreviousGil = (int)GetGil(); 
         private static void CheckGill()
@@ -71,6 +68,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
             {
                 if (SchedulerMain.RunTurnin)
                 {
+                    //To update gill amounth
                     CheckGill();
                     //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
                     if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
@@ -89,41 +87,9 @@ namespace GlobalTurnIn.Scheduler.Handlers
                         SlotsFilled.Clear();
                         TaskManager.Abort();
                     }
-                    if (IsAddonActive("ShopExchangeItem"))
-                    {
-                        if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog", out var addon) && IsAddonReady(addon))
-                        {
-                            if (Environment.TickCount64 - NoShopExchangeItemDialog > 10)
-                            {
-                                if (GenericThrottle)
-                                {
-                                    Callback.Fire(addon, true, 0);
-                                    NoShopExchangeItemDialog = Environment.TickCount64;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            NoShopExchangeItemDialog = Environment.TickCount64;
-                        }
-                        if (TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon2) && IsAddonReady(addon2))
-                        {
-                            if (Environment.TickCount64 - NoSelectYesno > 10)
-                            {
-                                if (GenericThrottle)
-                                {
-                                    Callback.Fire(addon2, true, 0);
-                                    NoSelectYesno = Environment.TickCount64;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            NoSelectYesno = Environment.TickCount64;
-                        }
-                    }
                 }
             }
+
         }
     }
 }
