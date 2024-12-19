@@ -71,6 +71,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
             {
                 if (SchedulerMain.RunTurnin)
                 {
+                    //To update gill amounth
                     CheckGill();
                     //by Taurenkey https://github.com/PunishXIV/PandorasBox/blob/24a4352f5b01751767c7ca7f1d4b48369be98711/PandorasBox/Features/UI/AutoSelectTurnin.cs
                     if (TryGetAddonByName<AddonRequest>("Request", out var addon3))
@@ -93,7 +94,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
                     {
                         if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog", out var addon) && IsAddonReady(addon))
                         {
-                            if (Environment.TickCount64 - NoShopExchangeItemDialog > 10)
+                            if (Environment.TickCount64 - NoShopExchangeItemDialog > 30)
                             {
                                 if (GenericThrottle)
                                 {
@@ -124,6 +125,7 @@ namespace GlobalTurnIn.Scheduler.Handlers
                     }
                 }
             }
+
         }
     }
 }

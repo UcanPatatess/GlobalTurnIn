@@ -120,16 +120,19 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
-                    if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4N"))
+                    using (ImRaii.Disabled(true))// did this to realse the stats
                     {
-                        if (SchedulerMain.DoWeTick)
+                        if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4N"))
                         {
-                            SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
-                        }
-                        else
-                        {
-                            SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
-                            SchedulerMain.RunA4N = true;
+                            if (SchedulerMain.DoWeTick)
+                            {
+                                SchedulerMain.DisablePlugin(); // Call DisablePlugin if running
+                            }
+                            else
+                            {
+                                SchedulerMain.EnablePlugin(); // Call EnablePlugin if not running
+                                SchedulerMain.RunA4N = true;
+                            }
                         }
                     }
                     ImGui.Text("Coming soon");

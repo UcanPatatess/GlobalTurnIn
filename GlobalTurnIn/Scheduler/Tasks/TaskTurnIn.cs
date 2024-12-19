@@ -197,10 +197,34 @@ namespace GlobalTurnIn.Scheduler.Tasks
             if (Amount > 127)
                 Amount = 127;
 
-            P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
+            //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItem", true, 0, List, Amount));
             //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("ShopExchangeItemDialog", true, 0), "Shop Exchange Dialog Close"); // Problem child is right here, for reference
-            P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), "Did Item Exhange");
-            P.taskManager.EnqueueDelay(200);
+            //P.taskManager.Enqueue(() => DidAmountChange(0, GetItemCount(gearItem)), "Did Item Exhange");
+            P.taskManager.Enqueue(() => DoExchange(gearItem, "ShopExchangeItem", true, 0, List, Amount));
+            P.taskManager.EnqueueDelay(100);
+        }
+        internal unsafe static bool DoExchange(int gearItem, string AddonName, bool kapkac, params int[] gibeme)
+        {
+            if (DidAmountChange(0,GetItemCount(gearItem)))
+            {
+                return true;
+            }
+            if (TryGetAddonByName<AtkUnitBase>("ShopExchangeItemDialog", out var addon2) && IsAddonReady(addon2))
+            {
+                if (FrameThrottler.Throttle("GlobalTurnInGenericThrottle", 20))
+                    Callback.Fire(addon2, true, 0);
+            }
+            else if (TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon3) && IsAddonReady(addon3))
+            {
+                if (FrameThrottler.Throttle("GlobalTurnInGenericThrottleee", 20))
+                    Callback.Fire(addon3, true, 0);
+            }
+            else if (TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && IsAddonReady(addon))
+            {
+                if(FrameThrottler.Throttle("GlobalTurnInGenericThrottlee", 20))
+                    Callback.Fire(addon, kapkac, gibeme.Cast<object>().ToArray());
+            }
+            return false;
         }
     }
 }
