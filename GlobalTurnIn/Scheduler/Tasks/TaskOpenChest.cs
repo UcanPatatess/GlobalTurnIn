@@ -1,3 +1,5 @@
+using Dalamud.Game.ClientState.Objects.Types;
+using GlobalTurnIn.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +10,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
 {
     internal static class TaskOpenChest
     {
-        public static void Enqueue()
+        public static void Enqueue(ulong GameObjectID)
         {
-            if (IsInZone(GTData.A4N))
-            {
-                TaskMoveTo.Enqueue(GTData.A4NChest1Pos, "Chest 1", 1);
-                TaskTarget.Enqueue(GTData.A4NChest1);
-            }
+            IGameObject? gameObject = null;
+            P.taskManager.Enqueue(() => TargetUtil.TryGetObjectByDataId(GameObjectID, out gameObject), "Getting Object by ObjectID");
+            P.taskManager.Enqueue(() => PlayerNotBusy());
+            P.taskManager.Enqueue(() => TargetUtil.InteractWithObject(gameObject), "Interacting w/ Object");
         }
     }
 }

@@ -126,8 +126,10 @@ namespace GlobalTurnIn.Windows
                     }
                     if (ImGui.Button("Chest Task"))
                     {
-                        TaskOpenChest.Enqueue();
-
+                        TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
+                        TaskOpenChest.Enqueue(GTData.A4NChest1);
+                        TaskOpenChest.Enqueue(GTData.A4NChest2);
+                        TaskOpenChest.Enqueue(GTData.A4NChest3);
                     }
 
                     ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
@@ -148,6 +150,10 @@ namespace GlobalTurnIn.Windows
                         if (ImGui.Button("Copy DataID to clipboard"))
                         {
                             ImGui.SetClipboardText($"{Svc.Targets.Target.DataId}");
+                        }
+                        if (ImGui.Button("Copy GameObjectID to clipboard"))
+                        {
+                            ImGui.SetClipboardText($"{Svc.Targets.Target.GameObjectId}");
                         }
                         ImGui.Text($"Target Pos: X: {targetXPos}, Y: {targetYPos}, Z: {targetZPos}");
                         if (ImGui.Button("Copy Target XYZ"))

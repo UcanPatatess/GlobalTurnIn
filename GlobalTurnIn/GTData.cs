@@ -11,12 +11,12 @@ internal class GTData
 {
     // Targets (ObjectID):
     // Alexander - The Burder of the Father (A4N) 
-    public static readonly uint RightForeleg = 1073770019;
-    public static readonly uint LeftForeleg = 1073770020;
-    public static readonly uint Manipulator = 1073770018;
-    public static readonly uint A4NChest1 = 438;
-    public static readonly uint A4NChest2 = 480;
-    public static readonly uint A4NChest3 = 479;
+    public static ulong RightForeleg = 4107;
+    public static ulong LeftForeleg = 4108;
+    public static ulong Manipulator = 3902;
+    public static ulong A4NChest1 = 438;
+    public static ulong A4NChest2 = 480;
+    public static ulong A4NChest3 = 479;
 
     // Zones
     public static int A4N = 445;

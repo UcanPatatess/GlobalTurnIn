@@ -132,38 +132,4 @@ public static unsafe class Util
             VendorSellDict[itemID].CurrentItemCount = GetItemCount(itemID);
         }
     }
-
-    // Targeting Utils
-    public static bool TryGetObjectByDataId(uint dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.DataId == dataId)) != null;
-    public static bool TryGetObjectByObjectId(uint ObjectID, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.GameObjectId == ObjectID)) != null;
-
-    public static unsafe void InteractWithObject(IGameObject? gameObject)
-    {
-        try
-        {
-            if (gameObject == null || !gameObject.IsTargetable)
-                return;
-            var gameObjectPointer = (GameObject*)gameObject.Address;
-            TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
-        }
-        catch (Exception ex)
-        {
-            Svc.Log.Info($"InteractWithObject: Exception: {ex}");
-        }
-    }
-
-    public static bool? TargetByID(IGameObject? gameObject)
-    {
-        if (GenericHelpers.IsOccupied())
-        {
-            var x = gameObject;
-            if (x != null)
-            {
-                Svc.Targets.SetTarget(x);
-                Svc.Log.Debug($"Setting the target to {x.DataId}");
-                return true;
-            }
-        }
-        return false;
-    }
 }
