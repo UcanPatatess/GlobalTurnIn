@@ -131,6 +131,10 @@ namespace GlobalTurnIn.Windows
                         TaskOpenChest.Enqueue(GTData.A4NChest2);
                         TaskOpenChest.Enqueue(GTData.A4NChest3);
                     }
+                    if (ImGui.Button("Full Inside A4N"))
+                    {
+                        TaskA4N.Enqueue();
+                    }
 
                     ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
 

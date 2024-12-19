@@ -21,6 +21,9 @@ internal class GTData
     // Zones
     public static int A4N = 445;
 
+    // Move Positions
+    public static Vector3 RightForeLegPos = new Vector3(-6.53f, 10.54f, -7.56f);
+
     // Chest Positions
     public static Vector3 A4NChest1Pos = new Vector3(-0.02f, 10.54f, -8.38f);
     public static Vector3 A4NChest2Pos = new Vector3(2f, 10.54f, -6.36f);
