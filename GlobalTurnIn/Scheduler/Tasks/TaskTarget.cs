@@ -14,7 +14,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         public static void Enqueue(ulong objectID)
         {
             IGameObject? gameObject = null;
-            P.taskManager.Enqueue(() => TargetUtil.TryGetObjectByObjectId(objectID, out gameObject), "Getting Object");
+            P.taskManager.Enqueue(() => TargetUtil.TryGetObjectByDataId(objectID, out gameObject), "Getting Object");
             P.taskManager.Enqueue(() => TargetUtil.TargetByID(gameObject), "Targeting Object");
         }
     }
