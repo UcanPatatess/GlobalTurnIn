@@ -18,6 +18,7 @@ using Lumina.Excel.Sheets;
 using ECommons;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using ECommons.DalamudServices.Legacy;
+using System.Runtime.InteropServices;
 
 
 namespace GlobalTurnIn;
