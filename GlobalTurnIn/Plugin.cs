@@ -59,7 +59,6 @@ public class Plugin : IDalamudPlugin
         GenericManager.Tick();
         TextAdvanceManager.Tick();
         YesAlreadyManager.Tick();
-        GetOutManager.Tick();
     }
     public void Dispose()
     {

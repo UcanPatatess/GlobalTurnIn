@@ -9,6 +9,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             P.taskManager.Enqueue(() => UpdateCurrentTask("Selling to vendor"));
             P.taskManager.Enqueue(SellVendor);
+            TaskGetOut.Enqueue();
             P.taskManager.EnqueueDelay(1000);
             P.taskManager.Enqueue(() => UpdateCurrentTask(""));
         }

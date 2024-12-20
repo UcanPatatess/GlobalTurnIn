@@ -123,7 +123,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             }
             P.taskManager.Enqueue(CloseShop);
             P.taskManager.EnqueueDelay(300);
-            GetOutManager.InternalTicking = true;
+            TaskGetOut.Enqueue();
             //P.taskManager.Enqueue(() => GenericHandlers.FireCallback("SelectString", true, -1));
         }
         internal unsafe static bool? CloseShop() //dükkanı kapattı biraz daha bakılması lazım
