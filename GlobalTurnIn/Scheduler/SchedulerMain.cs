@@ -39,9 +39,7 @@ namespace GlobalTurnIn.Scheduler
             SelectDuty,
             LaunchDuty,
             ConfirmContentWindow,
-            EnterCombat,
-            CombatMode,
-            OpenChest
+            A4NMode,
         }
         private static DutyState CurrentState = DutyState.None;
         internal static void Tick()
@@ -93,14 +91,19 @@ namespace GlobalTurnIn.Scheduler
                             case DutyState.ConfirmContentWindow:
                                 if (!IsAddonActive("ContentsFinderConfirm"))
                                 {
+                                    CurrentState = DutyState.A4NMode;
+                                }
+                                break;
+                            case DutyState.A4NMode: // this right here isn't working??? and i'm not sure why... 
+                                                    // Might generally rework this here soon. The switchstateness is messing with me
+                                if (IsInZone(GTData.A4NMapID))
+                                {
+                                    TaskA4N.Enqueue();
                                     CurrentState = DutyState.None;
                                 }
                                 break;
-
-                            //case DutyState.EnterCombat:
-                                //if !()
+                            }   
                         }
-                    }
                     else if (RunTurnin)
                     {
                         if (TotalExchangeItem != 0 && !C.VendorTurnIn)

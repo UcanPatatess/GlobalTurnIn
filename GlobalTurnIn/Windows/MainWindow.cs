@@ -2,6 +2,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
 using GlobalTurnIn.Scheduler;
@@ -120,9 +121,12 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
-                    using (ImRaii.Disabled(true))// did this to realse the stats
+                    ImGui.Text($"Current task is: {CurrentTask()}");
+                    ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
+                    ImGui.Text($"Zone ID = {Svc.ClientState.TerritoryType}");
+                    using (ImRaii.Disabled(false))// did this to realse the stats
                     {
-                        if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4N"))
+                        if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4NMapID"))
                         {
                             if (SchedulerMain.DoWeTick)
                             {

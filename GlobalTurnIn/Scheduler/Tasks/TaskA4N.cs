@@ -7,6 +7,7 @@ using ECommons.Automation.NeoTaskManager;
 using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
+using System.Data;
 
 namespace GlobalTurnIn.Scheduler.Tasks
 {
@@ -15,17 +16,17 @@ namespace GlobalTurnIn.Scheduler.Tasks
         internal static void Enqueue()
         {
             // some things to do:
-                // Could easily have BM manage the targeting for us/moving AI. 
-                // This would reduce some of the opt codes for us
-                // Other option is for us to just use the good old tried and true of moving ourselves to close the gap
-                // Add switch statements like you did for queueing
-                // Have an 
-                // -> Entrance Mode (Haven't started combat yet)
-                // -> In Combat
-                // -> Exit Combat -> Open Chest
-                // -> Leave Duty
+            // Could easily have BM manage the targeting for us/moving AI. 
+            // This would reduce some of the opt codes for us
+            // Other option is for us to just use the good old tried and true of moving ourselves to close the gap
+            // Add switch statements like you did for queueing
+            // Have an 
+            // -> Entrance Mode (Haven't started combat yet)
+            // -> In Combat
+            // -> Exit Combat -> Open Chest
+            // -> Leave Duty
 
-            // need to add a check to make sure you're in the zone here, THEN check PlayerNotBusy()
+            P.taskManager.Enqueue(() => IsInZone(GTData.A4NMapID));
             P.taskManager.Enqueue(() => PlayerNotBusy());
             TaskTarget.Enqueue(GTData.RightForeleg);
             P.taskManager.Enqueue(() => MoveToCombat(GTData.RightForeLegPos), "Moving to Combat");
@@ -39,6 +40,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             TaskOpenChest.Enqueue(GTData.A4NChest2);
             TaskOpenChest.Enqueue(GTData.A4NChest3);
             P.taskManager.Enqueue(() => LeaveDuty());
+            P.taskManager.Enqueue(UpdateStats);
         }
 
         private static float Distance(this Vector3 v, Vector3 v2)
@@ -109,6 +111,10 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
         private static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 1000, abortOnTimeout: false);
 
-
+        private static void UpdateStats()
+        {
+            C.SessionStats.TotalA4nRuns = C.SessionStats.TotalA4nRuns + 1;
+            C.Stats.TotalA4nRuns = C.Stats.TotalA4nRuns + 1;
+        }
     }
 }

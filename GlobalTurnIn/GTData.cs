@@ -19,7 +19,7 @@ internal class GTData
     public static ulong A4NChest3 = 479;
 
     // Zones
-    public static int A4N = 445;
+    public static int A4NMapID = 445;
 
     // Move Positions
     public static Vector3 RightForeLegPos = new Vector3(-6.53f, 10.54f, -7.56f);
