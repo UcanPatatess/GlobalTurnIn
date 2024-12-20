@@ -26,22 +26,13 @@ namespace GlobalTurnIn.Scheduler
             P.navmesh.Stop();
             RunTurnin = false;
             RunA4N = false;
-            CurrentState = DutyState.None;
+            hasEnqueuedDutyFinder = false;
             return true;
         }
 
         public static bool RunTurnin = false;
         public static bool RunA4N = false;
-        private enum DutyState
-        {
-            None,
-            OpenContentsFinder,
-            SelectDuty,
-            LaunchDuty,
-            ConfirmContentWindow,
-            A4NMode,
-        }
-        private static DutyState CurrentState = DutyState.None;
+        public static bool hasEnqueuedDutyFinder = false;
         internal static void Tick()
         {
             if (DoWeTick)
@@ -50,60 +41,26 @@ namespace GlobalTurnIn.Scheduler
                 {
                     if (RunA4N)
                     {
-                        switch(CurrentState)
+                        if (IsInZone(GTData.A4NMapID))
                         {
-                            case DutyState.None:
-                                if (IsAddonActive("ContentsFinder"))
-                                {
-                                    CurrentState = DutyState.OpenContentsFinder;
-                                }
-                                else
-                                {
-                                    TaskDutyFinder.Enqueue();
-                                    CurrentState = DutyState.OpenContentsFinder;
-                                }
-                                break;
-
-                            case DutyState.OpenContentsFinder:
-                                if (IsAddonActive("ContentsFinder"))
-                                {
-                                    TaskSelectCorrectDuty.Enqueue();
-                                    CurrentState = DutyState.SelectDuty;
-                                }
-                                break;
-
-                            case DutyState.SelectDuty:
-                                if (IsAddonActive("ContentsFinder"))
-                                {
-                                    TaskLaunchDuty.Enqueue();
-                                    CurrentState = DutyState.LaunchDuty;
-                                }
-                                break;
-
-                            case DutyState.LaunchDuty:
-                                if (IsAddonActive("ContentsFinderConfirm"))
-                                {
-                                    TaskContentWidnowConfirm.Enqueue();
-                                    CurrentState = DutyState.ConfirmContentWindow;
-                                }
-                                break;
-
-                            case DutyState.ConfirmContentWindow:
-                                if (!IsAddonActive("ContentsFinderConfirm"))
-                                {
-                                    CurrentState = DutyState.A4NMode;
-                                }
-                                break;
-                            case DutyState.A4NMode: // this right here isn't working??? and i'm not sure why... 
-                                                    // Might generally rework this here soon. The switchstateness is messing with me
-                                if (IsInZone(GTData.A4NMapID))
-                                {
-                                    TaskA4N.Enqueue();
-                                    CurrentState = DutyState.None;
-                                }
-                                break;
-                            }   
+                            TaskA4N.Enqueue();
+                            hasEnqueuedDutyFinder = false;
                         }
+                        else if (!IsAddonActive("ContentsFinder") && !hasEnqueuedDutyFinder)
+                        {
+                            TaskDutyFinder.Enqueue();
+                        }
+                        else if (IsAddonActive("ContentsFinder"))
+                        {
+                            TaskSelectCorrectDuty.Enqueue();
+                            TaskLaunchDuty.Enqueue();
+                            hasEnqueuedDutyFinder = true;
+                        }
+                        else if (IsAddonActive("ContentsFinderConfirm"))
+                        {
+                            TaskContentWidnowConfirm.Enqueue();
+                        }
+                    }
                     else if (RunTurnin)
                     {
                         if (TotalExchangeItem != 0 && !C.VendorTurnIn)

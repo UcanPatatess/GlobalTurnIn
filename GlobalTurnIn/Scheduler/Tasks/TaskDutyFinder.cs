@@ -9,6 +9,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
     {
         internal static void Enqueue()
         {
+            P.taskManager.Enqueue(PlayerNotBusy);
             P.taskManager.Enqueue(OpenDutyFinder);
         }
 

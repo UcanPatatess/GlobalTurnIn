@@ -27,7 +27,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             // -> Leave Duty
 
             P.taskManager.Enqueue(() => IsInZone(GTData.A4NMapID));
-            P.taskManager.Enqueue(() => PlayerNotBusy());
+            P.taskManager.Enqueue(PlayerNotBusy);
             TaskTarget.Enqueue(GTData.RightForeleg);
             P.taskManager.Enqueue(() => MoveToCombat(GTData.RightForeLegPos), "Moving to Combat");
             P.taskManager.Enqueue(() => !Svc.Condition[ConditionFlag.InCombat], "Waiting for combat to end", DConfig);
@@ -39,7 +39,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             TaskOpenChest.Enqueue(GTData.A4NChest1);
             TaskOpenChest.Enqueue(GTData.A4NChest2);
             TaskOpenChest.Enqueue(GTData.A4NChest3);
-            P.taskManager.Enqueue(() => LeaveDuty());
+            P.taskManager.Enqueue(LeaveDuty);
             P.taskManager.Enqueue(UpdateStats);
         }
 
@@ -66,7 +66,12 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.navmesh.SetAlignCamera(true);
             return false;
         }
+        private static readonly AbandonDuty abandonDuty = Marshal.GetDelegateForFunctionPointer<AbandonDuty>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 28 41 B2 01"));
 
+        private delegate void AbandonDuty(bool a1);
+
+        public static void LeaveDuty() => abandonDuty(false);
+        /*
         private static unsafe bool? LeaveDuty()
         {
             var agent = AgentModule.Instance()->GetAgentByInternalId(AgentId.ContentsFinderMenu);
@@ -92,7 +97,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
 
             return false;
         }
-
+        */
         public static unsafe AtkValue* CreateEventParams()
         {
             try
