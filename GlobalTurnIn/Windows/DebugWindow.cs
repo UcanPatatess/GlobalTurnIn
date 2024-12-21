@@ -126,7 +126,7 @@ namespace GlobalTurnIn.Windows
                     }
                     if (ImGui.Button("Add Passive Preset"))
                     {
-                        P.bossMod.RefreshPreset("RoR Passive", Resources.BMRotations.rootPassive);
+                        P.bossmod.RefreshPreset("RoR Passive", Resources.BMRotations.rootPassive);
                     }
                     ImGui.EndTabItem();
                 }
