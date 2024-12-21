@@ -12,5 +12,5 @@ global using global::System.Linq;
 global using static GlobalTurnIn.Plugin;
 global using static ECommons.GenericHelpers;
 global using static GlobalTurnIn.Util;
-global using static GlobalTurnIn.DataFile;
+global using static GlobalTurnIn.Data;
 
