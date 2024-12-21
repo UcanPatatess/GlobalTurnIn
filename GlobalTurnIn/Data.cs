@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GlobalTurnIn;
 
-internal class GTData
+internal class Data
 {
     // Targets (ObjectID):
     // Alexander - The Burder of the Father (A4N) 
@@ -28,5 +28,4 @@ internal class GTData
     public static Vector3 A4NChest1Pos = new Vector3(-0.02f, 10.54f, -8.38f);
     public static Vector3 A4NChest2Pos = new Vector3(2f, 10.54f, -6.36f);
     public static Vector3 A4NChest3Pos = new Vector3(-2.03f, 10.54f, -6.36f);
-
 }

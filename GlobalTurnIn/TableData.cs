@@ -3,7 +3,7 @@ using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegat
 
 namespace GlobalTurnIn;
 
-public static class Data
+public static class DataFile
 {
     public static int TotalExchangeItem = 0;
     public static int GordianTurnInCount = 0;
