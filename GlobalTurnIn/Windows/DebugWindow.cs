@@ -127,9 +127,9 @@ namespace GlobalTurnIn.Windows
                     if (ImGui.Button("Chest Task"))
                     {
                         TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
-                        TaskOpenChest.Enqueue(Data.A4NChest1);
-                        TaskOpenChest.Enqueue(Data.A4NChest2);
-                        TaskOpenChest.Enqueue(Data.A4NChest3);
+                        TaskOpenChest.Enqueue(GTData.A4NChest1);
+                        TaskOpenChest.Enqueue(GTData.A4NChest2);
+                        TaskOpenChest.Enqueue(GTData.A4NChest3);
                     }
                     if (ImGui.Button("Full Inside A4N"))
                     {
