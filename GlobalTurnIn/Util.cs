@@ -30,6 +30,38 @@ public static unsafe class Util
     {
         icurrentTask = task;
     }
+
+    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(GetDistanceToPlayer).FirstOrDefault(x => x.DataId == dataId)) != null;
+    internal static unsafe void InteractWithObject(IGameObject? gameObject)
+    {
+        try
+        {
+            if (gameObject == null || !gameObject.IsTargetable)
+                return;
+            var gameObjectPointer = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)gameObject.Address;
+            TargetSystem.Instance()->InteractWithObject(gameObjectPointer, false);
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Info($"InteractWithObject: Exception: {ex}");
+        }
+    }
+
+    internal static bool? TargetByID(IGameObject? gameObject)
+    {
+        if (!IsOccupied())
+        {
+            var x = gameObject;
+            if (x != null)
+            {
+                Svc.Targets.SetTarget(x);
+                ECommons.Logging.PluginLog.Information($"Setting the target to {x.DataId}");
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static unsafe bool CorrectDuty() // first actual function I made that returns a true/false statement in C#... man this was a pain to learn about xD(ice)
     {
         if (TryGetAddonByName<AtkUnitBase>("ContentsFinder", out var addon) && IsAddonReady(addon))

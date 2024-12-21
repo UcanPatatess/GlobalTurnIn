@@ -146,6 +146,9 @@ namespace GlobalTurnIn.Windows
                     }
 
                     ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
+                    ImGui.SameLine();
+                    ImGui.Text($"PluginInstalled : {PluginInstalled("BurningDowntheHouse")}");
+
 
                     ImGui.EndTabItem();
                 }

@@ -1,5 +1,4 @@
 using Dalamud.Game.ClientState.Objects.Types;
-using GlobalTurnIn.Utilities;
 using Lumina.Excel.Sheets;
 using System;
 using System.Collections.Generic;
@@ -14,8 +13,8 @@ namespace GlobalTurnIn.Scheduler.Tasks
         public static void Enqueue(ulong objectID)
         {
             IGameObject? gameObject = null;
-            P.taskManager.Enqueue(() => TargetUtil.TryGetObjectByDataId(objectID, out gameObject), "Getting Object");
-            P.taskManager.Enqueue(() => TargetUtil.TargetByID(gameObject), "Targeting Object");
+            P.taskManager.Enqueue(() => TryGetObjectByDataId(objectID, out gameObject), "Getting Object");
+            P.taskManager.Enqueue(() => TargetByID(gameObject), "Targeting Object");
         }
     }
 }
