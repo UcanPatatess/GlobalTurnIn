@@ -468,4 +468,7 @@ public static class Data
     public static readonly Vector3 A4NChest2Pos = new(2f, 10.54f, -6.36f);
     public static readonly Vector3 A4NChest3Pos = new(-2.03f, 10.54f, -6.36f);
 
+    // variables to be used across the place
+    public static bool RunInfinite = true;
+    public static int RunAmount = 1;
 }

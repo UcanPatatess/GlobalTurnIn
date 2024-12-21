@@ -2,9 +2,11 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using ECommons.Configuration;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.SimpleGui;
+using ECommons.Throttlers;
 using GlobalTurnIn.Scheduler;
 using ImGuiNET;
 using System.Numerics;
@@ -87,6 +89,12 @@ namespace GlobalTurnIn.Windows
 
             ImGui.EndChild();
         }
+
+        // Counter/Inputs
+        private int amountToRun = RunAmount;
+        private string nRaidString = "Infinite";
+        private string[] nRaidOptions = { "Infinite", "Run x times" };
+
         public override void Draw()
         {
             if (ImGui.BeginTabBar("##Main Window Tabs"))
@@ -126,7 +134,7 @@ namespace GlobalTurnIn.Windows
                     ImGui.Text($"Zone ID = {Svc.ClientState.TerritoryType}");
                     using (ImRaii.Disabled(false))// did this to realse the stats
                     {
-                        if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4NMapID"))
+                        if (ImGui.Button(SchedulerMain.DoWeTick ? "Stop" : "Start A4N"))
                         {
                             if (SchedulerMain.DoWeTick)
                             {
@@ -138,6 +146,38 @@ namespace GlobalTurnIn.Windows
                                 SchedulerMain.RunA4N = true;
                             }
                         }
+                    }
+                    ImGui.SetNextItemWidth(150);
+                    if (ImGui.BeginCombo("##Root of Riches - NRaid Farm", nRaidString))
+                    {
+                        foreach (var option in nRaidOptions)
+                        {
+                            if (ImGui.Selectable(option, option == nRaidString))
+                            {
+                                nRaidString = option;
+                            }
+                            if (option == nRaidString)
+                            {
+                                ImGui.SetItemDefaultFocus();
+                            }
+                        }
+                        ImGui.EndCombo();
+                    }
+                    if (nRaidString == nRaidOptions[0])
+                    {
+                        RunInfinite = true; 
+                    }
+                    else if (nRaidString == nRaidOptions[1])
+                    {
+                        RunInfinite = false;
+                        ImGui.SameLine();
+                        ImGui.SetNextItemWidth(175);
+                        if (ImGui.SliderInt("Input amount you want to run", ref amountToRun, 1, 999))
+                        {
+                            RunAmount = amountToRun;
+                            EzConfig.Save();
+                        }
+
                     }
                     ImGui.Text("Coming soon");
                     ImGui.EndTabItem();
