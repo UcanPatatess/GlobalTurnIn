@@ -58,6 +58,11 @@ namespace GlobalTurnIn.Scheduler
                                     TaskTarget.Enqueue(RightForeleg);
                                     P.taskManager.Enqueue(() => MoveToCombat(RightForeLegPos), "Moving to Combat");
                                     // If Left Leg is Targetable, enable the following
+                                    if (PluginInstalled("WrathCombo"))
+                                    {
+                                        RunCommand("wrath auto on"); // this is here while the IPC method doesn't exist (yet). Things to impliment cause I don't like commands
+                                        RunCommand("vbm ai on"); // Need to dig through VBM IPC to see if this is something that I can control through that. . . 
+                                    }
                                     // BM ai (to move to the target while in combat)
                                     // if Wrath installed, enable wrath + BM ai Limited
                                     // if RSR installed, 
@@ -65,6 +70,11 @@ namespace GlobalTurnIn.Scheduler
                                 }
                                 else if (TryGetObjectByDataId(A4NChest1, out gameObject))
                                 {
+                                    if (PluginInstalled("WrathCombo"))
+                                    {
+                                        RunCommand("wrath auto off");
+                                        RunCommand("vbm ai off");
+                                    }
                                     P.taskManager.Enqueue(() => A4NTask = "Chest Task");
                                     TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
                                     TaskOpenChest.Enqueue(A4NChest1);

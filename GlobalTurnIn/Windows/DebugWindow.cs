@@ -4,6 +4,7 @@ using ECommons.DalamudServices;
 using GlobalTurnIn.Scheduler.Handlers;
 using GlobalTurnIn.Scheduler.Tasks;
 using ImGuiNET;
+using System.IO;
 using System.Numerics;
 
 namespace GlobalTurnIn.Windows
@@ -31,6 +32,8 @@ namespace GlobalTurnIn.Windows
         private float targetXPos = 0;
         private float targetYPos = 0;
         private float targetZPos = 0;
+        private string pluginName = "none";
+        private string commandInput = "";
 
         public override void Draw()
         {
@@ -105,6 +108,25 @@ namespace GlobalTurnIn.Windows
                     if (ImGui.Button("Copy Current Zone ID"))
                     {
                         ImGui.SetClipboardText($"{zoneID}");
+                    }
+                    
+                    ImGui.InputText("Plugin Name Check", ref pluginName, 100);
+                    if (PluginInstalled(pluginName))
+                    {
+                        ImGui.Text($"Plugin: {pluginName} is installed");
+                    }
+                    else
+                    {
+                        ImGui.Text($"Plugin: {pluginName} is not visible");
+                    }
+                    ImGui.InputText("Command", ref commandInput, 500);
+                    if (ImGui.Button("Run Command"))
+                    {
+                        RunCommand(commandInput);
+                    }
+                    if (ImGui.Button("Add Passive Preset"))
+                    {
+                        P.bossMod.RefreshPreset("RoR Passive", Resources.BMRotations.rootPassive);
                     }
                     ImGui.EndTabItem();
                 }

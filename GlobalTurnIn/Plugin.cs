@@ -27,6 +27,7 @@ public class Plugin : IDalamudPlugin
     internal DeliverooIPC deliveroo;
     internal LifestreamIPC lifestream;
     internal NavmeshIPC navmesh;
+    internal BossModIPC bossMod;
 
 
     public Plugin(IDalamudPluginInterface pluginInterface)
@@ -46,6 +47,7 @@ public class Plugin : IDalamudPlugin
         deliveroo = new();
         lifestream = new();
         navmesh = new();
+        bossMod = new();
         Svc.Framework.Update += Tick;
         C.SessionStats.Reset();
     }

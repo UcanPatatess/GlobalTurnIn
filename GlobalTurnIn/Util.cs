@@ -20,6 +20,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using ECommons.DalamudServices.Legacy;
 using System.Runtime.InteropServices;
 using ECommons.Automation.NeoTaskManager;
+using System.Globalization;
 
 
 namespace GlobalTurnIn;
@@ -203,4 +204,9 @@ public static unsafe class Util
     private delegate void AbandonDuty(bool a1);
 
     public static void LeaveDuty() => ExitDuty(false);
+
+    public static void RunCommand(string command)
+    {
+        ECommons.Automation.Chat.Instance.ExecuteCommand($"/{command}");
+    }
 }
