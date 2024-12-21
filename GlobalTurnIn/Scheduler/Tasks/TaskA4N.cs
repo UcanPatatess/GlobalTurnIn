@@ -44,41 +44,6 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.taskManager.Enqueue(() => !IsInZone(A4NMapID));
         }
 
-        private static float Distance(this Vector3 v, Vector3 v2)
-        {
-            return new Vector2(v.X - v2.X, v.Z - v2.Z).Length();
-        }
-        private static unsafe bool IsMoving()
-        {
-            return AgentMap.Instance()->IsPlayerMoving == 1;
-        }
-
-        internal unsafe static bool? MoveToCombat(Vector3 targetPosition, float toleranceDistance = 3f)
-        {
-            if (targetPosition.Distance(Player.GameObject->Position) <= toleranceDistance || Svc.Condition[ConditionFlag.InCombat])
-            {
-                P.navmesh.Stop();
-                return true;
-            }
-            if (!P.navmesh.IsReady()) { UpdateCurrentTask("Waiting Navmesh"); return false; }
-            if (P.navmesh.PathfindInProgress() || P.navmesh.IsRunning() || IsMoving()) return false;
-
-            P.navmesh.PathfindAndMoveTo(targetPosition, false);
-            P.navmesh.SetAlignCamera(true);
-            return false;
-        }
-        private static readonly AbandonDuty ExitDuty = Marshal.GetDelegateForFunctionPointer<AbandonDuty>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 28 41 B2 01"));
-
-        private delegate void AbandonDuty(bool a1);
-
-        public static void LeaveDuty() => ExitDuty(false);
-
         private static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 1000, abortOnTimeout: false);
-
-        private static void UpdateStats()
-        {
-            C.SessionStats.TotalA4nRuns = C.SessionStats.TotalA4nRuns + 1;
-            C.Stats.TotalA4nRuns = C.Stats.TotalA4nRuns + 1;
-        }
     }
 }

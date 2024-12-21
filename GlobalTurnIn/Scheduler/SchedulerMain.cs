@@ -1,7 +1,10 @@
+using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.Automation.NeoTaskManager.Tasks;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using GlobalTurnIn.Scheduler.Tasks;
+using ImGuiNET;
 using System.Numerics;
 
 namespace GlobalTurnIn.Scheduler
@@ -30,9 +33,10 @@ namespace GlobalTurnIn.Scheduler
             return true;
         }
 
-        public static bool RunTurnin = false;
-        public static bool RunA4N = false;
+        public static bool RunTurnin = false; // Used for Turnin Toggle
+        public static bool RunA4N = false; // Used for N-Raid Toggle
         public static bool hasEnqueuedDutyFinder = false;
+        public static string A4NTask = "";
         internal static void Tick()
         {
             if (DoWeTick)
@@ -43,22 +47,58 @@ namespace GlobalTurnIn.Scheduler
                     {
                         if (IsInZone(A4NMapID))
                         {
-                            TaskA4N.Enqueue();
-                            hasEnqueuedDutyFinder = false;
+                            if (!Svc.Condition[ConditionFlag.InCombat])
+                            {
+                                IGameObject? gameObject = null;
+                                if (TryGetObjectByDataId(LeftForeleg, out gameObject) || TryGetObjectByDataId(RightForeleg, out gameObject))
+                                {
+                                    P.taskManager.Enqueue(() => A4NTask = "Targeted Left Foreleg");
+                                    // Left Leg is targetable... which means you aren't in combat/you haven't initiated it yet
+                                    P.taskManager.Enqueue(PlayerNotBusy);
+                                    TaskTarget.Enqueue(RightForeleg);
+                                    P.taskManager.Enqueue(() => MoveToCombat(RightForeLegPos), "Moving to Combat");
+                                    // If Left Leg is Targetable, enable the following
+                                    // BM ai (to move to the target while in combat)
+                                    // if Wrath installed, enable wrath + BM ai Limited
+                                    // if RSR installed, 
+                                    P.taskManager.Enqueue(() => !Svc.Condition[ConditionFlag.InCombat], "Waiting for combat to end", DConfig);
+                                }
+                                else if (TryGetObjectByDataId(A4NChest1, out gameObject))
+                                {
+                                    P.taskManager.Enqueue(() => A4NTask = "Chest Task");
+                                    TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
+                                    TaskOpenChest.Enqueue(A4NChest1);
+                                    TaskOpenChest.Enqueue(A4NChest2);
+                                    TaskOpenChest.Enqueue(A4NChest3);
+                                    P.taskManager.Enqueue(LeaveDuty);
+                                    P.taskManager.Enqueue(UpdateStats);
+                                    P.taskManager.Enqueue(() => !IsInZone(A4NMapID), "Waiting for you to leave A4N");
+                                    hasEnqueuedDutyFinder = false;
+                                }
+                                else
+                                {
+                                    P.taskManager.EnqueueDelay(100);
+                                    // just an exit for it to catch/reset in case either of these come false (it shouldn't, but better to have a failsafe)
+                                }
+                            }
                         }
-                        else if (!IsAddonActive("ContentsFinder") && !hasEnqueuedDutyFinder)
+                        else if (!IsInZone(A4NMapID))
                         {
-                            TaskDutyFinder.Enqueue();
-                        }
-                        else if (IsAddonActive("ContentsFinder"))
-                        {
-                            TaskSelectCorrectDuty.Enqueue();
-                            TaskLaunchDuty.Enqueue();
-                            hasEnqueuedDutyFinder = true;
-                        }
-                        else if (IsAddonActive("ContentsFinderConfirm"))
-                        {
-                            TaskContentWidnowConfirm.Enqueue();
+                            A4NTask = "Loading into duty";
+                            if (!IsAddonActive("ContentsFinder") && !hasEnqueuedDutyFinder)
+                            {
+                                TaskDutyFinder.Enqueue();
+                            }
+                            else if (IsAddonActive("ContentsFinder"))
+                            {
+                                TaskSelectCorrectDuty.Enqueue();
+                                TaskLaunchDuty.Enqueue();
+                                hasEnqueuedDutyFinder = true;
+                            }
+                            else if (IsAddonActive("ContentsFinderConfirm"))
+                            {
+                                TaskContentWidnowConfirm.Enqueue();
+                            }
                         }
                     }
                     else if (RunTurnin)

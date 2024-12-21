@@ -1,3 +1,4 @@
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
 using GlobalTurnIn.Scheduler.Handlers;
@@ -99,57 +100,12 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
-                    ImGui.Text($"A4n Duty is selected {CorrectDuty()}");
-                    ImGui.Text("Open A4NMapID in the duty selection");
-                    if (ImGui.Button("A4NMapID"))
+                    int zoneID = Svc.ClientState.TerritoryType;
+                    ImGui.Text($"Current Zone ID is: {zoneID}");
+                    if (ImGui.Button("Copy Current Zone ID"))
                     {
-                        TaskDutyFinder.Enqueue();
+                        ImGui.SetClipboardText($"{zoneID}");
                     }
-                    if (ImGui.Button("SelectDuty"))
-                    {
-                        TaskSelectCorrectDuty.Enqueue();
-                    }
-                    if (ImGui.Button("TaskLaunchDuty"))
-                    {
-                        TaskLaunchDuty.Enqueue();
-                    }
-                    if (ImGui.Button("TaskContentWidnowConfirm"))
-                    {
-                        TaskContentWidnowConfirm.Enqueue();
-                    }
-                    if (ImGui.Button("GetInA4n"))
-                    {
-                        TaskDutyFinder.Enqueue();
-                        TaskSelectCorrectDuty.Enqueue();
-                        TaskLaunchDuty.Enqueue();
-                        TaskContentWidnowConfirm.Enqueue();
-                    }
-                    if (ImGui.Button("Chest Task"))
-                    {
-                        TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
-                        TaskOpenChest.Enqueue(A4NChest1);
-                        TaskOpenChest.Enqueue(A4NChest2);
-                        TaskOpenChest.Enqueue(A4NChest3);
-                    }
-                    if (ImGui.Button("Full Inside A4N"))
-                    {
-                        TaskA4N.Enqueue();
-                    }
-
-                    if (ImGui.Button("Full A4N Loop"))
-                    {
-                        TaskDutyFinder.Enqueue();
-                        TaskSelectCorrectDuty.Enqueue();
-                        TaskLaunchDuty.Enqueue();
-                        TaskContentWidnowConfirm.Enqueue();
-                        TaskA4N.Enqueue();
-                    }
-
-                    ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
-                    ImGui.SameLine();
-                    ImGui.Text($"PluginInstalled : {PluginInstalled("BurningDowntheHouse")}");
-
-
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Targeting Debug"))
@@ -186,6 +142,73 @@ namespace GlobalTurnIn.Windows
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();
+            }
+        }
+
+        private void A4NGuiUi()
+        {
+            ImGui.Text($"A4n Duty is selected {CorrectDuty()}");
+            ImGui.Text("Open A4NMapID in the duty selection");
+            if (ImGui.Button("A4NMapID"))
+            {
+                TaskDutyFinder.Enqueue();
+            }
+            if (ImGui.Button("SelectDuty"))
+            {
+                TaskSelectCorrectDuty.Enqueue();
+            }
+            if (ImGui.Button("TaskLaunchDuty"))
+            {
+                TaskLaunchDuty.Enqueue();
+            }
+            if (ImGui.Button("TaskContentWidnowConfirm"))
+            {
+                TaskContentWidnowConfirm.Enqueue();
+            }
+            if (ImGui.Button("GetInA4n"))
+            {
+                TaskDutyFinder.Enqueue();
+                TaskSelectCorrectDuty.Enqueue();
+                TaskLaunchDuty.Enqueue();
+                TaskContentWidnowConfirm.Enqueue();
+            }
+            if (ImGui.Button("Chest Task"))
+            {
+                TaskMoveTo.Enqueue(A4NChestCenter, "Center Chest", 0.5f);
+                TaskOpenChest.Enqueue(A4NChest1);
+                TaskOpenChest.Enqueue(A4NChest2);
+                TaskOpenChest.Enqueue(A4NChest3);
+            }
+            if (ImGui.Button("Full Inside A4N"))
+            {
+                TaskA4N.Enqueue();
+            }
+
+            if (ImGui.Button("Full A4N Loop"))
+            {
+                TaskDutyFinder.Enqueue();
+                TaskSelectCorrectDuty.Enqueue();
+                TaskLaunchDuty.Enqueue();
+                TaskContentWidnowConfirm.Enqueue();
+                TaskA4N.Enqueue();
+            }
+
+            ImGui.Text($"Are we available/not busy? = {PlayerNotBusy()}");
+            ImGui.SameLine();
+            ImGui.Text($"PluginInstalled : {PluginInstalled("BurningDowntheHouse")}");
+
+            IGameObject? gameObject = null;
+            if (TryGetObjectByDataId(LeftForeleg, out gameObject))
+            {
+                ImGui.Text("Left leg is Targetable");
+            }
+            else if (TryGetObjectByDataId(A4NChest1, out gameObject))
+            {
+                ImGui.Text("Chest are Targetable");
+            }
+            else
+            {
+                ImGui.Text("Nothing is possible to target!");
             }
         }
     }

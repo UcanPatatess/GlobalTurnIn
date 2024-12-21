@@ -121,7 +121,7 @@ namespace GlobalTurnIn.Windows
                 }
                 if (ImGui.BeginTabItem("Normal Raid Farm"))
                 {
-                    ImGui.Text($"Current task is: {CurrentTask()}");
+                    ImGui.Text($"Current task is: {SchedulerMain.A4NTask}");
                     ImGui.Text($"Number of task: {P.taskManager.NumQueuedTasks}");
                     ImGui.Text($"Zone ID = {Svc.ClientState.TerritoryType}");
                     using (ImRaii.Disabled(false))// did this to realse the stats

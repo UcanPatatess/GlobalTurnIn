@@ -1,4 +1,5 @@
 
+using Lumina.Excel.Sheets;
 using System.Numerics;
 using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
 
@@ -445,10 +446,22 @@ public static class Data
     public static ulong A4NChest3 = 479;
 
     // Zones
+
+    // Normal Raid Areas
     public static int A4NMapID = 445;
+
+    // City -> Inn
+    public static int Grindania = 132;
+    public static int GridaniaInn = 179;
+
+    public static int LimsaLower = 129;
+    public static int LimsaUpper = 128;
+    //public static int LimsaInn = 0;
+
 
     // Move Positions
     public static readonly Vector3 RightForeLegPos = new(-6.53f, 10.54f, -7.56f);
+    public static readonly Vector3 A4NChestCenter = new(-0.08f, 10.6f, -6.46f);
 
     // Chest Positions
     public static readonly Vector3 A4NChest1Pos = new(-0.02f, 10.54f, -8.38f);
