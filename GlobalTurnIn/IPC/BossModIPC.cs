@@ -34,7 +34,7 @@ namespace GlobalTurnIn.IPC
             //check if our preset does not exist
             if (Presets_Get(name) == null)
                 //load it
-                Svc.Log.Debug($"AutoDuty Preset Loaded: {Presets_Create(preset, true)}");
+                Svc.Log.Debug($"RoR Preset Loaded: {Presets_Create(preset, true)}");
         }
 
         public void RefreshPreset(string name, string preset)
