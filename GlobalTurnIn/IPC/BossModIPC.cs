@@ -57,11 +57,5 @@ namespace GlobalTurnIn.IPC
             if (!Presets_GetForceDisabled())
                 Presets_SetForceDisabled();
         }
-
-        public void SetRange(float range)
-        {
-            Presets_AddTransientStrategy("AutoDuty", "BossMod.Autorotation.MiscAI.StayCloseToTarget", "range", MathF.Round(range, 1).ToString(CultureInfo.InvariantCulture));
-            Presets_AddTransientStrategy("AutoDuty Passive", "BossMod.Autorotation.MiscAI.StayCloseToTarget", "range", MathF.Round(range, 1).ToString(CultureInfo.InvariantCulture));
-        }
     }
 }

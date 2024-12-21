@@ -11,7 +11,8 @@ namespace GlobalTurnIn.Resources
         public static string rootPassive = @"
         {
             ""Name"": ""ROR Passive"",
-            ""Modules"": {
+            ""Modules"": 
+            {
                 ""BossMod.Autorotation.MiscAI.StayCloseToTarget"": []
             }
         }";
