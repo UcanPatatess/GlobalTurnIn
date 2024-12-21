@@ -14,7 +14,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         {
             IGameObject? gameObject = null;
             P.taskManager.Enqueue(() => TargetUtil.TryGetObjectByDataId(GameObjectID, out gameObject), "Getting Object by ObjectID");
-            P.taskManager.Enqueue(() => PlayerNotBusy());
+            P.taskManager.Enqueue(PlayerNotBusy);
             P.taskManager.Enqueue(() => TargetUtil.InteractWithObject(gameObject), "Interacting w/ Object");
         }
     }

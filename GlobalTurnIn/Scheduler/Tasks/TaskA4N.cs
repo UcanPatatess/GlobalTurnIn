@@ -41,6 +41,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
             TaskOpenChest.Enqueue(GTData.A4NChest3);
             P.taskManager.Enqueue(LeaveDuty);
             P.taskManager.Enqueue(UpdateStats);
+            P.taskManager.Enqueue(() => !IsInZone(GTData.A4NMapID));
         }
 
         private static float Distance(this Vector3 v, Vector3 v2)
@@ -71,48 +72,6 @@ namespace GlobalTurnIn.Scheduler.Tasks
         private delegate void AbandonDuty(bool a1);
 
         public static void LeaveDuty() => abandonDuty(false);
-        /*
-        private static unsafe bool? LeaveDuty()
-        {
-            var agent = AgentModule.Instance()->GetAgentByInternalId(AgentId.ContentsFinderMenu);
-            if (agent == null)
-            {
-                return false;
-            }
-
-            var eventObject = stackalloc AtkValue[1];
-            var atkValues = CreateEventParams();
-            if (atkValues != null)
-            {
-                try
-                {
-                    agent->ReceiveEvent(eventObject, atkValues, 1, 0);
-                    return true;
-                }
-                finally
-                {
-                    Marshal.FreeHGlobal(new IntPtr(atkValues));
-                }
-            }
-
-            return false;
-        }
-        */
-        public static unsafe AtkValue* CreateEventParams()
-        {
-            try
-            {
-                var atkValues = (AtkValue*)Marshal.AllocHGlobal(sizeof(AtkValue));
-                if (atkValues == null) return null;
-                atkValues[0].Type = ValueType.Int;
-                atkValues[0].Int = 0;
-                return atkValues;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
 
         private static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 1000, abortOnTimeout: false);
 
