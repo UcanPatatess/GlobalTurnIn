@@ -1,4 +1,5 @@
 
+using System.Numerics;
 using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentTreeList.Delegates;
 
 namespace GlobalTurnIn;
@@ -433,4 +434,25 @@ public static class Data
         DeltascapeLensID, DeltascapeShaftID, DeltascapeCrankID, DeltascapeSpringID, DeltascapePedalID, DeltascapeBoltID,
         AlexandrianLensID , AlexandrianShaftID, AlexandrianCrankID , AlexandrianSpringID , AlexandrianPedalID , AlexandrianBoltID
     };
+
+    // Targets (ObjectID):
+    // Alexander - The Burder of the Father (A4N) 
+    public static ulong RightForeleg = 4107;
+    public static ulong LeftForeleg = 4108;
+    public static ulong Manipulator = 3902;
+    public static ulong A4NChest1 = 438;
+    public static ulong A4NChest2 = 480;
+    public static ulong A4NChest3 = 479;
+
+    // Zones
+    public static int A4NMapID = 445;
+
+    // Move Positions
+    public static readonly Vector3 RightForeLegPos = new(-6.53f, 10.54f, -7.56f);
+
+    // Chest Positions
+    public static readonly Vector3 A4NChest1Pos = new(-0.02f, 10.54f, -8.38f);
+    public static readonly Vector3 A4NChest2Pos = new(2f, 10.54f, -6.36f);
+    public static readonly Vector3 A4NChest3Pos = new(-2.03f, 10.54f, -6.36f);
+
 }

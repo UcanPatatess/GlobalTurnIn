@@ -41,7 +41,7 @@ namespace GlobalTurnIn.Scheduler
                 {
                     if (RunA4N)
                     {
-                        if (IsInZone(GTData.A4NMapID))
+                        if (IsInZone(A4NMapID))
                         {
                             TaskA4N.Enqueue();
                             hasEnqueuedDutyFinder = false;

@@ -10,7 +10,7 @@ namespace GlobalTurnIn.Scheduler.Tasks
         internal static void Enqueue()
         {
             P.taskManager.Enqueue(ContentsFinderConfirm);
-            P.taskManager.Enqueue(() => IsInZone(GTData.A4NMapID));
+            P.taskManager.Enqueue(() => IsInZone(A4NMapID));
             P.taskManager.Enqueue(PlayerNotBusy);
         }
         internal static unsafe bool? ContentsFinderConfirm()

@@ -26,22 +26,22 @@ namespace GlobalTurnIn.Scheduler.Tasks
             // -> Exit Combat -> Open Chest
             // -> Leave Duty
 
-            P.taskManager.Enqueue(() => IsInZone(GTData.A4NMapID));
+            P.taskManager.Enqueue(() => IsInZone(A4NMapID));
             P.taskManager.Enqueue(PlayerNotBusy);
-            TaskTarget.Enqueue(GTData.RightForeleg);
-            P.taskManager.Enqueue(() => MoveToCombat(GTData.RightForeLegPos), "Moving to Combat");
+            TaskTarget.Enqueue(RightForeleg);
+            P.taskManager.Enqueue(() => MoveToCombat(RightForeLegPos), "Moving to Combat");
             P.taskManager.Enqueue(() => !Svc.Condition[ConditionFlag.InCombat], "Waiting for combat to end", DConfig);
             // if wrath installed, enable wrath
             // also if Wrath Rotation, enable the distance module in BM 
             // elseif !wrath rotation, enable BM rotation + Ai
 
             TaskMoveTo.Enqueue(new Vector3(-0.08f, 10.6f, -6.46f), "Center Chest", 0.5f);
-            TaskOpenChest.Enqueue(GTData.A4NChest1);
-            TaskOpenChest.Enqueue(GTData.A4NChest2);
-            TaskOpenChest.Enqueue(GTData.A4NChest3);
+            TaskOpenChest.Enqueue(A4NChest1);
+            TaskOpenChest.Enqueue(A4NChest2);
+            TaskOpenChest.Enqueue(A4NChest3);
             P.taskManager.Enqueue(LeaveDuty);
             P.taskManager.Enqueue(UpdateStats);
-            P.taskManager.Enqueue(() => !IsInZone(GTData.A4NMapID));
+            P.taskManager.Enqueue(() => !IsInZone(A4NMapID));
         }
 
         private static float Distance(this Vector3 v, Vector3 v2)
@@ -67,11 +67,11 @@ namespace GlobalTurnIn.Scheduler.Tasks
             P.navmesh.SetAlignCamera(true);
             return false;
         }
-        private static readonly AbandonDuty abandonDuty = Marshal.GetDelegateForFunctionPointer<AbandonDuty>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 28 41 B2 01"));
+        private static readonly AbandonDuty ExitDuty = Marshal.GetDelegateForFunctionPointer<AbandonDuty>(Svc.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 28 41 B2 01"));
 
         private delegate void AbandonDuty(bool a1);
 
-        public static void LeaveDuty() => abandonDuty(false);
+        public static void LeaveDuty() => ExitDuty(false);
 
         private static TaskManagerConfiguration DConfig => new(timeLimitMS: 10 * 60 * 1000, abortOnTimeout: false);
 
